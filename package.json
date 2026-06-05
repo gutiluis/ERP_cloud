@@ -13,7 +13,7 @@
     "test": "vitest"
   },
   "keywords": [],
-  "author": "ERP Team",
+  "author": "Technobool Contributors",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^22.10.2",
