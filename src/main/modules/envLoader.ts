@@ -1,5 +1,5 @@
 import { config } from 'dotenv' // Dotenv is a zero-dependency module that loads environment variables from a .env file into process.env.
-import { resolve } from 'path'
+import { resolve } from 'path' // make relative path into an absolute path
 import { existsSync } from 'fs'
 
 export function loadEnv() {
