@@ -2,29 +2,29 @@ version: "3.9"
 
 services:
   api:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: erp_api # flask
     ports:
       - "5000:5000"
       # erp_api reads 
     env_file: # read by erp_api not erp_db
-      - .env # expose port.. # docker reads the .env file and injects the environment variables into the container environment
-    depends_on:
+      # python load env pydotenv to keep secrets?
+      - .env # expose port
+    depends_on: # still missing checking connection
       - db
 
   db:
     image: mysql:8.0
     # erp_db ignores DATABASE_URL. files onle MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD. etc...
     container_name: erp_db # docker exec -it erp_db sh
-    environment:
-      MYSQL_DATABASE: erp
-      MYSQL_USER: erp
-      MYSQL_PASSWORD: erp
-      MYSQL_ROOT_PASSWORD: root # use same password to create test_db from a user script
+    env_file:
+      - .env # all environment variables are in the .env file
     ports:
     # from mysql docs. Connections to remote servers use TCP/IP. This command connects to the server running on remote.example.com using the default port number (3306):
     # always use 3306 for mysql internal docker
-      - "3307:3306" # 3306 internal. 3307 exposed to host. 3306 inside docker. 3307 mac host
+      - "3307:3306" # 3306 internal. 3307 exposed to host. 3306 inside docker is mysql container. 3307 is mac host
     volumes:
       - mysql_data:/var/lib/mysql # ls -la /var/lib/mysql from inside the container in colima vm
 
