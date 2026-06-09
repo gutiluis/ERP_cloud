@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from flask import Flask
 from .config import Config
 from .extensions import db, migrate
