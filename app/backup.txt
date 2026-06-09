@@ -1,7 +1,0 @@
-DATABASE_URL=mysql+pymysql://erp:erp@db:3306/erp
-
-username: erp
-password: erp
-host: db
-port: 3306
-database: erp
