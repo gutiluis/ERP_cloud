@@ -1,34 +1,56 @@
 # TODO:
 # change docker to use python-dotenv
 # oracle vm
-# flask production server change
+# flask production server change from development server
 # buy domain
 # one user admin account to manage everything
+# finish tests for backend and frontend
+# finish docs
+# finish frontend
 
 ---
 
 # how it works:
 cp .env.example .env
 
-# first make mysql db with docker
+---
+# development:
+# 1- first make mysql container db with docker
 docker compose up -d db
 
-# second check mysql db connection with docker
+---
+
+# 2- check mysql db connection with docker, or preferred way
+# test connection with docker compose, programming languages, or sql
+# does not require password
+docker compose exec db bash # enter service name not container name
 
 
+# 2.1 - or check mysql prompt without entering first bash. needs the password. without opening container shell first. enter password
+docker compose exec db mysql -u erp -p erp
 
 
-#
+# 2.2 - or run command with docker compose passing shell and mysql 
+docker compose exec db mysql -u erp -perp -e "SHOW DATABASES;"
+docker compose exec db mysql -u erp -perp erp -e "SHOW TABLES;"
+
+# 2.3 - or check with pymysql:
+/tests/test_connection.py
+
+---
+# 3 - after testing and building the db docker service build the api service
 docker compose up --build api
 
 
+---
+# 4 - run flask with the virtual environment
+source venv/bin/activate
+flask --app app run
 
-
-
+---
+# 5 - check route ok
+http://127.0.0.1:5000/health 
 
 --
-# how to test mysql docker connection after downloading the image and container:
-docker ps
-docker images
-docker compose ps
-
+# 6 - check normal route/view
+http://127.0.0.1:500
