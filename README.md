@@ -44,9 +44,16 @@ http://127.0.0.1:8000/health
 
 ---
 
-# 4.1 - run flask migrations
+# 4.1 - run flask migrations after building all containers
 cd /ERP
-docker compose exec api flask --app wsgi db initial
+docker compose exec api flask --app wsgi db init
+docker compose exec api flask --app wsgi db migrate -m "initial schema" # when models change
+docker compose exec api flask --app wsgi db upgrade # apply migration
+
+
+# 5 - check tables were mapped
+cd /ERP
+docker compose exec db mysql -u root -p
 
 # 4.2 -  make pytest for app/models
 

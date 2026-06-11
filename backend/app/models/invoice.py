@@ -139,6 +139,18 @@ class Invoice(TimeStampModel):
         lazy="selectin"
     )
     
+    currency: Mapped[str] = mapped_column(
+        String(3),
+        nullable=False,
+        server_default=text("'USD'"),
+        index=True
+    )
+    
+    discount_amount: Mapped[Decimal] = mapped_column(
+        Numeric(18, 2),
+        nullable=False,
+        server_default=text("0.00")
+    )
     
     def ensure_editable(self):
         if self.status in (InvoiceStatus.PAID, InvoiceStatus.VOID):
@@ -147,7 +159,10 @@ class Invoice(TimeStampModel):
     
     def recalc_invoice(self):
         self.ensure_editable()
+        # access the property in the invoiceitem class. no need for self class attribute
+        # subtotal is local variable no need for class attribute named subtotal
         subtotal = sum(i.line_total for i in self.items)
+        # tax_total is a local variable. no need for tax_total class attribute
         tax_total = sum(t.tax_amount for t in self.taxes)
         self.total_amount = subtotal + tax_total
 
@@ -202,7 +217,7 @@ class InvoiceItem(TimeStampModel):
         back_populates='items'
     )
 
-    product: Mapped["Product"]  = db.relationship("Product")
+    product_name: Mapped["Product"]  = db.relationship("Product")
 
     @property
     def line_total(self) -> Decimal:
@@ -257,11 +272,4 @@ class InvoiceTax(TimeStampModel):
     invoice: Mapped["Invoice"] = db.relationship(
         "Invoice", 
         back_populates="taxes"
-    )
-    
-    tax_id: Mapped[int] = mapped_column(
-        BigInteger,
-        db.ForeignKey("taxes.id"),
-        nullable=False,
-        index=True
     )
