@@ -15,8 +15,8 @@ cp .env.example .env
 
 ---
 # development:
-# 1- first make mysql container db with docker
-docker compose up -d db
+# 1 start all services same time:
+docker compose up -d --build
 
 ---
 
@@ -37,20 +37,24 @@ docker compose exec db mysql -u erp -perp erp -e "SHOW TABLES;"
 # 2.3 - or check with pymysql:
 /tests/test_connection.py
 
----
-# 3 - after testing and building the db docker service build the api service
-docker compose up --build api
-
 
 ---
-# 4 - run flask with the virtual environment
-source venv/bin/activate
-flask --app app run
+# 3.1 - check route ok
+http://127.0.0.1:8000/health 
 
 ---
-# 5 - check route ok
-http://127.0.0.1:5000/health 
 
---
+# 4.1 - run flask migrations
+cd /ERP
+docker compose exec api flask --app wsgi db initial
+
+# 4.2 -  make pytest for app/models
+
+---
+
+# TODO:
 # 6 - check normal route/view
 http://127.0.0.1:500
+
+# TODO:
+# 7 - design frontend

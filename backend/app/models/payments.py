@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+
+# descr:
+
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from datetime import datetime, timezone
@@ -28,9 +32,9 @@ class Payment(TimeStampModel):
     public_payment_id: Mapped[str] = mapped_column(
         String(50), unique=True, nullable=False, index=True
     )
-    invoice_fk_id: Mapped[int] = mapped_column(
+    invoice_id: Mapped[int] = mapped_column(
         BigInteger,
-        db.ForeignKey('invoices.id'),
+        db.ForeignKey('invoices.id', ondelete='restrict'),
         nullable=False,
         index=True,
     )

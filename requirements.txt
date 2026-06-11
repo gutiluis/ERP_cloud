@@ -1,6 +1,7 @@
 flask
 flask-sqlalchemy
 flask-migrate
+gunicorn
 pymysql
 python-dotenv
 cryptography>=41.0
