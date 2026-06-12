@@ -8,6 +8,8 @@ services:
     restart: unless-stopped
     container_name: erp_api
     ports:
+      # does not mean docker compose erp_api is running in localhost:5000
+      # does not mean its running in localhost:5000
       - "8000:5000"
 
       # erp_api reads 

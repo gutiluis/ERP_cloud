@@ -1,12 +1,12 @@
 # TODO:
 # change docker to use python-dotenv
 # oracle vm
-# flask production server change from development server
 # buy domain
 # one user admin account to manage everything
 # finish tests for backend and frontend
 # finish docs
 # finish frontend
+# develop flaks apis
 
 ---
 
@@ -25,6 +25,8 @@ docker compose up -d --build
 # does not require password
 docker compose exec db bash # enter service name not container name
 
+docker compose exec -it db bash
+docker compose exec -it api bash
 
 # 2.1 - or check mysql prompt without entering first bash. needs the password. without opening container shell first. enter password
 docker compose exec db mysql -u erp -p erp
@@ -50,6 +52,11 @@ docker compose exec api flask --app wsgi db init
 docker compose exec api flask --app wsgi db migrate -m "initial schema" # when models change
 docker compose exec api flask --app wsgi db upgrade # apply migration
 
+# 4.2 check migrations
+docker compose exec api flask db history
+docker compose exec api flask db current
+docker compose exec -it servicename sh
+
 
 # 5 - check tables were mapped
 cd /ERP
@@ -58,7 +65,10 @@ docker compose exec db mysql -u root -p
 # 4.2 -  make pytest for app/models
 
 ---
+# TODO:
+# 
 
+---
 # TODO:
 # 6 - check normal route/view
 http://127.0.0.1:500

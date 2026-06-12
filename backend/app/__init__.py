@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# filename: app/__init__.py
+# filename: backend/app/__init__.py
 # descr: orchestrator does not load models
 
 from flask import Flask
@@ -16,6 +16,9 @@ def create_app(config_object=Config):
 
     from .routes.health import health_bp
     app.register_blueprint(health_bp)
+
+    from .routes.index import index_bp
+    app.register_blueprint(index_bp)
 
     from . import models
 
