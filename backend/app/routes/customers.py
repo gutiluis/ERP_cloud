@@ -22,9 +22,9 @@ render edit form /GET
 submit edit form /PUT # electron desktop not browser. browser does not support the http method in python and flask
 # use react, vite, tailwind, js, fetch, ajax for the endpoint
 # electron does not render html
-EDIT CUSTOMER GOES IN ELECTRON admin/
+EDIT CUSTOMER GOES IN admin/
 # html forms only support get and post. browser does not support put
-# electron support the api endpoint with fetch
+# react, vite, tailwind support the api endpoint with fetch
 @customer_bp.route("/<int:customer_id>", methods=["PUT"])
 def update_customer(customer_id):
     return jsonify({
@@ -53,6 +53,7 @@ customer_bp = Blueprint(
 
 # [x] ready without frontend
 # [x] serving ready in jinja
+# GET request
 # use try except for db input/output only
 @customer_bp.route("/")
 def index_all_customers():
@@ -67,32 +68,26 @@ def index_all_customers():
     )
 
 
+@customer_bp.route("/new", methods=["GET"])
+def customer_form():
+    '''Admin get new customer form'''
+    return render_template('customers/customer_form.html')
 
 
-@customer_bp.route("/", methods=["POST"])
-def create_customer():
-    if request.method == "POST":
-    return render_template("customers/create.html")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+@customer_bp.route("/new", methods=["POST"])
+def submit_customer_form():
+    '''Admin submit new customer form'''
+    new_customer = Customer(
+        customer_id=request.form.get('customer_id'),
+        customer_name=request.form.get('customer_name'),
+        customer_email=request.form.get('customer_email') or None,
+        customer_phone=request.form.get('customer_phone') or None,
+        customer_address=request.form.get('customer_address'),
+        additional_notes=request.form.get('additional_notes') or None
+    )
+    db.session.add(new_customer)
+    db.session.commit()
+    return redirect(url_for('index'))
 
 
 
@@ -110,13 +105,9 @@ def get_customer(customer_id):
     '''
     Get one single customer by id from db with endpoint
     '''
-    
-    
-    
     return jsonify({
         "get": customer_id
     })
-
 
 
 

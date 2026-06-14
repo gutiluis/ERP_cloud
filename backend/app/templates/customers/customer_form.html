@@ -1,0 +1,22 @@
+{% extends "customers/layout.html" %}
+
+{% block title %}
+    Customer Form
+{% endblock %}
+
+{% block content %}
+
+  <h1>Customer Form</h1>
+  
+  <section>
+      <form action="{{ url_for('customer_form')}}" method="GET">
+  </section>
+  <section>
+      <form action="{{ url_for('submit_customer_form')}}" method="POST">
+        <label for="id">Customer ID</label>
+        <input id="id" name="customer_id" type="text" placeholder="Amazon">
+
+  </section>
+
+
+{% endblock %}

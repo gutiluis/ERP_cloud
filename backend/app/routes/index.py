@@ -18,6 +18,7 @@ from flask import Blueprint, render_template
 index_bp = Blueprint("index", __name__)
 
 
+# the indes will have inside all other index for all api endpoints
 @index_bp.route("/")
 def index():
     "Render home public rest api edpoint"
