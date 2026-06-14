@@ -1,0 +1,11 @@
+{% extends "500_layout.html" %}
+
+{% block title %}
+    <title>Internal 500 server error</title>
+{% endblock %}
+
+{% block body %}
+    <h1>Internal Server Error</h1>
+    <p>Oops... we seem to have made a mistake, sorry!</p>
+    <p><a href="{{ url_for('index.index') }}">Go somewhere nice instead</a>
+{% endblock %}

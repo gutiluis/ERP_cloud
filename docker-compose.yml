@@ -18,10 +18,15 @@ services:
     depends_on:
       - db
 
+    # remove for production
+    volumes:
+      - ./backend:/app
+
   frontend:
     build:
       context: .
       dockerfile: docker/frontend.Dockerfile
+ 
 
   nginx:
     build:

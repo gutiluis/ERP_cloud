@@ -18,6 +18,7 @@ from sqlalchemy.orm import mapped_column, Mapped
 from flask_migrate import Migrate
 from sqlalchemy.sql import func
 
+
 db = SQLAlchemy()
 migrate = Migrate()
 

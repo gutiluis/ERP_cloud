@@ -1,4 +1,6 @@
 # multi-stage build
+
+# used for production. DEBUGGING IS OFF!!
 FROM node:22-alpine AS builder
 
 WORKDIR /app

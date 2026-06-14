@@ -19,13 +19,17 @@ date -u
 
 
 echo "[INFO] Waiting for DB..."
-
+# 3306 networking
 while ! nc -z db 3306; do
     echo "[INFO] Waiting for database..."
     sleep 1
 done;
 
+echo "[WARN] DEBUG MODE IS ON!!! TURN IT OFF IN PRODUCTION ROOKIE!!"
 echo "[INFO] DB is up..."
 echo "[INFO] Running application..."
-
-exec gunicorn -b 0.0.0.0:5000 wsgi:app
+# gunicorn upfront and nginx behind. # put nginx upfront and gunicorn behind for production.
+# any lines after exec will never execute
+# after exec the terminal closes
+# it wasnt debugging so added defualt.conf file and changed frontend.Dockerfile and nging.Dockerfile
+exec gunicorn -b 0.0.0.0:5000 wsgi:app --log-level=debug --reload

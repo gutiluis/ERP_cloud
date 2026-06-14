@@ -13,17 +13,12 @@ http request reach backend through api
 
 '''
 # jsonify and json are not the same
-from flask import Blueprint, jsonify
+from flask import Blueprint, render_template
 
 index_bp = Blueprint("index", __name__)
-# restart containers to test
+
 
 @index_bp.route("/")
 def index():
     "Render home public rest api edpoint"
-    return jsonify({
-        "name": "ERP API",
-        "version": "1.0.0",
-        "status": "online"
-    }), 200
-  
+    return render_template('index.html')

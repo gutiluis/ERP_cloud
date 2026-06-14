@@ -72,7 +72,9 @@ class Invoice(TimeStampModel):
 
     customer_id: Mapped[int] = mapped_column(
         BigInteger, 
-        db.ForeignKey('customers.id'),
+        db.ForeignKey('customers.id',
+                      ondelete='RESTRICT'
+        ),
         nullable=False, 
         index=True
     )
