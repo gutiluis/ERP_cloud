@@ -52,7 +52,7 @@ customer_bp = Blueprint(
     "customers", __name__,
     url_prefix="/api/admin/customers"
 )
-
+# [x] run fllask migrations always before rendering
 # [x] ready without frontend
 # [x] serving ready in jinja
 # GET request
@@ -79,9 +79,8 @@ def customer_form():
 @customer_bp.route("/new", methods=["POST"])
 def submit_customer_form():
     '''Admin submit new customer form'''
-    # nullable = False
     
-    # required_fields dictionary
+    # required_fields dictionary are nullable=False inside the class model
     required_fields = {
         "Customer ID": request.form.get('customer_id', '').strip(),
         "Customer Name": request.form.get('customer_name', '').strip(),

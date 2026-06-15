@@ -6,24 +6,157 @@
 
 {% block content %}
 
-  <h1>Customer Form</h1>
-  
-  <section>
-      <form action="{{ url_for('customers.customer_form')}}" method="GET">
-  </section>
-  <section>
-      <form action="{{ url_for('customers.submit_customer_form')}}" method="POST">
-        <label for="id">Customer ID</label>
-        <input id="customer id" name="customer_id" type="text" placeholder="eg:..Amazon">
+<section>
 
-        {# [WARN] customer type has a default to buisness in the customer class model #}
-        <label for="customer_type">Customer Type</label>
-        <select name="customer_type">
-          <option value="invividual" id="customer_type" name="customer_type">Individual</option>
-          <option value="business" id="customer_type" name="customer_type">Business</option>
-        </select>
-  
-  </section>
+    <h1>Customer Form</h1>
 
+    <form id="cusomer_form" action="{{ url_for('customers.submit_customer_form') }}" method="POST">
+
+        <div class="id">
+            <label for="id">Customer ID</label>
+            <input
+                id="id"
+                name="id"
+                type="text"
+                placeholder="eg: 1"
+                required
+            >
+        </div>
+        <div class="name">
+            <label for="name">Customer Name</label>
+            <input
+                id="name"
+                name="name"
+                type="text"
+                placeholder="eg: Amazon"
+                required
+            >
+        </div>
+        <div>
+            <label for="stripe_id">Stripe Customer ID</label>
+            <input
+                id="stripe_id"
+                name="stripe_id"
+                type="text"
+                placeholder="eg: 1fZ2f@ffzz..d1"
+                required
+            >
+        </div>
+
+        <div>
+            <fieldset>
+                <legend>Customer Status</legend>
+                <div class="active_status">
+                    <input
+                        id="active_status"
+                        type="radio"
+                        name="active_status"
+                        value="active"
+                        checked
+                    >
+                    <label for="active_status">Active</label>
+                </div>
+                <div class="inactive_statusr">
+                    <input
+                        id="inactive_status"
+                        type="radio"
+                        name="inactive_status"
+                        value="inactive"
+                    >
+                </div>
+                <div class="blocked_status">
+                    <input
+                        id="blocked_status"
+                        type="radio"
+                        name="blocked_status"
+                        value="blocked"
+                    >
+                </div>
+            </fieldset>
+
+        <div class="email">
+            <label for="email">Customer Email</label>
+            <input
+                id="email"
+                name="email"
+                type="text"
+                placeholder="eg: customer@hotmail.com"
+            >
+        </div>
+
+
+        <div class="phone">
+            <label for="phone">Customer Phone Number</label>
+            <input
+                id="phone"
+                name="phone"
+                type="text"
+                placeholder="33313234"
+            >
+        </div>
+
+        <div class="address">
+            <label for="address">Custmer Phone Number</label>
+            <input
+                id="address"
+                name="address"
+                type="text"
+                placeholder="3321 St. BuenaVista, New York, Mexico"
+            >
+        </div>
+
+        <div class="additional_notes">
+            <label for="additional_notes">Additional Nones</label>
+            <input
+                id="additional_notes"
+                name="additional_notes"
+                type="text"
+            >
+        <div>
+
+        <div class="pay_method">
+            <label>Stripe Payment Method</label>
+            <input
+                id="pay_method"
+                name="pay_method"
+                type="text"
+                placeholder="Eg: E-transfer"
+            >
+        
+        </div>
+            <fieldset>
+                <legend>Customer Type</legend>
+                <div class="business_type">
+                    <input
+                        id="business_type"
+                        type="radio"
+                        name="customer_type"
+                        value="business"
+                        checked
+                    >
+                    <label for="business">Business</label>
+                </div>
+
+                <div class="individual_type">
+                    <input
+                        id="individual_type"
+                        type="radio"
+                        name="individual_type"
+                        value="individual"
+                    >
+                    <label for="individual_type">Individual</label>
+                </div>
+            </fieldset>
+            <div>
+                <button type="submit">Save Customer</button>
+            </div>
+        </div>
+    </form>
+
+</section>
 
 {% endblock %}
+  
+
+
+

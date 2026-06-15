@@ -42,6 +42,7 @@ class Customer(TimeStampModel):
     __tablename__ = 'customers'
     __table_args__ = (
         Index("ix_customer_status", "customer_status"), 
+        # every single row in that column must have a completely different value
         UniqueConstraint("customer_id"),
     )
     {
@@ -125,7 +126,7 @@ class Customer(TimeStampModel):
         # default is sqlalchemy/python side
         default=CustomerType.BUSINESS,
         # server_default is database side
-        server_default='business'
+        server_default=text("'business'")
     )
     
 
