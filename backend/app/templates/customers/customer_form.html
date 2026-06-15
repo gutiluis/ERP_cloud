@@ -9,10 +9,10 @@
   <h1>Customer Form</h1>
   
   <section>
-      <form action="{{ url_for('customer_form')}}" method="GET">
+      <form action="{{ url_for('customers.customer_form')}}" method="GET">
   </section>
   <section>
-      <form action="{{ url_for('submit_customer_form')}}" method="POST">
+      <form action="{{ url_for('customers.submit_customer_form')}}" method="POST">
         <label for="id">Customer ID</label>
         <input id="customer id" name="customer_id" type="text" placeholder="eg:..Amazon">
 

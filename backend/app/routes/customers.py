@@ -45,7 +45,7 @@ from app.models import Customer
 from flask import Blueprint, jsonify, abort, request, render_template, redirect, url_for, flash, current_app
 from app import db # delete db
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from models.customers import CustomerStatus
+from app.models.customers import CustomerStatus
 
 
 customer_bp = Blueprint(
