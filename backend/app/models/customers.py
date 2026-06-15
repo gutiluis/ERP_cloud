@@ -15,21 +15,38 @@ from app.extensions import (
     BigInteger,
     TimeStampModel,
     Optional,
-    Text
+    Text,
+    text,
+    UniqueConstraint,
+    Index
 )
 
 
 if TYPE_CHECKING:
     from .invoice import Invoice
+    from .orders import Order
 
-# TODO: customer status, customer_type
+
 class CustomerStatus(str, enum.Enum):
     ACTIVE = 'active'
     INACTIVE = 'inactive'
     BLOCKED = 'blocked'
+    
 
+class CustomerType(str, enum.Enum):
+    BUSINESS = 'business'
+    INDIVIDUAL = 'individual'
+
+# does the table require constraints, indexes or other database-level configuration/rules
 class Customer(TimeStampModel):
     __tablename__ = 'customers'
+    __table_args__ = (
+        Index("ix_customer_status", "customer_status"), 
+        UniqueConstraint("customer_id"),
+    )
+    {
+        "mysql_engine": "InnoDB"
+    }
 
     # backup in mysql too
     # biginteger does not increment automatically in sqlite. and does not autogenerate the id
@@ -49,7 +66,8 @@ class Customer(TimeStampModel):
 
     customer_name: Mapped[str] = mapped_column(
         String(100), 
-        nullable=False
+        nullable=False,
+        unique=True
     )
 
     customer_email: Mapped[Optional[str]] = mapped_column(
@@ -58,6 +76,7 @@ class Customer(TimeStampModel):
         unique=True,
         index=True
     )
+
     customer_phone: Mapped[Optional[str]] = mapped_column(
         String(50), 
         nullable=True
@@ -65,8 +84,9 @@ class Customer(TimeStampModel):
 
     customer_address: Mapped[str] = mapped_column(
         Text, 
-        nullable=False
+        nullable=True
     )
+    
     additional_notes: Mapped[Optional[str]] = mapped_column(
         Text, 
         nullable=True
@@ -78,32 +98,50 @@ class Customer(TimeStampModel):
         unique=True
     )
     
-    default_payment_method_id: Mapped[Optional[str]] = mapped_column(
+    stripe_default_payment_method_id: Mapped[Optional[str]] = mapped_column(
         Text,
         nullable=True
     )
     
     customer_status: Mapped[CustomerStatus] = mapped_column(
         db.Enum(
-            CustomerSatus,
+            CustomerStatus,
             native_enum=False,
             validate_strings=True
         ),
         nullable=False,
         default=CustomerStatus.ACTIVE,
-        server_default='active'
+        server_default=text("'active'")
+    )
+
+    customer_type: Mapped[CustomerType] = mapped_column(
+        db.Enum(
+            CustomerType,
+            # native_enum helps migrations complexity
+            native_enum=False,
+            validate_strings=True
+        ),
+        nullable=False,
+        # default is sqlalchemy/python side
+        default=CustomerType.BUSINESS,
+        # server_default is database side
+        server_default='business'
     )
     
-    customer_type: Mapped[str] = mapped_column(
-        String(50),
-        nullable=False
-    )
-    
-    
+
     # one customer can have many invoices
     # use list in the many side of a relationship only
     invoices: Mapped[list["Invoice"]] = db.relationship(
         'Invoice',
+        back_populates='customer',
+        lazy='selectin',
+    )
+    
+    # class attribute orders.
+    # lazy='selectin' is a relationship loading style
+    # back_populates is not a parameter of the class attribute. is a parameter of relationship()
+    orders: Mapped[list["Order"]] = db.relationship(
+        'Order',
         back_populates='customer',
         lazy='selectin',
     )

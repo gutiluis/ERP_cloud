@@ -26,6 +26,7 @@ from datetime import datetime, timezone
 if TYPE_CHECKING:
     from .products import Product
     from .user import User
+    from .customers import Customer
 
 class Order(TimeStampModel):
     __tablename__ = 'orders'
@@ -80,6 +81,12 @@ class Order(TimeStampModel):
         "User",
         back_populates="orders"
     )
+
+    customer: Mapped["Customer"] = db.relationship(
+        "Customer",
+        back_populates="orders"
+    )
+
 
     created_by_user_id: Mapped[int] = mapped_column(
         BigInteger,

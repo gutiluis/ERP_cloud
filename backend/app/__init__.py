@@ -13,8 +13,6 @@ def register_error_handlers(app):
         return render_template('500.html'), 500
 
 
-
-
 def create_app(config_object=Config):
     app = Flask(__name__)
     app.config.from_object(config_object)

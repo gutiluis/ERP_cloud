@@ -11,7 +11,8 @@ from sqlalchemy import (
     Enum,
     Index,
     Integer,
-    CheckConstraint)
+    CheckConstraint,
+    UniqueConstraint)
 from decimal import Decimal
 from typing import Optional
 from sqlalchemy.orm import mapped_column, Mapped

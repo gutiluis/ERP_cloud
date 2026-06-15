@@ -42,9 +42,11 @@ delete not render/DELETE # only available in frontend js code. available for adm
 
 
 from app.models import Customer
-from flask import Blueprint, jsonify, abort, request, render_template, redirect, url_for
+from flask import Blueprint, jsonify, abort, request, render_template, redirect, url_for, flash, current_app
 from app import db # delete db
-from sqlalchemy import exc
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from models.customers import CustomerStatus
+
 
 customer_bp = Blueprint(
     "customers", __name__,
@@ -73,21 +75,70 @@ def customer_form():
     '''Admin get new customer form'''
     return render_template('customers/customer_form.html')
 
-
+# in a route that only accepts post. the route is already being called from a form submission
 @customer_bp.route("/new", methods=["POST"])
 def submit_customer_form():
     '''Admin submit new customer form'''
-    new_customer = Customer(
-        customer_id=request.form.get('customer_id'),
-        customer_name=request.form.get('customer_name'),
-        customer_email=request.form.get('customer_email') or None,
-        customer_phone=request.form.get('customer_phone') or None,
-        customer_address=request.form.get('customer_address'),
-        additional_notes=request.form.get('additional_notes') or None
-    )
-    db.session.add(new_customer)
-    db.session.commit()
-    return redirect(url_for('index'))
+    # nullable = False
+    
+    # required_fields dictionary
+    required_fields = {
+        "Customer ID": request.form.get('customer_id', '').strip(),
+        "Customer Name": request.form.get('customer_name', '').strip(),
+        "Stripe Customer ID": request.form.get('stripe_customer_id', '').strip(),
+        "Customer Status": request.form.get('customer_status', '').strip(),
+
+    }
+
+    for field_name, value in required_fields.items():
+        if not value:
+            flash(f"{field_name} is required.", "error")
+            return redirect(url_for('customer_bp.customer_form'))
+    
+    existing_customer = Customer.query.filter_by(
+        customer_id=required_fields['Customer ID']
+    ).first()
+    if existing_customer:
+        flash("Customer ID already exists.", "error")
+        return redirect(url_for("customer_bp.customer_form"))
+    
+    try:
+        new_customer = Customer(
+            customer_id=required_fields["Customer ID"],
+            customer_name=required_fields["Customer Name"],
+            customer_email=request.form.get(
+                'customer_email', ''
+                ).strip().lower() or None,
+            customer_phone=request.form.get(
+                'customer_phone', ''
+                ).strip() or None,
+            customer_address=request.form.get(
+                'customer_address', ''
+                ).strip() or None,
+            additional_notes=request.form.get(
+                'additional_notes', ''
+                ).strip() or None,
+            stripe_customer_id=required_fields["Stripe Customer ID"],
+            stripe_default_payment_method_id=request.form.get(
+                'stripe_default_payment_method_id', ''
+                ).strip() or None,
+            customer_status=CustomerStatus(
+                required_fields[
+                    'Customer Status'],
+            ),
+        )
+        
+        db.session.add(new_customer)
+        db.session.commit()
+    
+        flash("Customer created successfully...", "success")
+        return redirect(url_for("customer_bp.index_all_customers"))
+    
+    except SQLAlchemyError as error:
+        db.session.rollback()
+        current_app.logger.error(f"Customer creation failed: {error}")
+        flash("Failed to create customer.", "error")
+        return redirect(url_for('customer_bp.customer_form'))
 
 
 

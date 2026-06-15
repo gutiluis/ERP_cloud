@@ -110,6 +110,7 @@ class Invoice(TimeStampModel):
 
     payments: Mapped[list["Payment"]] = db.relationship(
         "Payment", 
+        # the name of the table is invoice or invoices?
         back_populates="invoice",
         lazy='selectin',
         cascade='save-update, merge'
@@ -118,6 +119,7 @@ class Invoice(TimeStampModel):
     # see invoicetaxes relationship annotated mapping
     taxes: Mapped[list["InvoiceTax"]] = db.relationship(
         "InvoiceTax", 
+        # the name of the table is invoices or invoice?
         back_populates="invoice", 
         cascade="all, delete-orphan", 
         lazy="selectin"
@@ -136,6 +138,7 @@ class Invoice(TimeStampModel):
     
     items: Mapped[list["InvoiceItem"]] = db.relationship(
         "InvoiceItem",
+        # the name of the table is invoice or invoices?
         back_populates="invoice",
         cascade="all, delete-orphan",
         lazy="selectin"
@@ -221,6 +224,7 @@ class InvoiceItem(TimeStampModel):
 
     product_name: Mapped["Product"]  = db.relationship("Product")
 
+    # can be used within other classes
     @property
     def line_total(self) -> Decimal:
         return Decimal(self.quantity) * Decimal(self.unit_price)
@@ -228,13 +232,18 @@ class InvoiceItem(TimeStampModel):
 
 class InvoiceTax(TimeStampModel):
     __tablename__ = 'invoice_taxes'
+    # declarative style system
     # querying
+    # __table_args__ is a class attribute
+    # index=True is not the same Index
+    # use __table_args__ to specify table arguments other than args(name, metadata, and mapped_column args)
     __table_args__ = (
         Index("ix_invoice_tax_invoice_id", "invoice_id"),
         Index("ix_invoice_tax_type", "tax_type"),
         CheckConstraint("tax_rate_percent >= 0 AND tax_rate_percent <= 100"),
         CheckConstraint("tax_base >= 0"),
         CheckConstraint("tax_amount >= 0"),
+        # class attribute specified as a dictionary of __table_args__ in docs
         {"mysql_engine": "InnoDB", "mysql_charset": "utf8mb4"},
     )
     

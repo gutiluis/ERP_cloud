@@ -14,8 +14,15 @@
   <section>
       <form action="{{ url_for('submit_customer_form')}}" method="POST">
         <label for="id">Customer ID</label>
-        <input id="id" name="customer_id" type="text" placeholder="Amazon">
+        <input id="customer id" name="customer_id" type="text" placeholder="eg:..Amazon">
 
+        {# [WARN] customer type has a default to buisness in the customer class model #}
+        <label for="customer_type">Customer Type</label>
+        <select name="customer_type">
+          <option value="invividual" id="customer_type" name="customer_type">Individual</option>
+          <option value="business" id="customer_type" name="customer_type">Business</option>
+        </select>
+  
   </section>
 
 

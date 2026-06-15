@@ -2,6 +2,8 @@
 
 # filename: user.py
 # descr: relationship with orders.py
+
+
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
@@ -33,28 +35,16 @@ class User(TimeStampModel):
     username: Mapped[str] = mapped_column(
         String(50), unique=True, nullable=False, index=True
     )
+    
     email: Mapped[str] = mapped_column(
         String(200), unique=True, nullable=False, index=True
-    )
-    password_hash: Mapped[str] = mapped_column(
-        String(255), 
-        nullable=False
-    )
-    
-    is_active: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, 
-        index=True,
-        server_default=text("0")
-    )
-    
-    is_admin: Mapped[bool] = mapped_column(
-        Boolean, 
-        nullable=False,
-        server_default=text("0")
     )
     
     orders: Mapped[list["Order"]] = db.relationship(
         "Order",
         back_populates="created_by_user"
     )
-    additional_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    
+    additional_notes: Mapped[Optional[str]] = mapped_column(
+        Text, nullable=True
+    )
