@@ -1,8 +1,8 @@
 """initial schema
 
-Revision ID: 9f36ca86b2cb
+Revision ID: ffc11b0029cd
 Revises: 
-Create Date: 2026-06-15 03:01:49.908417
+Create Date: 2026-06-16 02:20:45.873738
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '9f36ca86b2cb'
+revision = 'ffc11b0029cd'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -26,16 +26,13 @@ def upgrade():
     sa.Column('customer_phone', sa.String(length=50), nullable=True),
     sa.Column('customer_address', sa.Text(), nullable=True),
     sa.Column('additional_notes', sa.Text(), nullable=True),
-    sa.Column('stripe_customer_id', sa.String(length=50), nullable=False),
-    sa.Column('stripe_default_payment_method_id', sa.Text(), nullable=True),
     sa.Column('customer_status', sa.Enum('ACTIVE', 'INACTIVE', 'BLOCKED', name='customerstatus', native_enum=False), server_default=sa.text("'active'"), nullable=False),
-    sa.Column('customer_type', sa.Enum('BUSINESS', 'INDIVIDUAL', name='customertype', native_enum=False), server_default='business', nullable=False),
+    sa.Column('customer_type', sa.Enum('BUSINESS', 'INDIVIDUAL', name='customertype', native_enum=False), server_default=sa.text("'business'"), nullable=False),
     sa.Column('created', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('customer_id'),
-    sa.UniqueConstraint('customer_name'),
-    sa.UniqueConstraint('stripe_customer_id')
+    sa.UniqueConstraint('customer_name')
     )
     with op.batch_alter_table('customers', schema=None) as batch_op:
         batch_op.create_index('ix_customer_status', ['customer_status'], unique=False)

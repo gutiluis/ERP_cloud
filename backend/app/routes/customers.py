@@ -11,15 +11,17 @@ list all customers /GET
 # also electron admin
 # api url is not a folder nor file # GET is default
 
-
+[x] done
 render create form /GET
+[]
 submit create form /POST
 
 ---
 render edit form /GET
 
 ---
-submit edit form /PUT # electron desktop not browser. browser does not support the http method in python and flask
+submit edit form /PUT # electron desktop not browser.
+# browser does not support the http method in python and flask
 # use react, vite, tailwind, js, fetch, ajax for the endpoint
 # electron does not render html
 EDIT CUSTOMER GOES IN admin/
@@ -33,7 +35,8 @@ def update_customer(customer_id):
 
 ---
 # [x] finish delete function api endpoint. missing test
-delete not render/DELETE # only available in frontend js code. available for admin. available in electron
+delete not render/DELETE # only available in frontend js code.
+# available for admin. available in electron
 
 ---
 # missing /admin/src/ authentication and hide it from the frontend client
@@ -42,16 +45,18 @@ delete not render/DELETE # only available in frontend js code. available for adm
 
 
 from app.models import Customer
-from flask import Blueprint, jsonify, abort, request, render_template, redirect, url_for, flash, current_app
-from app import db # delete db
+from flask import Blueprint, jsonify, request, render_template, redirect, url_for, flash, current_app
+from app import db  # delete db
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from app.models.customers import CustomerStatus
+from app.models.customers import CustomerStatus, CustomerType
 
 
 customer_bp = Blueprint(
     "customers", __name__,
     url_prefix="/api/admin/customers"
 )
+
+
 # [x] run fllask migrations always before rendering
 # [x] ready without frontend
 # [x] serving ready in jinja
@@ -75,31 +80,29 @@ def customer_form():
     '''Admin get new customer form'''
     return render_template('customers/customer_form.html')
 
+
 # in a route that only accepts post. the route is already being called from a form submission
 @customer_bp.route("/new", methods=["POST"])
 def submit_customer_form():
-    '''Admin submit new customer form'''
-    
+    '''Admin submit new customer form with redirection'''
+
     # required_fields dictionary are nullable=False inside the class model
     required_fields = {
         "Customer ID": request.form.get('customer_id', '').strip(),
         "Customer Name": request.form.get('customer_name', '').strip(),
         "Customer Status": request.form.get('customer_status', '').strip(),
-
     }
-
     for field_name, value in required_fields.items():
         if not value:
             flash(f"{field_name} is required.", "error")
             return redirect(url_for('customers.customer_form'))
-    
     existing_customer = Customer.query.filter_by(
         customer_id=required_fields['Customer ID']
     ).first()
     if existing_customer:
+        # [] does not return and the db is not updating
         flash("Customer ID already exists.", "error")
-        return redirect(url_for("customer_bp.customer_form"))
-    
+        return redirect(url_for("customers.customer_form"))
     try:
         new_customer = Customer(
             customer_id=required_fields["Customer ID"],
@@ -120,22 +123,35 @@ def submit_customer_form():
                 required_fields[
                     'Customer Status']
             ),
-            customer_type=request.form.get(
+            customer_type=CustomerType(
+                request.form.get(
                 "customer_type",
                 "business"
+                )
             )
         )
-        
+    except ValueError:
+        flash("Invalid customer data.", "error")
+        return redirect(url_for("customers.customer_form"))
+    try:
         db.session.add(new_customer)
         db.session.commit()
-    
-        flash("Customer created successfully...", "success")
-        return redirect(url_for("customer_bp.index_all_customers"))
-    
+        flash("Customer creaded successfully", "success")
+        return redirect(url_for("customers.customer_form"))
+    except IntegrityError as error: # duplicate check with customer_id
+        db.session.rollback()
+        # current_app is for dev producton logs. the user does not see it
+        current_app.logger.exception(f"Customer could not be created: {error}")
+        # [] redirect template after creating a customer to the page. flash is for the user
+        flash("Customer ID already exists. Failed to create customer", "error")
+        # http://localhost:8000/api/admin/customers/ # @index_all_customers_ # 
+        return redirect(url_for("customers.customer_form"))
     except SQLAlchemyError as error:
         db.session.rollback()
-        current_app.logger.error(f"Customer creation failed: {error}")
-        flash("Failed to create customer.", "error")
+        #
+        current_app.logger.exception(f"Database fail: {error}")
+        # flash stores message in the session. is not printing by itself
+        flash("Database error. Failed to create customer.", "error")
         return redirect(url_for('customers.customer_form'))
 
 
@@ -184,5 +200,3 @@ def delete_customer(customer_id):
         print(f"[ERROR] {err}")
         # 500 is internal server error unexpected condition
         return {"message": "Unexpected error"}, 500
-    
-    

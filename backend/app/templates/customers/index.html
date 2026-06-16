@@ -4,6 +4,8 @@
     Customers
 {% endblock %}
 
+{% block body %}
+{% endblock %}
 
 {% block content %}
 
@@ -14,6 +16,7 @@
 <div>
     {% for customer in customers %}
         <div>
+            {# print customer.name and customer_email in same row #}
             {{ customer.customer_name }}
             
             {{ customer.customer_email }}
@@ -26,3 +29,4 @@
 {% endif %}
 
 {% endblock %}
+

@@ -29,9 +29,12 @@ sleep 7
 
 # migrations
 docker compose exec api flask --app wsgi db init
+echo "[INFO] INITIALIZE MIGRATIONS"
 
-sleep 2
+sleep 4
 docker compose exec api flask --app wsgi db migrate -m "initial schema"
+echo "[INFO] MIGRATIONS"
 
-sleep 2
+sleep 4
 docker compose exec api flask --app wsgi db upgrade
+echo "[INFO] MIGRATIONS UPGRADED"

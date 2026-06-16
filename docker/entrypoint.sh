@@ -32,4 +32,5 @@ echo "[INFO] Running application..."
 # any lines after exec will never execute
 # after exec the terminal closes
 # it wasnt debugging so added defualt.conf file and changed frontend.Dockerfile and nging.Dockerfile
+# the [warning] log comes from the --reload 
 exec gunicorn -b 0.0.0.0:5000 wsgi:app --log-level=debug --reload
