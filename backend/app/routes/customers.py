@@ -51,6 +51,7 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from app.models.customers import CustomerStatus, CustomerType
 
 
+
 customer_bp = Blueprint(
     "customers", __name__,
     url_prefix="/api/admin/customers"
@@ -92,21 +93,24 @@ def submit_customer_form():
         "Customer Name": request.form.get('customer_name', '').strip(),
         "Customer Status": request.form.get('customer_status', '').strip(),
     }
+    # empty customer_status exists and exits here
     for field_name, value in required_fields.items():
         if not value:
+            # under set-cookie in base64-encoded json through a session cookie
             flash(f"{field_name} is required.", "error")
             return redirect(url_for('customers.customer_form'))
-    existing_customer = Customer.query.filter_by(
-        customer_id=required_fields['Customer ID']
-    ).first()
-    if existing_customer:
-        # [] does not return and the db is not updating
-        flash("Customer ID already exists.", "error")
-        return redirect(url_for("customers.customer_form"))
+    #existing_customer = Customer.query.filter_by(
+    #    customer_id=required_fields['Customer ID']
+    #).first()
+    #if existing_customer:
+        # [ ] does not return and the db is not updating
+    #    flash("Customer ID already exists.", "error")
+    #    return redirect(url_for("customers.customer_form"))
     try:
         new_customer = Customer(
             customer_id=required_fields["Customer ID"],
             customer_name=required_fields["Customer Name"],
+            # sqlalchemy stores python none as sql null
             customer_email=request.form.get(
                 'customer_email', ''
                 ).strip().lower() or None,
@@ -130,21 +134,26 @@ def submit_customer_form():
                 )
             )
         )
-    except ValueError:
-        flash("Invalid customer data.", "error")
-        return redirect(url_for("customers.customer_form"))
+    except ValueError as error:
+        current_app.logger.error(f"[LOG] Missing mandatory fields: {error}")
+        return {"error": str(error)}, 400
+
+#        flash("Invalid customer data.", "error")
+#        return redirect(url_for("customers.customer_form"))
     try:
         db.session.add(new_customer)
         db.session.commit()
+        # [ x ] the flash is visible in the customer_form
         flash("Customer creaded successfully", "success")
         return redirect(url_for("customers.customer_form"))
+    # exception for repeated customer_id, customer_name, customer_email unique=True
     except IntegrityError as error: # duplicate check with customer_id
         db.session.rollback()
         # current_app is for dev producton logs. the user does not see it
-        current_app.logger.exception(f"Customer could not be created: {error}")
-        # [] redirect template after creating a customer to the page. flash is for the user
+        current_app.logger.error(f"[LOG] Customer has same customer_id, or same customer_name or same email: {error}")
+        # [ x ] redirect template after creating a customer to the page. 
+        # [ x ] flash is being rendered in the customer_form.html
         flash("Customer ID already exists. Failed to create customer", "error")
-        # http://localhost:8000/api/admin/customers/ # @index_all_customers_ # 
         return redirect(url_for("customers.customer_form"))
     except SQLAlchemyError as error:
         db.session.rollback()
@@ -200,3 +209,8 @@ def delete_customer(customer_id):
         print(f"[ERROR] {err}")
         # 500 is internal server error unexpected condition
         return {"message": "Unexpected error"}, 500
+
+
+@customer_bp.route("/test", methods=["GET"])
+def test_function():
+    return current_app.name

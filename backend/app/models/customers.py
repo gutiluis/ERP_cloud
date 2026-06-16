@@ -57,6 +57,7 @@ class Customer(TimeStampModel):
         autoincrement=True
     )
 
+    # exception integrity error
     # every customer has an invoice
     customer_id: Mapped[str] = mapped_column(
         String(50), 
@@ -65,12 +66,14 @@ class Customer(TimeStampModel):
         nullable=False
     )
 
+    # exception integrity error
     customer_name: Mapped[str] = mapped_column(
         String(100), 
         nullable=False,
         unique=True
     )
 
+    # exception integrityerror
     customer_email: Mapped[Optional[str]] = mapped_column(
         String(200), 
         nullable=True,
