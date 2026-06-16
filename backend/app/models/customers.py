@@ -93,12 +93,6 @@ class Customer(TimeStampModel):
         nullable=True
     )
     
-    stripe_customer_id: Mapped[str] = mapped_column(
-        String(50),
-        nullable=False,
-        unique=True
-    )
-    
     customer_status: Mapped[CustomerStatus] = mapped_column(
         db.Enum(
             CustomerStatus,

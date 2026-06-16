@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-# file:
-# descr:
+# file: backend/app/config.py
+# descr: load flask flash secret key
 
 
 
@@ -11,8 +11,10 @@ import os
 load_dotenv()
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = os.getenv(
-        f"{'DATABASE_URL'}",
-    )
+    # os.getenv returns none if missing
+    # change to os.environ in production
+    SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-key")
+    # os.environ crashes immediately
+    SQLALCHEMY_DATABASE_URI = os.environ["DATABASE_URL"]
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 

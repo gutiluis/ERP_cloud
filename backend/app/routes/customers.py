@@ -91,7 +91,7 @@ def submit_customer_form():
     for field_name, value in required_fields.items():
         if not value:
             flash(f"{field_name} is required.", "error")
-            return redirect(url_for('customer_bp.customer_form'))
+            return redirect(url_for('customers.customer_form'))
     
     existing_customer = Customer.query.filter_by(
         customer_id=required_fields['Customer ID']
@@ -118,7 +118,7 @@ def submit_customer_form():
                 ).strip() or None,
             customer_status=CustomerStatus(
                 required_fields[
-                    'Customer Status'],
+                    'Customer Status']
             ),
             customer_type=request.form.get(
                 "customer_type",
@@ -136,7 +136,7 @@ def submit_customer_form():
         db.session.rollback()
         current_app.logger.error(f"Customer creation failed: {error}")
         flash("Failed to create customer.", "error")
-        return redirect(url_for('customer_bp.customer_form'))
+        return redirect(url_for('customers.customer_form'))
 
 
 
