@@ -44,6 +44,8 @@ http://127.0.0.1:8000/api/admin/customers/
 cd /ERP
 docker compose exec api flask --app wsgi db init
 docker compose exec api flask --app wsgi db migrate -m "initial schema" # when models change
+# when erp.customers table is not found even though the migrations folder exists
+docker compose exec api flask --app wsgi db migrate -m "map tables"
 docker compose exec api flask --app wsgi db upgrade # apply migration
 
 ### 4.2 check migrations

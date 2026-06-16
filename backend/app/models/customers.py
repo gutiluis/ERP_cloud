@@ -99,11 +99,6 @@ class Customer(TimeStampModel):
         unique=True
     )
     
-    stripe_default_payment_method_id: Mapped[Optional[str]] = mapped_column(
-        Text,
-        nullable=True
-    )
-    
     customer_status: Mapped[CustomerStatus] = mapped_column(
         db.Enum(
             CustomerStatus,

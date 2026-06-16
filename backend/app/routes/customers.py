@@ -84,7 +84,6 @@ def submit_customer_form():
     required_fields = {
         "Customer ID": request.form.get('customer_id', '').strip(),
         "Customer Name": request.form.get('customer_name', '').strip(),
-        "Stripe Customer ID": request.form.get('stripe_customer_id', '').strip(),
         "Customer Status": request.form.get('customer_status', '').strip(),
 
     }
@@ -117,14 +116,14 @@ def submit_customer_form():
             additional_notes=request.form.get(
                 'additional_notes', ''
                 ).strip() or None,
-            stripe_customer_id=required_fields["Stripe Customer ID"],
-            stripe_default_payment_method_id=request.form.get(
-                'stripe_default_payment_method_id', ''
-                ).strip() or None,
             customer_status=CustomerStatus(
                 required_fields[
                     'Customer Status'],
             ),
+            customer_type=request.form.get(
+                "customer_type",
+                "business"
+            )
         )
         
         db.session.add(new_customer)
