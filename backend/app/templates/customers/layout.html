@@ -11,12 +11,14 @@
     <body>
      
         <header>
-            <h1>Admin Customers</h1>
+            <h1>Admin Customers Management</h1>
 
             <nav>
-                <h2>Customers</h2>
+                <h2>Customer Module:</h2>
             </nav>
         </header>
+        {% block actions %}
+        {% endblock %}
 
         <main>
             {% with messages = get_flashed_messages() %}
@@ -29,8 +31,10 @@
                 {% endif %}
             {% endwith %}
 
-            {% block content %}
+            <!-- list all customers from the /api/admin/customers route udner customers/inedx.html -->
+            {% block customer_content %}
             {% endblock %}
+
         </main>
         
     </body>

@@ -52,6 +52,8 @@ docker compose exec api flask --app wsgi db upgrade # apply migration
 docker compose exec api flask db history
 docker compose exec api flask db current
 docker compose exec -it servicename sh
+### 4.3 check routes
+docker compose exec api flask routes
 
 ---
 

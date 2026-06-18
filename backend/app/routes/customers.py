@@ -13,7 +13,7 @@ list all customers /GET
 
 [x] done
 render create form /GET
-[]
+[ x ] missing phone
 submit create form /POST
 
 ---
@@ -57,15 +57,16 @@ customer_bp = Blueprint(
     url_prefix="/api/admin/customers"
 )
 
-
+# `flask routes` to confirm route
 # [x] run fllask migrations always before rendering
 # [x] ready without frontend
 # [x] serving ready in jinja
 # GET request
 # use try except for db input/output only
+# http://localhost:8000/api/admin/customers/
 @customer_bp.route("/")
 def index_all_customers():
-    "Admin render customers index/"
+    "Admin render all customers index/"
     # TODO: define current_user
 #    if not current_user.is_admin:
 #        abort(403)
@@ -81,7 +82,7 @@ def customer_form():
     '''Admin get new customer form'''
     return render_template('customers/customer_form.html')
 
-
+# [ ] missing phone filter
 # in a route that only accepts post. the route is already being called from a form submission
 @customer_bp.route("/new", methods=["POST"])
 def submit_customer_form():
@@ -127,6 +128,7 @@ def submit_customer_form():
                 required_fields[
                     'Customer Status']
             ),
+            # nullable=False in the model
             customer_type=CustomerType(
                 request.form.get(
                 "customer_type",
@@ -134,12 +136,10 @@ def submit_customer_form():
                 )
             )
         )
+    # won't be reached being caught after the required_fields statement
     except ValueError as error:
-        current_app.logger.error(f"[LOG] Missing mandatory fields: {error}")
-        return {"error": str(error)}, 400
-
-#        flash("Invalid customer data.", "error")
-#        return redirect(url_for("customers.customer_form"))
+        flash("Invalid customer data.", "error")
+        return redirect(url_for("customers.customer_form"))
     try:
         db.session.add(new_customer)
         db.session.commit()
@@ -155,6 +155,7 @@ def submit_customer_form():
         # [ x ] flash is being rendered in the customer_form.html
         flash("Customer ID already exists. Failed to create customer", "error")
         return redirect(url_for("customers.customer_form"))
+    # integrityrror is a sublass of sqlalchemyerror
     except SQLAlchemyError as error:
         db.session.rollback()
         #
@@ -164,51 +165,58 @@ def submit_customer_form():
         return redirect(url_for('customers.customer_form'))
 
 
+# [ x ] ready rest api endpoint
+@customer_bp.route("/edit/<string:customer_id>", methods=["GET"])
+def edit_customer(customer_id):
+    '''Admin customer edit form fetch'''
+    # query.get_or_404 by primary_key only not string customer_id
+    customer = Customer.query.filter_by(customer_id=customer_id).one_or_404()
+    return render_template("customers/editcustomer.html", customer=customer)
 
 
+# html does not accept put
+# REST or RESTful
+# <int:custmer_id> only accepts integers customer_id is a string. id is the other option with straight db primary_key
+# frontend fetch/ajax method is put. not available with flask
+@customer_bp.route("/edit/<string:customer_id>", methods=["POST"])
+def update_customer(customer_id):
+    '''Admin update customer form'''
+    customer = Customer.query.filter_by(customer_id=customer_id).one_or_404()
+    if request.method == "POST":
+    # customer_id is the variable # customer is the model
+        customer.customer_id = request.form.get("customer_id")
+        customer.customer_name = request.form.get("customer_name")
+        customer.customer_email = request.form.get("customer_email")
+        customer.customer_phone = request.form.get("customer_phone")
+        customer.customer_address = request.form.get("customer_address")
+        customer.additional_notes = request.form.get("additional_notes")
+        customer.customer_status = request.form.get("customer_status")
+        customer.customer_type = request.form.get("customer_type")
+        db.session.commit()
+    # return {"message", "customer updated"} # creates a set not json
+        return redirect(url_for('customers.index_all_customers'))
+    return render_template("customers/editcustomer.html")
 
 
-
-
-
-
-
-
-@customer_bp.route("/<int:customer_id>", methods=["GET"])
-def get_customer(customer_id):
+@customer_bp.route("/<string:customer_id>", methods=["GET"])
+def customer_detail(customer_id):
     '''
-    Get one single customer by id from db with endpoint
+    Admin fetch one single customer by customer_id from db
     '''
-    return jsonify({
-        "get": customer_id
-    })
-
+    customer = Customer.query.filter_by(customer_id=customer_id).one_or_404()
+    return render_template("customers/customerdetail.html", customer=customer)
 
 
 # TODO: test
-@customer_bp.route("/<int:customer_id>/delete")
+@customer_bp.route("/<string:customer_id>/delete")
 def delete_customer(customer_id):
     '''
     only allow delete customer without invoices permamently from the db
     '''
-    customer = Customer.query.get_or_404(customer_id)
-    try:
-        db.session.delete(customer)
-        db.session.commit()
-        return redirect(url_for("index"))
-
-    except IntegrityError:
-        db.session.rollback()
-        # 400 is bad request client error response
-        return {
-            "message": "Cannot delete customer with invoices, payments, or orders"
-        }, 400
-
-    except Exception as err:
-        db.session.rollback()
-        print(f"[ERROR] {err}")
-        # 500 is internal server error unexpected condition
-        return {"message": "Unexpected error"}, 500
+    customer = Customer.query.filter_by(customer_id=customer_id).one_or_404()
+    db.session.delete(customer)
+    db.session.commit()
+    return redirect(url_for("customers.index_all_customers"))
 
 
 @customer_bp.route("/test", methods=["GET"])

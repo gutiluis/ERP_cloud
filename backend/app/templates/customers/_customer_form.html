@@ -1,0 +1,146 @@
+
+<form action="{{ form_action }}" method="POST">
+    <section>
+        <fieldset>
+            <legend>Customer Information</legend>
+            <div class="id">
+                <label for="customer_id">Customer ID</label>
+                <input
+                    id="customer_id"
+                    name="customer_id"
+                    type="text"
+                    placeholder="eg: CUST-00001"
+                    value="{{ customer.customer_id if customer else '' }}"
+                    required
+                >
+            </div>
+            <div class="name">
+                <label for="customer_name">Customer Name</label>
+                <input
+                    id="customer_name"
+                    name="customer_name"
+                    type="text"
+                    placeholder="eg: Amazon"
+                    value="{{ customer.customer_name if customer else '' }}"
+                    required
+                >
+            </div>
+        </fieldset>
+    </section>
+
+    <section>
+        <fieldset>
+            <legend>Customer Status</legend>
+            <div class="active_status">
+                <input
+                    id="active_status"
+                    type="radio"
+                    name="customer_status"
+                    value="active"
+                    checked
+                >
+                <label for="active_status">Active</label>
+            </div>
+            <div class="inactive_status">
+                <input
+                    id="inactive_status"
+                    type="radio"
+                    name="customer_status"
+                    value="inactive"
+                >
+                <label for="inactive_status">Inactive</label>
+            </div>
+            <div class="blocked_status">
+                <input
+                    id="blocked_status"
+                    type="radio"
+                    name="customer_status"
+                    value="blocked"
+                >
+                <label for="blocked_status">Blocked</label>
+            </div>
+        </fieldset>
+    </section>
+
+    <section>
+        <fieldset>
+            <legend>Contact Information</legend>
+
+            <div class="email">
+                <label for="customer_email">Customer Email</label>
+                <input
+                    id="customer_email"
+                    name="customer_email"
+                    type="email"
+                    placeholder="eg: customer@hotmail.com"
+                >
+            </div>
+
+            <div class="phone">
+                <label for="customer_phone">Customer Phone Number</label>
+                <input
+                    id="customer_phone"
+                    name="customer_phone"
+                    type="tel"
+                    placeholder="eg: 33313234"
+                >
+            </div>
+
+            <div class="address">
+                <label for="customer_address">Customer Address</label>
+                <input
+                    id="customer_address"
+                    name="customer_address"
+                    type="text"
+                    placeholder="eg: 3321 Main St., New York, USA"
+                >
+            </div>
+        </fieldset>
+    </section>
+
+
+    <section>
+        <fieldset>
+            <legend>Customer Type</legend>
+
+            <div class="business_type">
+                <input
+                    id="business_type"
+                    type="radio"
+                    name="customer_type"
+                    value="business"
+                    checked
+                >
+                <label for="business_type">Business</label>
+            </div>
+
+            <div class="individual_type">
+                <input
+                    id="individual_type"
+                    type="radio"
+                    name="customer_type"
+                    value="individual"
+                >
+                <label for="individual_type">Individual</label>
+            </div>
+        </fieldset>
+    </section>
+
+    <section class="additional_notes">
+        <label for="additional_notes">Additional Notes</label>
+        <textarea
+            name="additional_notes" 
+            id="additional_notes"
+            cols="30" 
+            rows="10"
+        ></textarea>
+        </section>
+    
+    
+
+        <div id="form-buttons">
+            <button type="submit">Create Customer</button>
+            <button type="reset">Reset Form</button>
+        </div>
+    
+</form>

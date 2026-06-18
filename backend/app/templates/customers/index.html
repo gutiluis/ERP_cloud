@@ -1,24 +1,26 @@
 {% extends "customers/layout.html" %}
 
 {% block title %}
-    Customers
+    Customers Home Page
 {% endblock %}
 
-{% block body %}
+
+{% block actions %}
+<a href="{{ url_for('customers.customer_form') }}">
+    CREATE New Customer
+</a>
 {% endblock %}
 
-{% block content %}
 
-<h1>Customers</h1>
-
+{% block customer_content %}
 
 {% if customers %}
 <div>
     {% for customer in customers %}
         <div>
+            {{ customer.customer_id }}
             {# print customer.name and customer_email in same row #}
             {{ customer.customer_name }}
-            
             {{ customer.customer_email }}
         </div>
     {% endfor %}
