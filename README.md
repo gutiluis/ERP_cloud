@@ -84,8 +84,6 @@ docker compose restart api
 
 # TODO:
 
-# change docker to use python-dotenv
-
 # oracle vm
 
 # buy domain

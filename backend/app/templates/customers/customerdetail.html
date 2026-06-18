@@ -24,8 +24,8 @@
                 <li>Email: {{ customer.customer_email }}</li>
                 <li>Phone: {{ customer.customer_phone }}</li>
                 <li>Address: {{ customer.customer_address }}</li>
-                <li>Status: {{ customer.customer_status }}</li>
-                <li>Type: {{ customer.customer_type }}</li>
+                <li>Status: {{ customer.customer_status.name.lower() }}</li>
+                <li>Type: {{ customer.customer_type.name.lower() }}</li>
                 <li>Notes: {{ customer.additional_notes }}</li>
             </ul>
     </section>

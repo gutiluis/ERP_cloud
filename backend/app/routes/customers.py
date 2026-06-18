@@ -7,8 +7,6 @@ descr: app/models/customers.py server-rendered admin html with jinja
 # TODO:
 / axios/ fetch http methods to make it admin only
 even though frontend will make the transaction flask still will serialize json
-list all customers /GET
-# also electron admin
 # api url is not a folder nor file # GET is default
 
 [x] done
@@ -19,24 +17,10 @@ submit create form /POST
 ---
 render edit form /GET
 
----
-submit edit form /PUT # electron desktop not browser.
-# browser does not support the http method in python and flask
-# use react, vite, tailwind, js, fetch, ajax for the endpoint
-# electron does not render html
-EDIT CUSTOMER GOES IN admin/
-# html forms only support get and post. browser does not support put
-# react, vite, tailwind support the api endpoint with fetch
-@customer_bp.route("/<int:customer_id>", methods=["PUT"])
-def update_customer(customer_id):
-    return jsonify({
-        "updated": customer_id
-    })
 
 ---
 # [x] finish delete function api endpoint. missing test
 delete not render/DELETE # only available in frontend js code.
-# available for admin. available in electron
 
 ---
 # missing /admin/src/ authentication and hide it from the frontend client
@@ -100,13 +84,6 @@ def submit_customer_form():
             # under set-cookie in base64-encoded json through a session cookie
             flash(f"{field_name} is required.", "error")
             return redirect(url_for('customers.customer_form'))
-    #existing_customer = Customer.query.filter_by(
-    #    customer_id=required_fields['Customer ID']
-    #).first()
-    #if existing_customer:
-        # [ ] does not return and the db is not updating
-    #    flash("Customer ID already exists.", "error")
-    #    return redirect(url_for("customers.customer_form"))
     try:
         new_customer = Customer(
             customer_id=required_fields["Customer ID"],
@@ -218,7 +195,3 @@ def delete_customer(customer_id):
     db.session.commit()
     return redirect(url_for("customers.index_all_customers"))
 
-
-@customer_bp.route("/test", methods=["GET"])
-def test_function():
-    return current_app.name
