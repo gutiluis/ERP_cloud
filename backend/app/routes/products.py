@@ -5,7 +5,7 @@
 
 
 from app.models import Product
-from flask import Blueprint
+from flask import Blueprint, render_template
 
 
 
@@ -20,7 +20,11 @@ product_bp = Blueprint(
 # get by default
 @product_bp.route("/")
 def index_all_products():
-    return "ok"
+    products = db.session.execute(
+            db.select(Product).order_by(Product.product_id)).scalars().all()
+    return render_template("products/index.html",
+                           products=products
+    )
 
 @product_bp.route("/new")
 def add_product():

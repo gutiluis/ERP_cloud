@@ -31,6 +31,9 @@ def create_app(config_object=Config):
     from .routes.customers import customer_bp
     app.register_blueprint(customer_bp)
 
+    from .routes.products import product_bp
+    app.register_blueprint(product_bp)
+
     from . import models
     
     

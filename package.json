@@ -1,0 +1,27 @@
+{
+  "name": "erp",
+  "version": "1.0.0",
+  "description": "cp .env.example .env",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "release": "standard-version"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gutiluis/ERP_cloud.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/gutiluis/ERP_cloud/issues"
+  },
+  "homepage": "https://github.com/gutiluis/ERP_cloud#readme",
+  "devDependencies": {
+    "standard-version": "^9.5.0"
+  }
+}
