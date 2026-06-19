@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
 # filename: backend/app/__init__.py
-# descr: orchestrator does not load models
+# descr: factory orchestrator does not load models
 
+from flasgger import Swagger
 from flask import Flask, render_template
 from .config import Config
 from .extensions import db, migrate
@@ -16,9 +17,11 @@ def register_error_handlers(app):
 def create_app(config_object=Config):
     app = Flask(__name__)
     app.config.from_object(config_object)
-
+    # initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
+    # intialize swagger with the app instance
+    swagger = Swagger(app)
 
     register_error_handlers(app)
 

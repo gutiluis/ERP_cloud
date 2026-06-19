@@ -3,7 +3,7 @@
 # file: /backend/app/routes/products.py
 # descr: product model rest api routes with flask
 
-
+from app import db
 from app.models import Product
 from flask import Blueprint, render_template
 

@@ -174,9 +174,27 @@ def update_customer(customer_id):
 
 @customer_bp.route("/<string:customer_id>", methods=["GET"])
 def customer_detail(customer_id):
-    '''
-    Admin fetch one single customer by customer_id from db
-    '''
+    """
+    Admin fetch one single customer_id from db for customers
+    ---
+    tags:
+      - Customers
+    parameters:
+      - name: customer_id
+        in: path
+        type: string
+        required: true
+        description: the id of the customer
+    responses:
+      200:
+        description: Customer details found successfully
+        content:
+          text/html:
+            schema:
+              type: string
+      404:
+        description: Customer not found
+    """
     customer = Customer.query.filter_by(customer_id=customer_id).one_or_404()
     return render_template("customers/customerdetail.html", customer=customer)
 

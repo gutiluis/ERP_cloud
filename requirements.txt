@@ -6,3 +6,4 @@ pymysql
 python-dotenv
 cryptography>=41.0
 sqlalchemy
+flasgger
