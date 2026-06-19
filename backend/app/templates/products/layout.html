@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        {% block title %}
+        {% endblock %}
+        <meta name="description" content="product layout">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+     
+        <header>
+            <h1>Admin Product Management</h1>
+
+            <nav>
+                <h2>Product Module:</h2>
+            </nav>
+        </header>
+        {% block actions %}
+        {% endblock %}
+
+        <main>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class=flashes>
+                        {% for message in messages %}
+                            <div class="flash">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- list all customers from the /api/admin/customers route udner customers/inedx.html -->
+            {% block product_content %}
+            {% endblock %}
+
+        </main>
+        
+    </body>
+</html>

@@ -16,7 +16,6 @@
 
 
 
-set -e
 date -u
 
 docker compose down -v

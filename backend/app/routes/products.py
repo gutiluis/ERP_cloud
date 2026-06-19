@@ -3,7 +3,11 @@
 # file: /backend/app/routes/products.py
 # descr: product model rest api routes with flask
 
+
+from app.models import Product
 from flask import Blueprint
+
+
 
 
 product_bp = Blueprint(
@@ -12,11 +16,12 @@ product_bp = Blueprint(
     url_prefix="/api/admin/products"
 )
 
+
+# get by default
 @product_bp.route("/")
 def index_all_products():
-    pass
+    return "ok"
 
-@product_bp.route("/")
-def product_detail():
-    product = Product.query.all_or_get_404()
-    return product
+@product_bp.route("/new")
+def add_product():
+    return "ok"

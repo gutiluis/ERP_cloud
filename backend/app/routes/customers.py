@@ -5,8 +5,6 @@
 descr: app/models/customers.py server-rendered admin html with jinja
 
 # TODO:
-/ axios/ fetch http methods to make it admin only
-even though frontend will make the transaction flask still will serialize json
 # api url is not a folder nor file # GET is default
 
 [x] done
@@ -29,7 +27,7 @@ delete not render/DELETE # only available in frontend js code.
 
 
 from app.models import Customer
-from flask import Blueprint, jsonify, request, render_template, redirect, url_for, flash, current_app
+from flask import Blueprint, request, render_template, redirect, url_for, flash, current_app
 from app import db  # delete db
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from app.models.customers import CustomerStatus, CustomerType
@@ -71,7 +69,6 @@ def customer_form():
 @customer_bp.route("/new", methods=["POST"])
 def submit_customer_form():
     '''Admin submit new customer form with redirection'''
-
     # required_fields dictionary are nullable=False inside the class model
     required_fields = {
         "Customer ID": request.form.get('customer_id', '').strip(),
