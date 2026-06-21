@@ -8,7 +8,7 @@
 
 
 
-from app.extensions import login_manager
+from app.extensions import login_manager, db
 from app.models import AdminUser
 
 

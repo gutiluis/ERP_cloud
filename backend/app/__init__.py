@@ -33,8 +33,11 @@ def create_app(config_object=Config):
 #    swagger = Swagger(app)
 
     register_error_handlers(app)
+    # absolute import
+    #from app.auth.routes import auth_bp
+    #app.register_blueprint(auth_bp)
 
-    from app.auth.routes import auth_bp
+    from .auth.routes import auth_bp
     app.register_blueprint(auth_bp)
 
     from .routes.health import health_bp

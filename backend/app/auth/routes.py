@@ -4,7 +4,7 @@
 
 
 # file: /app/auth/routes.py
-# descr: admin login authentication once the adminuser and password is set
+# descr: admin login authentication once the adminuser and hash password is set
 
 
 
@@ -57,7 +57,7 @@ def login():
             login_user(admin)
 
             next_page = request.args.get("next")
-            return redirect(next_page or url_for("index"))
+            return redirect(next_page or url_for("index.index"))
 
         flash("Invalid username or password", "error")
 

@@ -30,8 +30,12 @@ from sqlalchemy.sql import func
 
 db = SQLAlchemy()
 
+
 # LoginManager is extension object not configuration data
 login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
+
+
 #class AnonymousUser(AnonymousUserMixin):
 #    is_admin = False
 
