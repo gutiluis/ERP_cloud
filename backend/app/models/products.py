@@ -6,6 +6,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from decimal import Decimal
+from sqlalchemy.orm import relationship
 
 from app.extensions import (
     db,
@@ -116,9 +117,18 @@ class ProductVariant(TimeStampModel):
         nullable=False,
         server_default=text("1") # db
     )
-    color: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
-    size: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
-    price: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
+    color: Mapped[Optional[str]] = mapped_column(
+            String(100), 
+            nullable=True
+    )
+    size: Mapped[Optional[str]] = mapped_column(
+            String(100), 
+            nullable=True
+    )
+    price: Mapped[Decimal] = mapped_column(
+            Numeric(10, 2), 
+            nullable=False
+    )
 
     stock_quantity: Mapped[int] = mapped_column(
         Integer,

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # file: backend/app/config.py
-# descr: load flask flash secret key
+# descr: load flask flash secret key, and flask_login secret key
 
 
 
@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
+
 
 class Config:
     # os.getenv returns none if missing

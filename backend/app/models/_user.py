@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-# filename: user.py
+# filename: /backend/app/models/user.py
 # descr: relationship with orders.py
 
 
 from __future__ import annotations
 from typing import TYPE_CHECKING
-
+from sqlalchemy.orm import relationships
 from app.extensions import (
     db,
     Mapped,
@@ -32,12 +32,11 @@ class User(TimeStampModel):
         autoincrement=True
     )
 
-    username: Mapped[str] = mapped_column(
-        String(50), unique=True, nullable=False, index=True
-    )
-    
     email: Mapped[str] = mapped_column(
-        String(200), unique=True, nullable=False, index=True
+        String(200), 
+        unique=True, 
+        nullable=False, 
+        index=True
     )
     
     orders: Mapped[list["Order"]] = db.relationship(

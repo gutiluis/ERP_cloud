@@ -17,15 +17,19 @@ product_bp = Blueprint(
 )
 
 
-# get by default
 @product_bp.route("/")
 def index_all_products():
     products = db.session.execute(
-            db.select(Product).order_by(Product.product_id)).scalars().all()
+            db.select(Product).order_by(Product.public_product_id)).scalars().all()
     return render_template("products/index.html",
                            products=products
     )
 
 @product_bp.route("/new")
 def add_product():
+    return "ok"
+
+
+@product_bp.route("/new", methods=["POST"])
+def submit_form():
     return "ok"

@@ -1,4 +1,5 @@
 flask
+flask-marshmallow
 flask-sqlalchemy
 flask-migrate
 gunicorn
@@ -7,3 +8,4 @@ python-dotenv
 cryptography>=41.0
 sqlalchemy
 flasgger
+flask-login

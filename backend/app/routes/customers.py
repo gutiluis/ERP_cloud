@@ -4,30 +4,13 @@
 '''
 descr: app/models/customers.py server-rendered admin html with jinja
 
-# TODO:
 # api url is not a folder nor file # GET is default
-
-[x] done
-render create form /GET
-[ x ] missing phone
-submit create form /POST
-
----
-render edit form /GET
-
-
----
-# [x] finish delete function api endpoint. missing test
-delete not render/DELETE # only available in frontend js code.
-
----
-# missing /admin/src/ authentication and hide it from the frontend client
 
 '''
 
-
+from app.extensions import current_user
 from app.models import Customer
-from flask import Blueprint, request, render_template, redirect, url_for, flash, current_app
+from flask import Blueprint, request, render_template, redirect, url_for, flash, current_app, abort
 from app import db  # delete db
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from app.models.customers import CustomerStatus, CustomerType
@@ -39,20 +22,19 @@ customer_bp = Blueprint(
     url_prefix="/api/admin/customers"
 )
 
-# `flask routes` to confirm route
-# [x] run fllask migrations always before rendering
-# [x] ready without frontend
-# [x] serving ready in jinja
-# GET request
 # use try except for db input/output only
-# http://localhost:8000/api/admin/customers/
 @customer_bp.route("/")
 def index_all_customers():
-    "Admin render all customers index/"
+    """
+    Admin render all customers
+    """
     # TODO: define current_user
-#    if not current_user.is_admin:
-#        abort(403)
-    customers = Customer.query.all()
+    # pytest
+    # authentication and hide it from the client
+    # to use is_authenticated you need is_authenticated you need UserMixin
+    if not current_user.is_authenticated:
+        abort(403)
+    customers = db.session.execute(db.select(Customer).order_by(Customer.customer_id)).scalars().all()
     return render_template(
         "customers/index.html",
         customers=customers
@@ -63,6 +45,7 @@ def index_all_customers():
 def customer_form():
     '''Admin get new customer form'''
     return render_template('customers/customer_form.html')
+
 
 # [ ] missing phone filter
 # in a route that only accepts post. the route is already being called from a form submission
@@ -174,27 +157,6 @@ def update_customer(customer_id):
 
 @customer_bp.route("/<string:customer_id>", methods=["GET"])
 def customer_detail(customer_id):
-    """
-    Admin fetch one single customer_id from db for customers
-    ---
-    tags:
-      - Customers
-    parameters:
-      - name: customer_id
-        in: path
-        type: string
-        required: true
-        description: the id of the customer
-    responses:
-      200:
-        description: Customer details found successfully
-        content:
-          text/html:
-            schema:
-              type: string
-      404:
-        description: Customer not found
-    """
     customer = Customer.query.filter_by(customer_id=customer_id).one_or_404()
     return render_template("customers/customerdetail.html", customer=customer)
 

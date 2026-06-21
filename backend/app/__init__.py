@@ -3,10 +3,15 @@
 # filename: backend/app/__init__.py
 # descr: factory orchestrator does not load models
 
-from flasgger import Swagger
+
+# enable for api docstring for api documentation with marshmallow
+#from flasgger import Swagger
 from flask import Flask, render_template
+# add by the end of the app
+#from flask import Marshmallow
 from .config import Config
-from .extensions import db, migrate
+from .extensions import db, migrate, login_manager
+
 
 def register_error_handlers(app):
     @app.errorhandler(500)
@@ -20,10 +25,17 @@ def create_app(config_object=Config):
     # initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
+
+    login_manager.init_app(app)
+    # add by the end of the app
+#    ma = Marshmallow(app)
     # intialize swagger with the app instance
-    swagger = Swagger(app)
+#    swagger = Swagger(app)
 
     register_error_handlers(app)
+
+    from app.auth.routes import auth_bp
+    app.register_blueprint(auth_bp)
 
     from .routes.health import health_bp
     app.register_blueprint(health_bp)

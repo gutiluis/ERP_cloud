@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
 
-# file:
-# descr:
+# file: /backend/app/extensions.py
+# descr: factory pattern extensions instances of init_app()
 
 
-
+from flask_login import LoginManager, UserMixin, current_user
 from datetime import datetime, timezone
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import (
@@ -29,6 +29,15 @@ from sqlalchemy.sql import func
 
 
 db = SQLAlchemy()
+
+# LoginManager is extension object not configuration data
+login_manager = LoginManager()
+#class AnonymousUser(AnonymousUserMixin):
+#    is_admin = False
+
+# login_manager.anonymous_user = AnonymousUser
+
+
 migrate = Migrate()
 
 class TimeStampModel(db.Model):
@@ -42,6 +51,6 @@ class TimeStampModel(db.Model):
     updated: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
-        server_onupdate=func.now(),
+        onupdate=func.now(),
         nullable=False
     )

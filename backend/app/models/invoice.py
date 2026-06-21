@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING # fix declarative mapping relationship with ann
 from datetime import datetime, timezone
 from decimal import Decimal
 import enum
-
+from sqlalchemy.orm import relationship
 from app.extensions import (
     db,
     Mapped,

@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 
-# descr:
+
+
+# file: /backend/app/models/payments.py
+# descr: payments model
 
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from datetime import datetime, timezone
-
+from sqlalchemy.orm import relationship
 from app.extensions import (
     db,
     TimeStampModel,
