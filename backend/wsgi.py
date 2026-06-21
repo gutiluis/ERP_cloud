@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 
-# filename: wsgi.py
+# filename: /backend/wsgi.py
 # descr: load app from wsgi use instead of run.py for development
 
 

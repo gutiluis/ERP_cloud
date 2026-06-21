@@ -19,7 +19,7 @@ from app.extensions import (
     Optional,
     Text,
     db,
-    # UserMixin,
+    UserMixin,
     # AnonymousUserMixin
 )
 
@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     from .user import User
     from .payments import Payment
 
-# usermixin is the reason of is_authenticated() for the route
+# usermixin is the reason of is_authenticated(), and is_active for the route
 # UserMixin is not for db columns. has: is_authenticated, is_active, is_anonymous, get_id()
 class AdminUser(UserMixin, TimeStampModel):
     __tablename__ = "adminUsers"
@@ -69,12 +69,12 @@ class AdminUser(UserMixin, TimeStampModel):
     )
     
     # UserMixin is not for a db column. The column is overriding the property of UserMixin
-    is_active: Mapped[bool] = mapped_column(
-        Boolean, 
-        nullable=False, 
-        index=True,
-        server_default=text("0")
-    )
+    #is_active: Mapped[bool] = mapped_column(
+    #    Boolean, 
+    #    nullable=False, 
+    #    index=True,
+    #    server_default=text("0")
+    #)
     
     orders: Mapped[list["Order"]] = db.relationship(
         "Order",

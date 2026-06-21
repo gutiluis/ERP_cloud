@@ -32,7 +32,7 @@ def index_all_customers():
     # pytest
     # authentication and hide it from the client
     # to use is_authenticated you need is_authenticated you need UserMixin
-    if not current_user.is_authenticated:
+    if not current_user.is_authenticated and current_user.is_active:
         abort(403)
     customers = db.session.execute(db.select(Customer).order_by(Customer.customer_id)).scalars().all()
     return render_template(
