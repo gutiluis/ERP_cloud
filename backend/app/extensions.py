@@ -5,7 +5,7 @@
 # descr: factory pattern extensions instances of init_app()
 
 
-from flask_login import LoginManager, UserMixin, current_user
+from flask_login import LoginManager, UserMixin, current_user, login_required
 from datetime import datetime, timezone
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import (

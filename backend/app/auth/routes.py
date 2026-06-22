@@ -57,7 +57,7 @@ def login():
             login_user(admin)
 
             next_page = request.args.get("next")
-            return redirect(next_page or url_for("index.index"))
+            return redirect(next_page or url_for("customers.index_all_customers"))
 
         flash("Invalid username or password", "error")
 

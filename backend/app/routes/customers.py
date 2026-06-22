@@ -8,7 +8,7 @@ descr: app/models/customers.py server-rendered admin html with jinja
 
 '''
 
-from app.extensions import current_user
+from app.extensions import current_user, login_required
 from app.models import Customer
 from flask import Blueprint, request, render_template, redirect, url_for, flash, current_app, abort
 from app import db  # delete db
@@ -24,6 +24,7 @@ customer_bp = Blueprint(
 
 # use try except for db input/output only
 @customer_bp.route("/")
+@login_required
 def index_all_customers():
     """
     Admin render all customers
@@ -32,8 +33,8 @@ def index_all_customers():
     # pytest
     # authentication and hide it from the client
     # to use is_authenticated you need is_authenticated you need UserMixin
-    if not current_user.is_authenticated and current_user.is_active:
-        abort(403)
+#    if not current_user.is_authenticated and current_user.is_active:
+#        abort(403)
     customers = db.session.execute(db.select(Customer).order_by(Customer.customer_id)).scalars().all()
     return render_template(
         "customers/index.html",
@@ -42,6 +43,7 @@ def index_all_customers():
 
 
 @customer_bp.route("/new", methods=["GET"])
+@login_required
 def customer_form():
     '''Admin get new customer form'''
     return render_template('customers/customer_form.html')
@@ -50,6 +52,7 @@ def customer_form():
 # [ ] missing phone filter
 # in a route that only accepts post. the route is already being called from a form submission
 @customer_bp.route("/new", methods=["POST"])
+@login_required
 def submit_customer_form():
     '''Admin submit new customer form with redirection'''
     # required_fields dictionary are nullable=False inside the class model
@@ -124,6 +127,7 @@ def submit_customer_form():
 
 # [ x ] ready rest api endpoint
 @customer_bp.route("/edit/<string:customer_id>", methods=["GET"])
+@login_required
 def edit_customer(customer_id):
     '''Admin customer edit form fetch'''
     # query.get_or_404 by primary_key only not string customer_id
@@ -136,6 +140,7 @@ def edit_customer(customer_id):
 # <int:custmer_id> only accepts integers customer_id is a string. id is the other option with straight db primary_key
 # frontend fetch/ajax method is put. not available with flask
 @customer_bp.route("/edit/<string:customer_id>", methods=["POST"])
+@login_required
 def update_customer(customer_id):
     '''Admin update customer form'''
     customer = Customer.query.filter_by(customer_id=customer_id).one_or_404()
@@ -156,6 +161,7 @@ def update_customer(customer_id):
 
 
 @customer_bp.route("/<string:customer_id>", methods=["GET"])
+@login_required
 def customer_detail(customer_id):
     customer = Customer.query.filter_by(customer_id=customer_id).one_or_404()
     return render_template("customers/customerdetail.html", customer=customer)
@@ -163,6 +169,7 @@ def customer_detail(customer_id):
 
 # TODO: test
 @customer_bp.route("/<string:customer_id>/delete")
+@login_required
 def delete_customer(customer_id):
     '''
     only allow delete customer without invoices permamently from the db
