@@ -7,8 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 
 ### Added
-
-* **customers:** add customers login_required ([b141d5e](https://github.com/gutiluis/ERP_cloud/commit/b141d5ebf1475f189505ab0e192b3c4a251b400b))
+* **app/auth:** add flask-login authentication
+* **routes/customers.py:** add customers login_required 
 
 ## [1.1.0](https://github.com/gutiluis/ERP_cloud/compare/v1.0.0...v1.1.0) (2026-06-19)
 

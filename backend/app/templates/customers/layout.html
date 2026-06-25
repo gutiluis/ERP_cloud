@@ -17,7 +17,16 @@
                 <h2>Customer Module:</h2>
             </nav>
         </header>
+
         {% block actions %}
+            <div class="actions">
+                {# usermixin uses current_user#}
+                {% if current_user.is_authenticated %}
+                    <form action="{{ url_for('auth.logout') }}" method="POST">
+                        <button type="submit">Logout</button>
+                    </form>
+                {% endif %}
+            </div>
         {% endblock %}
 
         <main>

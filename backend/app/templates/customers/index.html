@@ -6,12 +6,17 @@
 
 
 {% block actions %}
-    <a href="{{ url_for('customers.customer_form') }}">
-        Create New Customer
-    </a>
+    <div class="actions">
+        <form action="{{ url_for('customers.customer_form') }}">
+            <button type="submit">Create New Customer</button>
+        </form>
+        {# super keeps the parent layout's logout button because the block is being overriden #}
+        {{ super() }}
+    </div>
 {% endblock %}
 
 
+{# remove block actions from parent to not replace #}
 {% block customer_content %}
     <div>
         {% if customers %}

@@ -1,0 +1,98 @@
+<body>
+    <section>
+        <fieldset>
+            <legend>Product Variant</legend>
+            <div class="color">
+                <label for="color">Product Color</label>
+                <input
+                    id="color"
+                    name="color"
+                    type="text"
+                    placeholder="eg: red, blue,..."
+                    value="{{ variant.color if variant else '' }}"
+                >
+            </div>
+
+            <div class="size">
+                <label for="size">Product Size</label>
+                <input
+                    id="size"
+                    name="size"
+                    type="text"
+                    placeholder="eg: small, medium, xs..."
+                    value="{{ variant.size if variant else '' }}"
+                >
+            </div>
+
+            <div class="price">
+                <label for="price">Product Price</label>
+                <input
+                    id="price"
+                    name="price"
+                    type="number"
+                    min="0.00"
+                    max="50000.00"
+                    step="0.01"
+                    placeholder="eg: 0.00"
+                    value="{{ variant.price if variant else '' }}"
+                    required
+                >
+            </div>
+
+            <div class="stock">
+                <label for="stock_quantity">Product Stock Left</label>
+                <input
+                    id="stock_quantity"
+                    name="stock_quantity"
+                    type="number"
+                    min="0"
+                    step="1"
+                    placeholder="eg: 0"
+                    value="{{ variant.stock_quantity if variant else '0' }}"
+                >
+            </div>
+            <div class="sku">
+                <label for="sku">Product SKU</label>
+                <input
+                    id="sku"
+                    name="sku"
+                    type="text"
+                    placeholder="eg: Stock Keeping Unit"
+                    value="{{ variant.sku if variant else '' }}"
+                >
+            </div>
+
+            <div class="is_external">
+                <label for="is_external">
+                    <input
+                        id="is_external"
+                        name="is_external"
+                        type="checkbox"
+                        {% if variant and variant.is_external %}checked{% endif %}
+                    >
+                    External Product
+                </label>
+            </div>
+            <div class="external_source">
+                <label for="externa_source">External Source</label>
+                <input
+                    id="externa_souce"
+                    name="external_source"
+                    type="text"
+                    placeholder="eg: Stripe"
+                    value="{{ variant.external_source if variant else '' }}"
+                >
+            </div>
+
+            <div class="external_product_id">
+                <label for="external_product_id">External Product ID</label>
+                <input
+                    id="external_product_id"
+                    name="external_product_id"
+                    type="text"
+                    value="{{ variant.external_product_id if variant else '' }}"
+                >
+            </div>
+        </fieldset>
+    </section>
+</body>

@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         {% block title %}
         {% endblock %}
-        <meta name="description" content="product layout">
+        <meta name="description" content="product_layout">
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>
@@ -17,7 +17,15 @@
                 <h2>Product Module:</h2>
             </nav>
         </header>
+
         {% block actions %}
+            <div class="actions">
+                {% if current_user.is_authenticated %}
+                    <form action="{{ url_for('auth.logout') }}" method="POST">
+                        <button type="submit">Logout</button>
+                    </form>
+                {% endif %}
+            </div>
         {% endblock %}
 
         <main>
@@ -31,7 +39,7 @@
                 {% endif %}
             {% endwith %}
 
-            <!-- list all customers from the /api/admin/customers route udner customers/inedx.html -->
+            <!-- list all products from the /api/admin/products route udner products/inedx.html -->
             {% block product_content %}
             {% endblock %}
 

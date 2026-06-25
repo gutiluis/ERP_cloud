@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-# file: customers.py
-# descr: external buyer who will receive the bags.
-# relation wit invoice table
+# file: /app/models/customers.py
+# descr: external buyer who will receive the products.
+# relation with invoice table
 
 from __future__ import annotations # fix import from another file model
 from typing import TYPE_CHECKING
@@ -95,7 +95,9 @@ class Customer(TimeStampModel):
         Text, 
         nullable=True
     )
-    
+# class enum.Enum Enum is the base class for all enum enumerations
+# Color.Blue.name
+   # cusotomer.customerstatus.name 
     customer_status: Mapped[CustomerStatus] = mapped_column(
         db.Enum(
             CustomerStatus,

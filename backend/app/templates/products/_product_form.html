@@ -1,0 +1,107 @@
+<body>
+    <section>
+        <fieldset>
+            <legend>Product Information</legend>
+            <div class="id">
+                <label for="product_id">Product ID</label>
+                <input
+                    id="product_id"
+                    name="product_id"
+                    type="text"
+                    placeholder="eg: PROD-00001"
+                    value="{{ product.product_id if product else '' }}"
+                    {% if product %}readonly{% endif %}
+                    required
+                >
+            </div>
+            <div class="name">
+                <label for="product_name">Product Name</label>
+                <input
+                    id="product_name"
+                    name="product_name"
+                    type="text"
+                    placeholder="eg: Bag"
+                    value="{{ product.product_name if product else '' }}"
+                    required
+                >
+            </div>
+            <div class="brand">
+                <label for="brand">Product Brand</label>
+                <input
+                    id="brand"
+                    name="brand"
+                    type="text"
+                    placeholder="eg: Nike"
+                    value="{{ product.brand if product else '' }}"
+                    required
+                >
+            </div>
+            <div class="category">
+                <label for="category">Product Category</label>
+                <input
+                    id="category"
+                    name="category"
+                    type="text"
+                    placeholder="eg: Running Shoes"
+                    value="{{ product.category if product else '' }}"
+                    required
+                >
+            </div>
+            <div>
+                {% if product %}
+                <div class="is-active">
+                    <label for="is_active">
+                        <input
+                            id="is_active"
+                            name="is_active"
+                            type="checkbox"
+                            {% if product.is_active %}checked{% endif %}
+                        >
+                        Active
+                    </label>
+                </div>
+                {% endif %}
+            </div>
+            <div class="description">
+                <label for="description">Product Detail</label>
+                <textarea
+                    id="description"
+                    name="description"
+                    required
+                >{{ product.description if product else '' }}</textarea>
+            </div>
+            <div class="url">
+                <label for="url">Product URL</label>
+                <input
+                    id="url"
+                    name="url"
+                    type="url"
+                    placeholder="eg: https://nike.com/running_shoes/"
+                    value="{{ product.url if product else '' }}"
+                    required
+                >
+            </div>
+            <div class="url-tag">
+                <label for="url-tag">Product Alternative Text</label>
+                <input
+                    id="url-tag"
+                    name="url-tag"
+                    type="text"
+                    placeholder="eg: This photo is..."
+                    value="{{ product.url_tag if product else '' }}"
+                >
+            </div>
+            <div class="additional_notes">
+                <label for="notes">Notes</label>
+                <input
+                    id="notes"
+                    name="notes"
+                    type="text"
+                    placeholder="eg: Product with limited warranty"
+                    value="{{ product.additional_notes if product else '' }}"
+                >
+            </div>
+                
+        </fieldset>
+    </section>
+</body>

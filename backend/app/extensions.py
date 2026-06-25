@@ -21,7 +21,7 @@ from sqlalchemy import (
     Integer,
     CheckConstraint,
     UniqueConstraint)
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from typing import Optional
 from sqlalchemy.orm import mapped_column, Mapped
 from flask_migrate import Migrate

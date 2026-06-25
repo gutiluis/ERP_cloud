@@ -6,6 +6,8 @@
 {% endblock %}
 
 {% block actions %}
+    {{ super() }}
+
     <a class="home-btn" href="{{ url_for('customers.index_all_customers') }}">
         Return to All Customers List
     </a>

@@ -6,9 +6,12 @@
 
 
 {% block actions %}
-    <a href="{{ url_for('products.add_product') }}">
-        Create New Product
-    </a>
+    <div class="actions">
+        <form action="{{ url_for('products.add_product') }}">
+            <button type="submit">Create New Product</button>
+        </form>
+        {{ super() }} 
+    </div>
 {% endblock %}
 
 
@@ -29,7 +32,6 @@
                             <tr>
                                 <td>{{ product.product_id }}</td>
                                 <td>{{ product.product_name }}</td>
-                                <td>{{ product.product_email }}</td>
                                 <td>
                                     <a href="{{ url_for('products.product_detail',
                                                     product_id=product.product_id) }}">

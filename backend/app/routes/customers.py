@@ -8,10 +8,10 @@ descr: app/models/customers.py server-rendered admin html with jinja
 
 '''
 
-from app.extensions import current_user, login_required
+from app.extensions import login_required
 from app.models import Customer
-from flask import Blueprint, request, render_template, redirect, url_for, flash, current_app, abort
-from app import db  # delete db
+from flask import Blueprint, request, render_template, redirect, url_for, flash
+from app import db
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from app.models.customers import CustomerStatus, CustomerType
 
@@ -31,10 +31,6 @@ def index_all_customers():
     """
     # TODO: define current_user
     # pytest
-    # authentication and hide it from the client
-    # to use is_authenticated you need is_authenticated you need UserMixin
-#    if not current_user.is_authenticated and current_user.is_active:
-#        abort(403)
     customers = db.session.execute(db.select(Customer).order_by(Customer.customer_id)).scalars().all()
     return render_template(
         "customers/index.html",

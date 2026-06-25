@@ -34,7 +34,7 @@ class Product(TimeStampModel):
         autoincrement=True
     )
     
-    public_product_id: Mapped[str] = mapped_column(
+    product_id: Mapped[str] = mapped_column(
         String(50), 
         index=True, 
         unique=True, 
@@ -52,7 +52,7 @@ class Product(TimeStampModel):
         index=True
     )
     
-    product_category: Mapped[str] = mapped_column(
+    category: Mapped[str] = mapped_column(
         String(200), 
         nullable=False, 
         index=True
@@ -63,7 +63,7 @@ class Product(TimeStampModel):
         server_default=text("1")
     )
     
-    product_description: Mapped[str] = mapped_column(
+    description: Mapped[str] = mapped_column(
         Text, 
         nullable=False
     )
@@ -72,7 +72,7 @@ class Product(TimeStampModel):
         "Order",
         back_populates="product"
     )
-    
+    # photolink
     # text cannot be indexed
     # If a column is unique=True or index=True, it must be String(n) in MySQL.
     # 3072 bytes = 768 characters in utf8mb4
@@ -133,7 +133,8 @@ class ProductVariant(TimeStampModel):
     stock_quantity: Mapped[int] = mapped_column(
         Integer,
         # text('0') is sql expression not Text column types
-        nullable=False, server_default=text("0")
+        nullable=False, 
+        server_default=text("0")
     )
 
     sku: Mapped[str] = mapped_column(
@@ -161,11 +162,13 @@ class ProductVariant(TimeStampModel):
     )
 
     external_source: Mapped[Optional[str]] = mapped_column(
-        String(200), nullable=True
+        String(200), 
+        nullable=True
     )
     
     external_product_id: Mapped[Optional[str]] = mapped_column(
-        String(200), nullable=True
+        String(200), 
+        nullable=True
     )
     
     product = db.relationship(
