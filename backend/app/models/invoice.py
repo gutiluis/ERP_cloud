@@ -28,7 +28,8 @@ from app.extensions import (
     Enum,
     func,
     Index,
-    CheckConstraint
+    CheckConstraint,
+    Integer
 )
 
 if TYPE_CHECKING: # fix import relationship from another file
@@ -63,7 +64,7 @@ class Invoice(TimeStampModel):
         autoincrement=True
     )
 
-    public_invoice_id: Mapped[str] = mapped_column(
+    invoice_id: Mapped[str] = mapped_column(
         String(50), 
         unique=True, 
         nullable=False, 
@@ -105,7 +106,8 @@ class Invoice(TimeStampModel):
     
     invoice_due_date: Mapped[datetime] = mapped_column(
         DateTime, 
-        nullable=False
+        nullable=False,
+        server_default=func.now()
     )
 
     payments: Mapped[list["Payment"]] = db.relationship(
@@ -147,12 +149,18 @@ class Invoice(TimeStampModel):
     currency: Mapped[str] = mapped_column(
         String(3),
         nullable=False,
-        server_default=text("'USD'"),
+        server_default=text("'MXN'"),
         index=True
     )
     
     discount_amount: Mapped[Decimal] = mapped_column(
         Numeric(18, 2),
+        nullable=False,
+        server_default=text("0.00")
+    )
+
+    discount_percentage: Mapped[Decimal] = mapped_column(
+        Numeric(5, 2),
         nullable=False,
         server_default=text("0.00")
     )
@@ -175,6 +183,8 @@ class Invoice(TimeStampModel):
         self.ensure_editable()
         self.items.append(item)
         db.session.flush()
+
+
 
 class InvoiceItem(TimeStampModel):
     __tablename__ = "invoice_items"
@@ -206,7 +216,7 @@ class InvoiceItem(TimeStampModel):
     )
 
     quantity: Mapped[int] = mapped_column(
-        BigInteger, 
+        Integer, 
         nullable=False,
     )
 

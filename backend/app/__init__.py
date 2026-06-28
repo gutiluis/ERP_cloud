@@ -52,6 +52,9 @@ def create_app(config_object=Config):
     from .routes.products import product_bp
     app.register_blueprint(product_bp)
 
+    from .routes.invoices import invoice_bp
+    app.register_blueprint(invoice_bp)
+
     from . import models
     
     

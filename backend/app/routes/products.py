@@ -28,8 +28,6 @@ def index_all_products():
                            products=products
     )
 
-# [ x ] render product_variant.html and product_form.html
-# [ x ] render product_form
 @product_bp.route("/new", methods=["GET"])
 @login_required
 def product_form():
@@ -39,20 +37,6 @@ def product_form():
     return render_template('products/product_form.html')
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-# [  ] submit form to db 
 @product_bp.route("/new", methods=["POST"])
 @login_required
 def add_product():
@@ -73,13 +57,17 @@ def add_product():
     if not price_str:
         raise ValueError("[INFO] Price field required")
 
+    stock_str = request.form.get("stock_quantity", "").strip()
+    if not stock_str:
+        raise ValueError("[INFO STOCK field required")
+
     variant = ProductVariant(
         product = product,
         price=Decimal(price_str),
+        stock_quantity = int(stock_str),
         # the object has the relationship under productvariant under product backpopulating variants
         color = request.form.get("color", "").strip(),
         size = request.form.get("size", "").strip(),
-        stock_quantity = request.form.get("stock_quantity", "").strip(),
         sku = request.form.get("sku", "").strip(),
         # boolean
         is_external = "is_external" in request.form,
@@ -90,35 +78,6 @@ def add_product():
     db.session.add(product)
     db.session.commit()
     return redirect(url_for("products.index_all_products"))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -174,9 +133,6 @@ def update_product(product_id):
         return redirect(url_for("products.product_form"))
 
 
-
-
-
 @product_bp.route("/<string:product_id>", methods=["GET"])
 @login_required
 def product_detail(product_id):
@@ -188,7 +144,7 @@ def product_detail(product_id):
 
 
 
-@product_bp.route("/<string:product_id>/delete")
+@product_bp.route("/delete/<string:product_id>")
 @login_required
 def delete_product(product_id):
     """

@@ -19,13 +19,13 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Product ID</th>
-                            <th>Product Name</th>
-                            <th>Product Brand</th>
-                            <th>Product Category</th>
-                            <th>Product Description</th>
-                            <th>Product URL</th>
-                            <th>Product URL TAG</th>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Brand</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>URL</th>
+                            <th>URL TAG</th>
                             <th>Additional Notes</th>
                         </tr>
                     </thead>
@@ -49,12 +49,12 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Product Color</th>
-                            <th>Product Size</th>
-                            <th>Product Stock</th>
-                            <th>Product Price</th>
-                            <th>Product SKU</th>
-                            <th>External</th>
+                            <th>Color</th>
+                            <th>Size</th>
+                            <th>Stock</th>
+                            <th>Price</th>
+                            <th>Stock Keepig Unit</th>
+                            <th>External Source</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -73,7 +73,7 @@
                                         <section>
                                             <h3>External Source</h3>
                                             <p>Source: {{ variant.external_source }}</p>
-                                            <p>External ID: {{ variant.external_product_id }}</p>
+                                            <p>ID: {{ variant.external_product_id }}</p>
                                         </section>
                                     {% endif %}
                                 </td>

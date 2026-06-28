@@ -1,8 +1,8 @@
 """initial schema
 
-Revision ID: ea1f26f4ef2d
+Revision ID: 3f6df8af195b
 Revises: 
-Create Date: 2026-06-21 21:35:17.246139
+Create Date: 2026-06-25 14:33:42.562437
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'ea1f26f4ef2d'
+revision = '3f6df8af195b'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -57,12 +57,12 @@ def upgrade():
 
     op.create_table('products',
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
-    sa.Column('public_product_id', sa.String(length=50), nullable=False),
+    sa.Column('product_id', sa.String(length=50), nullable=False),
     sa.Column('product_name', sa.String(length=200), nullable=False),
     sa.Column('brand', sa.String(length=200), nullable=False),
-    sa.Column('product_category', sa.String(length=200), nullable=False),
+    sa.Column('category', sa.String(length=200), nullable=False),
     sa.Column('is_active', sa.Boolean(), server_default=sa.text('1'), nullable=False),
-    sa.Column('product_description', sa.Text(), nullable=False),
+    sa.Column('description', sa.Text(), nullable=False),
     sa.Column('url', sa.String(length=760), nullable=False),
     sa.Column('url_tag', sa.String(length=100), nullable=True),
     sa.Column('additional_notes', sa.Text(), nullable=True),
@@ -73,8 +73,8 @@ def upgrade():
     )
     with op.batch_alter_table('products', schema=None) as batch_op:
         batch_op.create_index(batch_op.f('ix_products_brand'), ['brand'], unique=False)
-        batch_op.create_index(batch_op.f('ix_products_product_category'), ['product_category'], unique=False)
-        batch_op.create_index(batch_op.f('ix_products_public_product_id'), ['public_product_id'], unique=True)
+        batch_op.create_index(batch_op.f('ix_products_category'), ['category'], unique=False)
+        batch_op.create_index(batch_op.f('ix_products_product_id'), ['product_id'], unique=True)
 
     op.create_table('invoices',
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
@@ -257,8 +257,8 @@ def downgrade():
 
     op.drop_table('invoices')
     with op.batch_alter_table('products', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('ix_products_public_product_id'))
-        batch_op.drop_index(batch_op.f('ix_products_product_category'))
+        batch_op.drop_index(batch_op.f('ix_products_product_id'))
+        batch_op.drop_index(batch_op.f('ix_products_category'))
         batch_op.drop_index(batch_op.f('ix_products_brand'))
 
     op.drop_table('products')
