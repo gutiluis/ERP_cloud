@@ -76,11 +76,6 @@ class AdminUser(UserMixin, TimeStampModel):
     #    server_default=text("0")
     #)
     
-    orders: Mapped[list["Order"]] = db.relationship(
-        "Order",
-        back_populates="created_by_user"
-    )
-
     additional_notes: Mapped[str | None ] = mapped_column(
         Text, 
         nullable=True

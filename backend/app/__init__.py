@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # filename: backend/app/__init__.py
-# descr: factory orchestrator does not load models
+# descr: factory orchestrator does not load models. app factory
 
 
 # enable for api docstring for api documentation with marshmallow
@@ -36,6 +36,9 @@ def create_app(config_object=Config):
     # absolute import
     #from app.auth.routes import auth_bp
     #app.register_blueprint(auth_bp)
+    
+    from .routes.stripe import stripe_bp
+    app.register_blueprint(stripe_bp)
 
     from .auth.routes import auth_bp
     app.register_blueprint(auth_bp)

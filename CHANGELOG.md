@@ -8,7 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-* invoice index, void, detail routes completed ([be1fb21](https://github.com/gutiluis/ERP_cloud/commit/be1fb217d697dac58fcfc5d96b0aa49349977b7a))
+* **routes/invoices.py:** invoice index, void, detail routes 
+* **routes/products.py:** products and product variants admin public routes
 
 ## [1.1.1] - [2026-06-25]
 

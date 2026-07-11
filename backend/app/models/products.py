@@ -1,4 +1,4 @@
-#!/user/bin/env python3
+j#!/user/bin/env python3
 
 # filename: products.py
 # descr: static catalog. relationship with orders.py
@@ -68,8 +68,8 @@ class Product(TimeStampModel):
         nullable=False
     )
     
-    orders: Mapped[list["Order"]] = db.relationship(
-        "Order",
+    order_items: Mapped[list["OrderItem"]] = db.relationship(
+        "OrderItem",
         back_populates="product"
     )
     # photolink
@@ -79,7 +79,7 @@ class Product(TimeStampModel):
     url: Mapped[str] = mapped_column(
         String(760), 
         unique=True, 
-        nullable=False
+        nullable=True
     )
     url_tag: Mapped[str] = mapped_column(
         String(100), 
@@ -89,6 +89,11 @@ class Product(TimeStampModel):
     additional_notes: Mapped[Optional[str]] = mapped_column(
         Text, 
         nullable=True
+    )
+
+    cart_items: Mapped[list["CartItem"]] = db.relationship(
+        "CartItem",
+        back_populates="product"
     )
 
     variants = db.relationship(
@@ -101,6 +106,13 @@ class Product(TimeStampModel):
 
 class ProductVariant(TimeStampModel):
     __tablename__ = 'product_variants'
+    __table_args__ = (
+        db.UniqueConstraint(
+            "external_source",
+            "external_product_id",
+            name="uq_external_product"
+        ),
+    )
     id: Mapped[int] = mapped_column(
         BigInteger, 
         primary_key=True, autoincrement=True
@@ -148,7 +160,7 @@ class ProductVariant(TimeStampModel):
         nullable=True,
         index=True
     )
-
+    # stripe is an external integration, not source of truth of db. db owns the product not stripe. even though all payemnts are in credit card 
     stripe_product_id: Mapped[Optional[str]] = mapped_column(
         String(255),
         nullable=True,
@@ -171,10 +183,11 @@ class ProductVariant(TimeStampModel):
         nullable=True
     )
     
-    product = db.relationship(
+    product: Mapped["Product"] = (
+        db.relationship(
         'Product',
         back_populates='variants',
-    )
+    ))
     
     @property
     def is_in_stock(self) -> bool:

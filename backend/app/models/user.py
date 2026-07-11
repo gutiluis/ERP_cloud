@@ -16,8 +16,7 @@ from app.extensions import (
     Boolean,
     TimeStampModel,
     Optional,
-    Text,
-    text
+    Text
 )
 
 if TYPE_CHECKING:
@@ -31,7 +30,7 @@ class User(TimeStampModel):
         primary_key=True, 
         autoincrement=True
     )
-
+    # user enter email to send order and other notifications
     email: Mapped[str] = mapped_column(
         String(200), 
         unique=True, 
@@ -41,9 +40,15 @@ class User(TimeStampModel):
     
     orders: Mapped[list["Order"]] = db.relationship(
         "Order",
-        back_populates="created_by_user"
+        back_populates="user"
+    )
+
+    carts: Mapped["carts"] = db.relationship(
+        "Cart",
+        back_populates="user",
     )
     
     additional_notes: Mapped[Optional[str]] = mapped_column(
-        Text, nullable=True
+        Text, 
+        nullable=True
     )

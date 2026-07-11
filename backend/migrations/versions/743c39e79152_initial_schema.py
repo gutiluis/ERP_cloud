@@ -1,8 +1,8 @@
 """initial schema
 
-Revision ID: 3f6df8af195b
+Revision ID: 743c39e79152
 Revises: 
-Create Date: 2026-06-25 14:33:42.562437
+Create Date: 2026-07-10 17:38:26.768622
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '3f6df8af195b'
+revision = '743c39e79152'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -76,17 +76,41 @@ def upgrade():
         batch_op.create_index(batch_op.f('ix_products_category'), ['category'], unique=False)
         batch_op.create_index(batch_op.f('ix_products_product_id'), ['product_id'], unique=True)
 
+    op.create_table('users',
+    sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
+    sa.Column('email', sa.String(length=200), nullable=False),
+    sa.Column('additional_notes', sa.Text(), nullable=True),
+    sa.Column('created', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('updated', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
+    with op.batch_alter_table('users', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_users_email'), ['email'], unique=True)
+
+    op.create_table('carts',
+    sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
+    sa.Column('user_id', sa.BigInteger(), nullable=False),
+    sa.Column('status', sa.Enum('PENDING', 'ACTIVE', 'ABANDONED', 'CONVERTED', name='cartstatus', native_enum=False), server_default='pending', nullable=False),
+    sa.Column('created', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('updated', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    with op.batch_alter_table('carts', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_carts_status'), ['status'], unique=False)
+        batch_op.create_index(batch_op.f('ix_carts_user_id'), ['user_id'], unique=False)
+
     op.create_table('invoices',
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
-    sa.Column('public_invoice_id', sa.String(length=50), nullable=False),
+    sa.Column('invoice_id', sa.String(length=50), nullable=False),
     sa.Column('customer_id', sa.BigInteger(), nullable=False),
     sa.Column('status', sa.Enum('DRAFT', 'ISSUED', 'PAID', 'CANCELLED', 'VOID', name='invoicestatus', native_enum=False), server_default='draft', nullable=False),
     sa.Column('invoice_date', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
-    sa.Column('invoice_due_date', sa.DateTime(), nullable=False),
     sa.Column('additional_notes', sa.Text(), nullable=True),
     sa.Column('total_amount', sa.Numeric(precision=14, scale=2), server_default=sa.text('0.00'), nullable=False),
-    sa.Column('currency', sa.String(length=3), server_default=sa.text("'USD'"), nullable=False),
+    sa.Column('currency', sa.String(length=3), server_default=sa.text("'MXN'"), nullable=False),
     sa.Column('discount_amount', sa.Numeric(precision=18, scale=2), server_default=sa.text('0.00'), nullable=False),
+    sa.Column('discount_percentage', sa.Numeric(precision=5, scale=2), server_default=sa.text('0.00'), nullable=False),
     sa.Column('created', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['customer_id'], ['customers.id'], ondelete='RESTRICT'),
@@ -100,32 +124,41 @@ def upgrade():
         batch_op.create_index('ix_invoice_status', ['status'], unique=False)
         batch_op.create_index(batch_op.f('ix_invoices_currency'), ['currency'], unique=False)
         batch_op.create_index(batch_op.f('ix_invoices_customer_id'), ['customer_id'], unique=False)
-        batch_op.create_index(batch_op.f('ix_invoices_public_invoice_id'), ['public_invoice_id'], unique=True)
+        batch_op.create_index(batch_op.f('ix_invoices_invoice_id'), ['invoice_id'], unique=True)
 
     op.create_table('orders',
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
     sa.Column('stripe_session_id', sa.String(length=200), nullable=False),
-    sa.Column('stripe_payment_intent', sa.String(length=200), nullable=False),
-    sa.Column('status', sa.String(length=50), nullable=False),
-    sa.Column('product_id', sa.BigInteger(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('stripe_payment_intent_id', sa.String(length=200), nullable=True),
+    sa.Column('status', sa.Enum('PENDING', 'PAID', 'SHIPPED', 'COMPLETED', 'FAILED', 'REFUNDED', name='orderstatus', native_enum=False), server_default='pending', nullable=False),
+    sa.Column('user_id', sa.BigInteger(), nullable=False),
     sa.Column('created_by_user_id', sa.BigInteger(), nullable=False),
     sa.Column('customer_id', sa.BigInteger(), nullable=False),
+    sa.Column('shipping_address_1', sa.String(length=200), nullable=False),
+    sa.Column('shipping_address_2', sa.String(length=200), nullable=True),
+    sa.Column('shipping_country', sa.String(length=50), nullable=False),
+    sa.Column('shipping_city', sa.String(length=50), nullable=False),
+    sa.Column('shipping_zip_code', sa.String(length=50), nullable=False),
+    sa.Column('shipping_state', sa.String(length=50), nullable=False),
     sa.Column('created', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['created_by_user_id'], ['adminUsers.id'], ),
     sa.ForeignKeyConstraint(['customer_id'], ['customers.id'], ),
-    sa.ForeignKeyConstraint(['product_id'], ['products.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('stripe_payment_intent'),
+    sa.UniqueConstraint('shipping_address_1'),
+    sa.UniqueConstraint('shipping_address_2'),
+    sa.UniqueConstraint('shipping_city'),
+    sa.UniqueConstraint('shipping_country'),
+    sa.UniqueConstraint('shipping_state'),
+    sa.UniqueConstraint('shipping_zip_code'),
+    sa.UniqueConstraint('stripe_payment_intent_id'),
     sa.UniqueConstraint('stripe_session_id'),
     mysql_charset='utf8mb4',
     mysql_engine='InnoDB'
     )
     with op.batch_alter_table('orders', schema=None) as batch_op:
-        batch_op.create_index('ix_order_customer', ['customer_id'], unique=False)
-        batch_op.create_index('ix_order_product', ['product_id'], unique=False)
-        batch_op.create_index('ix_order_status', ['status'], unique=False)
+        batch_op.create_index(batch_op.f('ix_orders_status'), ['status'], unique=False)
 
     op.create_table('product_variants',
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
@@ -152,11 +185,27 @@ def upgrade():
         batch_op.create_index(batch_op.f('ix_product_variants_stripe_price_id'), ['stripe_price_id'], unique=False)
         batch_op.create_index(batch_op.f('ix_product_variants_stripe_product_id'), ['stripe_product_id'], unique=False)
 
+    op.create_table('cart_items',
+    sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
+    sa.Column('cart_id', sa.BigInteger(), nullable=False),
+    sa.Column('product_id', sa.BigInteger(), nullable=False),
+    sa.Column('quantity', sa.Integer(), nullable=False),
+    sa.Column('unit_price', sa.Numeric(precision=10, scale=2), nullable=False),
+    sa.Column('created', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('updated', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.ForeignKeyConstraint(['cart_id'], ['carts.id'], ),
+    sa.ForeignKeyConstraint(['product_id'], ['products.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    with op.batch_alter_table('cart_items', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_cart_items_cart_id'), ['cart_id'], unique=False)
+        batch_op.create_index(batch_op.f('ix_cart_items_product_id'), ['product_id'], unique=False)
+
     op.create_table('invoice_items',
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
     sa.Column('invoice_id', sa.BigInteger(), nullable=False),
     sa.Column('product_id', sa.BigInteger(), nullable=False),
-    sa.Column('quantity', sa.BigInteger(), nullable=False),
+    sa.Column('quantity', sa.Integer(), nullable=False),
     sa.Column('unit_price', sa.Numeric(precision=14, scale=2), server_default=sa.text('0.00'), nullable=False),
     sa.Column('created', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
@@ -194,6 +243,24 @@ def upgrade():
         batch_op.create_index('ix_invoice_tax_invoice_id', ['invoice_id'], unique=False)
         batch_op.create_index('ix_invoice_tax_type', ['tax_type'], unique=False)
 
+    op.create_table('order_items',
+    sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
+    sa.Column('quantity', sa.Integer(), nullable=False),
+    sa.Column('order_id', sa.BigInteger(), nullable=False),
+    sa.Column('product_id', sa.String(length=200), nullable=False),
+    sa.Column('unit_price', sa.Numeric(precision=10, scale=2), nullable=False),
+    sa.Column('created', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('updated', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.ForeignKeyConstraint(['order_id'], ['orders.id'], ),
+    sa.ForeignKeyConstraint(['product_id'], ['products.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    mysql_charset='utf8mb4',
+    mysql_engine='InnoDB'
+    )
+    with op.batch_alter_table('order_items', schema=None) as batch_op:
+        batch_op.create_index('ix_order_items_order_id', ['order_id'], unique=False)
+        batch_op.create_index('ix_order_items_product_id', ['product_id'], unique=False)
+
     op.create_table('payments',
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
     sa.Column('public_payment_id', sa.String(length=50), nullable=False),
@@ -223,6 +290,11 @@ def downgrade():
         batch_op.drop_index(batch_op.f('ix_payments_invoice_id'))
 
     op.drop_table('payments')
+    with op.batch_alter_table('order_items', schema=None) as batch_op:
+        batch_op.drop_index('ix_order_items_product_id')
+        batch_op.drop_index('ix_order_items_order_id')
+
+    op.drop_table('order_items')
     with op.batch_alter_table('invoice_taxes', schema=None) as batch_op:
         batch_op.drop_index('ix_invoice_tax_type')
         batch_op.drop_index('ix_invoice_tax_invoice_id')
@@ -235,6 +307,11 @@ def downgrade():
         batch_op.drop_index(batch_op.f('ix_invoice_items_invoice_id'))
 
     op.drop_table('invoice_items')
+    with op.batch_alter_table('cart_items', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_cart_items_product_id'))
+        batch_op.drop_index(batch_op.f('ix_cart_items_cart_id'))
+
+    op.drop_table('cart_items')
     with op.batch_alter_table('product_variants', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_product_variants_stripe_product_id'))
         batch_op.drop_index(batch_op.f('ix_product_variants_stripe_price_id'))
@@ -242,13 +319,11 @@ def downgrade():
 
     op.drop_table('product_variants')
     with op.batch_alter_table('orders', schema=None) as batch_op:
-        batch_op.drop_index('ix_order_status')
-        batch_op.drop_index('ix_order_product')
-        batch_op.drop_index('ix_order_customer')
+        batch_op.drop_index(batch_op.f('ix_orders_status'))
 
     op.drop_table('orders')
     with op.batch_alter_table('invoices', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('ix_invoices_public_invoice_id'))
+        batch_op.drop_index(batch_op.f('ix_invoices_invoice_id'))
         batch_op.drop_index(batch_op.f('ix_invoices_customer_id'))
         batch_op.drop_index(batch_op.f('ix_invoices_currency'))
         batch_op.drop_index('ix_invoice_status')
@@ -256,6 +331,15 @@ def downgrade():
         batch_op.drop_index('ix_invoice_customer')
 
     op.drop_table('invoices')
+    with op.batch_alter_table('carts', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_carts_user_id'))
+        batch_op.drop_index(batch_op.f('ix_carts_status'))
+
+    op.drop_table('carts')
+    with op.batch_alter_table('users', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_users_email'))
+
+    op.drop_table('users')
     with op.batch_alter_table('products', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_products_product_id'))
         batch_op.drop_index(batch_op.f('ix_products_category'))

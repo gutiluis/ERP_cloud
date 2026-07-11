@@ -1,5 +1,5 @@
 flask
-flask-marshmallow
+#flask-marshmallow
 flask-sqlalchemy
 flask-migrate
 gunicorn
@@ -7,5 +7,6 @@ pymysql
 python-dotenv
 cryptography>=41.0
 sqlalchemy
-flasgger
+#flasgger
 flask-login
+stripe==11.4.0

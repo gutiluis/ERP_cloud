@@ -104,12 +104,6 @@ class Invoice(TimeStampModel):
         server_default=func.now()
     )
     
-    invoice_due_date: Mapped[datetime] = mapped_column(
-        DateTime, 
-        nullable=False,
-        server_default=func.now()
-    )
-
     payments: Mapped[list["Payment"]] = db.relationship(
         "Payment", 
         # the name of the table is invoice or invoices?
@@ -117,7 +111,7 @@ class Invoice(TimeStampModel):
         lazy='selectin',
         cascade='save-update, merge'
     )
-    
+    # used to append the stripe checkout session as invoice.taxes(obj=obj) 
     # see invoicetaxes relationship annotated mapping
     taxes: Mapped[list["InvoiceTax"]] = db.relationship(
         "InvoiceTax", 
@@ -214,7 +208,7 @@ class InvoiceItem(TimeStampModel):
         nullable=False, 
         index=True
     )
-
+    # invoiced quantity for several products from the order PO. order.py model already has a quantity column
     quantity: Mapped[int] = mapped_column(
         Integer, 
         nullable=False,

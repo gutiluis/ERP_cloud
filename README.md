@@ -69,6 +69,10 @@ docker compose up --build -d api
 ### or 
 docker compose restart api
 
+---
+### 7 - enter admin
+docker compose exec api bash
+flask shell
 
 
 ---
