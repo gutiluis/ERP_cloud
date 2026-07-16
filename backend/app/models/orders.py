@@ -152,13 +152,18 @@ class Order(TimeStampModel):
         nullable=False
     )
 
+    invoice: Mapped["Invoice"] = db.relationship(
+        "Invoice",
+        back_populates="order",
+        uselist=False, # one order produces one invoice
+    )
+
 
 class OrderItem(TimeStampModel):
     __tablename__ = 'order_items'
     __table_args__ = (
         Index("ix_order_items_order_id", "order_id"),
         Index("ix_order_items_product_id", "product_id"),
-        {"mysql_engine": "InnoDB", "mysql_charset": "utf8mb4"},
     )
     id: Mapped[int] = mapped_column(
         BigInteger,
@@ -179,12 +184,11 @@ class OrderItem(TimeStampModel):
         index=True
     )
 
-    product_id: Mapped[int] = mapped_column(
-        BigInteger,
-        db.ForeignKey('products.id'),
+    product_id: Mapped[str] = mapped_column(
+        String(50),
+        db.ForeignKey("products.product_id"),
         nullable=False,
-        index=True,
-        unique=True
+        index=True
     )
 
     product: Mapped["Product"] = db.relationship(

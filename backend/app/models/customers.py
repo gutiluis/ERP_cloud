@@ -84,11 +84,16 @@ class Customer(TimeStampModel):
     customer_phone: Mapped[Optional[str]] = mapped_column(
         String(50), 
         nullable=True
-    ) # a phone numbers are identifiers. not numbers/integers
+    ) # phone numbers are identifiers. not numbers/integers
 
     customer_address: Mapped[str] = mapped_column(
         Text, 
         nullable=True
+    )
+
+    products: Mapped[list["Product"]] = db.relationship(
+        "Product",
+        back_populates="customer"
     )
     
     additional_notes: Mapped[Optional[str]] = mapped_column(

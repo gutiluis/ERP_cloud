@@ -22,6 +22,10 @@
   },
   "homepage": "https://github.com/gutiluis/ERP_cloud#readme",
   "devDependencies": {
+    "@stripe/cli": "^1.43.8",
     "standard-version": "^9.5.0"
+  },
+  "allowScripts": {
+    "@stripe/cli@1.43.8": true
   }
 }

@@ -55,7 +55,6 @@ class Invoice(TimeStampModel):
         Index("ix_invoice_customer", "customer_id"),
         Index("ix_invoice_status", "status"),
         Index("ix_invoice_customer_status", "customer_id", "status"),
-        {"mysql_engine": "InnoDB", "mysql_charset": "utf8mb4"},
     )
 
     id: Mapped[int] = mapped_column(
@@ -108,8 +107,8 @@ class Invoice(TimeStampModel):
         "Payment", 
         # the name of the table is invoice or invoices?
         back_populates="invoice",
-        lazy='selectin',
-        cascade='save-update, merge'
+        lazy="selectin",
+        cascade="save-update, merge"
     )
     # used to append the stripe checkout session as invoice.taxes(obj=obj) 
     # see invoicetaxes relationship annotated mapping
@@ -119,6 +118,22 @@ class Invoice(TimeStampModel):
         back_populates="invoice", 
         cascade="all, delete-orphan", 
         lazy="selectin"
+    )
+    order_id: Mapped[int] = mapped_column(
+        BigInteger,
+        db.ForeignKey("orders.id",
+                      ondelete="RESTRICT"),
+        nullable=False,
+        unique=True,
+        index=True,
+
+    )
+
+    # use with stripe webhook
+    order: Mapped["Order"] = db.relationship(
+        "Order",
+        back_populates="invoice",
+        lazy="selectin",
     )
 
     additional_notes: Mapped[Optional[str]] = mapped_column(

@@ -29,8 +29,6 @@ def index_all_customers():
     """
     Admin render all customers
     """
-    # TODO: define current_user
-    # pytest
     customers = db.session.execute(db.select(Customer).order_by(Customer.customer_id)).scalars().all()
     return render_template(
         "customers/index.html",
@@ -163,7 +161,6 @@ def customer_detail(customer_id):
     return render_template("customers/customerdetail.html", customer=customer)
 
 
-# TODO: test
 @customer_bp.route("/<string:customer_id>/delete")
 @login_required
 def delete_customer(customer_id):

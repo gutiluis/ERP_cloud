@@ -1,4 +1,4 @@
-j#!/user/bin/env python3
+#!/user/bin/env python3
 
 # filename: products.py
 # descr: static catalog. relationship with orders.py
@@ -44,6 +44,17 @@ class Product(TimeStampModel):
     product_name: Mapped[str] = mapped_column(
         String(200), 
         nullable=False
+    )
+
+    customer_id: Mapped[str] = mapped_column(
+        String(50),
+        db.ForeignKey("customers.customer_id"),
+        nullable=False
+    )
+
+    customer: Mapped[list["Customer"]] = db.relationship(
+        "Customer",
+        back_populates="products"
     )
     
     brand: Mapped[str] = mapped_column(
@@ -115,11 +126,13 @@ class ProductVariant(TimeStampModel):
     )
     id: Mapped[int] = mapped_column(
         BigInteger, 
-        primary_key=True, autoincrement=True
+        primary_key=True, 
+        autoincrement=True
     )
 
-    product_id: Mapped[int] = mapped_column(
-        db.ForeignKey('products.id'), 
+    product_id: Mapped[str] = mapped_column(
+        String(50),
+        db.ForeignKey('products.product_id'), 
         nullable=False, 
         index=True
     )

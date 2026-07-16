@@ -40,6 +40,7 @@ def create_app(config_object=Config):
     from .routes.stripe import stripe_bp
     app.register_blueprint(stripe_bp)
 
+
     from .auth.routes import auth_bp
     app.register_blueprint(auth_bp)
 

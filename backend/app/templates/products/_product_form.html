@@ -11,7 +11,7 @@
                     placeholder="eg: PROD-00001"
                     value="{{ product.product_id if product else '' }}"
                     {% if product %}readonly{% endif %}
-                    required
+                    require
                 >
             </div>
             <div class="name">
@@ -78,7 +78,6 @@
                     type="url"
                     placeholder="eg: https://nike.com/running_shoes/"
                     value="{{ product.url if product else '' }}"
-                    required
                 >
             </div>
             <div class="url-tag">

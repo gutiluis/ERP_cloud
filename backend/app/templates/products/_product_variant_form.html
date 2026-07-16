@@ -59,6 +59,7 @@
                     type="text"
                     placeholder="eg: Stock Keeping Unit"
                     value="{{ variant.sku if variant else '' }}"
+                    {% if variant %}readonly{% endif %}
                 >
             </div>
 

@@ -38,6 +38,9 @@ http://127.0.0.1:8000/health
 http://127.0.0.1:8000/ # still in flask. shoud be UI
 http://127.0.0.1:8000/api/admin/customers/
 
+### 3.2 - cheeck logs
+docker compose logs -f --tail 10 -t
+
 ---
 
 ### 4.1 - run flask migrations after building all containers
@@ -70,10 +73,55 @@ docker compose up --build -d api
 docker compose restart api
 
 ---
-### 7 - enter admin
+### 7 - enter admin in the db and create adminuser table in mysql
 docker compose exec api bash
 flask shell
+from app import db
+from app.models.admin_user import AdminUser
+from werkzeug.security import generate_password_hash
+admin = AdminUser(
+admin_id="adminid",
+username="username",
+email="email@example.com",
+password_hash=generate_password_hash("some password")
+)
+db.session.add(admin)
+db.session.commit()
 
+
+---
+### 8 - stripe testing after stripe cli and stripe login config
+# make order needed for checkout, webhook
+docker compose exec api bash
+flask shell
+from app import db
+from app.models.orders import Order
+order = Order(
+    customer_id=customer.id, # needs customer
+    status="pending",
+    total_amount=cart.total_amount
+)
+db.session.add(order)
+db.session.flush()
+# make items
+for item in cart.items:
+    order_item = OrderItem(
+        order_id=order.id,
+        product_id=item.product_id,
+        quantity=item.quantity,
+        unit_price=item.price
+    )
+
+    db.session.add(order_item)
+
+db.session.commit()
+
+select * from orders;
+## 8.1 after order
+npx stripe listen --forward-to localhost:8000/api/admin/stripe/webhook
+# second terminal
+npx stripe trigger payment_intent.succeeded
+npx stripe trigger checkout.session.completed
 
 ---
 
@@ -99,3 +147,16 @@ flask shell
 # finish docs
 
 # finish frontend
+
+
+---
+buyer
+cart
+checkout
+create order pending status
+create stripe checkout session
+buyer pays stripe
+wbhook
+    paid order status update
+    payment creation
+    invoice creation

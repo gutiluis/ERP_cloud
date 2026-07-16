@@ -5,8 +5,10 @@
 
 from app import db
 from app.models import Product, ProductVariant
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import (Blueprint, render_template, request, 
+                   redirect, url_for, flash, abort)
 from app.extensions import login_required, Decimal, InvalidOperation
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 
 
@@ -68,10 +70,10 @@ def add_product():
         ]
 
     if product_missing:
-        abort(400, description=f"Missing product Fields: {product_missing}")
+        abort(400, description=f"Missing Product Fields: {product_missing}")
 
     if variant_missing:
-        abort(400, description=f"Missing variant field: {variant_missing}")
+        abort(400, description=f"Missing Variant Field: {variant_missing}")
 
     product = Product(
         product_id = data.get(
@@ -99,6 +101,7 @@ def add_product():
             "additional_notes", ""
             ).strip() or None
     )
+
     try:
         price = Decimal(data.get("price", "").strip())
         stock_quantity = int(data.get("stock_quantity", "").strip())
@@ -129,8 +132,12 @@ def add_product():
             ).strip() or None,
     )
     db.session.add(product)
-    db.session.commit()
-    return redirect(url_for("products.index_all_products"))
+    try:
+        db.session.commit()
+    except IntegrityError: # handle dups
+        db.session.rollback()
+        flash("PLEASE TRY AGAIN YOU ARE DUPLICATING A VALUE INSIDE THE FORM WHICH ALREADY EXISTS", "error")
+        return redirect(url_for("products.index_all_products"))
 
 
 
@@ -153,7 +160,33 @@ def update_product(product_id):
     """
     Admin edit product form for db
     """
+    product_required_fields = [
+        "product_name", "brand",
+        "category", "description"
+        ]
 
+    variant_required_fields = [
+        "price", "stock_quantity",
+        ]
+    data = request.form
+
+    product_missing = [
+        field for field in product_required_fields 
+        if not data.get(
+        field, "").strip()
+        ]
+
+    variant_missing = [
+        field for field in variant_required_fields
+        if not data.get(
+        field, "").strip()
+        ]
+
+    if product_missing:
+        abort(400, description=f"Missing product Fields: {product_missing}")
+
+    if variant_missing:
+        abort(400, description=f"Missing variant field: {variant_missing}")
 
     try:
         product = Product.query.filter_by(product_id=product_id).one_or_404()
@@ -162,57 +195,59 @@ def update_product(product_id):
                 product_id=product.id
         ).first_or_404()
 
-        product.product_name = request.form.get(
+        product.product_name = data.get(
                 "product_name", ""
                 ).strip()# if im updating a product name is it or None? use or None under nullable=True in the model
-        product.brand = request.form.get(
+        product.brand = data.get(
                 "brand", ""
                 ).strip()
-        product.category = request.form.get(
+        product.category = data.get(
                 "category", ""
                 ).strip()
-        product.is_active = "is_active" in request.form
-        product.description = request.form.get(
+        product.is_active = "is_active" in data
+        product.description = data.get(
                 "description", ""
                 ).strip()
-        product.url = request.form.get(
+        product.url = data.get( # nullable=True
                 "url", ""
                 ).strip() or None
-        product.url_tag = request.form.get(
+        product.url_tag = data.get(
                 "url_tag", ""
                 ).strip() or None
-        product.additional_notes = request.form.get(
+        product.additional_notes = data.get(
                 "additional_notes", ""
                 ).strip() or None
 
-        variant.is_active = "is_active" in request.form
-        variant.color = request.form.get(
+        variant.is_active = "is_active" in data
+        variant.color = data.get(
                 "color", ""
                 ).strip() or None
-        variant.size = request.form.get(
+        variant.size = data.get(
                 "size", ""
                 ).strip() or None
-        variant.price = Decimal(request.form.get("price") or "0.00")
-        variant.stock_quantity = int(request.form.get("stock_quantity") or 0)
-        variant.sku = request.form.get(
-                "sku", ""
-                ).strip() or None
-        variant.is_external = "is_external" in request.form
-        variant.external_source = request.form.get(
+        variant.price = Decimal(data.get("price") or "0.00")
+        variant.stock_quantity = int(data.get("stock_quantity") or 0)
+        variant.is_external = "is_external" in data
+        variant.external_source = data.get(
                 "external_source", ""
                 ).strip() or None
-        variant.external_product_id = request.form.get(
+        variant.external_product_id = data.get(
                 "external_product_id", ""
                 ).strip() or None
 
         db.session.commit()
         return redirect(url_for("products.index_all_products",
                                 product_id=product.product_id))
-    except Exception as err:
-        print(err)
+    except IntegrityError as err: # handle dups
         db.session.rollback()
+        print(err)
+        flash("YOU ARE DUPLICATING A UNIQUE VALUE. PLEASE TRY AGAIN", "error")
         return redirect(url_for("products.product_form"))
-
+    except SQLAlchemyError as err: # generic errors class
+        db.session.rollback()
+        print(err)
+        flash("DATABASE ERROR OCURRED", "error")
+        return redirect(url_for("products.product_form"))
 
 @product_bp.route("/<string:product_id>", methods=["GET"])
 @login_required
