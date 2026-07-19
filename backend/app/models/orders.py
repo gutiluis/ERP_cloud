@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # filename: /backend/app/models/orders.py
-# descr: relationship with product, user, invoice
+# descr: relationship with product, user, invoice. The cart model has an order
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from decimal import Decimal
@@ -80,12 +80,6 @@ class Order(TimeStampModel):
         default=OrderStatus.PENDING,
         server_default="pending",
         index=True
-    )
-
-    user_id: Mapped[int] = mapped_column(
-        BigInteger,
-        db.ForeignKey("users.id"),
-        nullable=False,
     )
 
     user: Mapped["User"] = db.relationship(

@@ -20,9 +20,9 @@ import stripe
 from stripe.error import SignatureVerificationError
 from flask import Blueprint, request, current_app, abort, redirect
 from app import db
-from app.extensions import login_required, current_user, Decimal
+from app.extensions import login_required, Decimal
 from app.models.invoice import Invoice
-from app.models.orders import Order, OrterItem
+from app.models.orders import Order, OrderItem
 from app.models.cart import Cart
 from app import config
 
@@ -34,22 +34,27 @@ stripe_bp = Blueprint(
 
 
 @stripe_bp.route("/checkout", methods=["POST"])
-#@login_required
+#@login_required # remove for testing
 def checkout():
     """
-    load cart before checkout
+    cart is created/managed by react frontend
+    order is created by flask backend
+    load cart before checkout with order
     Stripe checkout session creation for webhook. webhook needs order and other models
         """
-    cart = Cart.query.filter_by(user_id=current_user.id).first()
+    data = request.get_json()
+    cart_id = data["cart_id"]
+    # the cart is a buyer session
+    cart = Cart.query.get(cart_id) # load from cart model
 
     if not cart:
         return {"error": "Cart not found"}, 404
 
     if not cart.items:
         return {"error": "Cart is empty"}, 400
-
+    # cart and order products come from the customers model
     order = Order(
-        user_id=current_user.id,
+        customer_id=cart.customer_id,
         status="pending",
         total_amount=cart.total_amount
     )
@@ -92,14 +97,20 @@ def checkout():
 
 
 
-# Idempotency-Key header
 # Stripe-Should-Retry # header for idempotency
 # change to https after
 # create webhook endpoint handler to receive event data post requests
 @stripe_bp.route("/webhook", methods=["POST"])
 def webhook():
+    """
+    Process completed payments
+    Idempotency check
+    Listen for events to automatically trigger reactions
+    Receive eventes at an https webhook endpoint
+    """
     # all event share same structure except data property
     # event body
+    print("[INFO] WEBHOOOK HIT")
     payload = request.data
     # signature parameter for constructEvent()
     # event payload verification. with endpoint's secret verification in the try statement
@@ -113,6 +124,7 @@ def webhook():
             # endpoint secret associated parameter for construct_event
             current_app.config["STRIPE_WEBHOOK_SECRET"]
         )
+        print("EVENT TYPE:", event["type"])
     except ValueError as e:
         # 400 bad request
         print("[ERROR] INVALID PAYLOAD", e)
@@ -130,7 +142,7 @@ def webhook():
 
     print("EVENT:", event["type"])
     print("SESSION ID:", session.get("id"))
-    print("METADATA:", session.get("metadata"))
+    print("METADATA:", session.get("metadata")) # no metadata
 
     
     stripe_session_id = session.get("id")

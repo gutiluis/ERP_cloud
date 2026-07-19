@@ -1,8 +1,8 @@
 """initial schema
 
-Revision ID: 675349f04e51
+Revision ID: 7cf8a0ba02b9
 Revises: 
-Create Date: 2026-07-16 01:11:58.541452
+Create Date: 2026-07-16 16:34:24.888782
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '675349f04e51'
+revision = '7cf8a0ba02b9'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -192,8 +192,8 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     with op.batch_alter_table('order_items', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('ix_order_items_order_id'), ['order_id'], unique=False)
-        batch_op.create_index('ix_order_items_product_id', ['product_id'], unique=False)
+        batch_op.create_index('ix_order_items_order_id', ['order_id'], unique=False)
+        batch_op.create_index(batch_op.f('ix_order_items_product_id'), ['product_id'], unique=False)
 
     op.create_table('product_variants',
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
@@ -311,8 +311,8 @@ def downgrade():
 
     op.drop_table('product_variants')
     with op.batch_alter_table('order_items', schema=None) as batch_op:
-        batch_op.drop_index('ix_order_items_product_id')
-        batch_op.drop_index(batch_op.f('ix_order_items_order_id'))
+        batch_op.drop_index(batch_op.f('ix_order_items_product_id'))
+        batch_op.drop_index('ix_order_items_order_id')
 
     op.drop_table('order_items')
     with op.batch_alter_table('invoices', schema=None) as batch_op:

@@ -152,7 +152,9 @@ npx stripe trigger checkout.session.completed
 ---
 buyer
 cart
+add/remove cartItem
 checkout
+flask api load cart
 create order pending status
 create stripe checkout session
 buyer pays stripe
@@ -160,3 +162,4 @@ wbhook
     paid order status update
     payment creation
     invoice creation
+    update inventory

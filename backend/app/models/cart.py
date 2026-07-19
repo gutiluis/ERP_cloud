@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # file: /app/models/cart.py
-# descr: preorder cart
+# descr: preorder cart to be used in the stripe checkout function
 
 
 import enum
@@ -34,17 +34,15 @@ class Cart(TimeStampModel):
         autoincrement=True
     )
 
-    user_id: Mapped[int] = mapped_column(
-        db.ForeignKey("users.id"),
+    # react can store it in a cookie or local storage and send it with api requests
+    # instead of user_id for no login of user and /stripe/checkout
+    cart_token: Mapped[str] = mapped_column(
+        String(64),
+        unique=True,
         nullable=False,
         index=True
     )
 
-    user: Mapped["User"] = db.relationship(
-        "User",
-        back_populates="carts",
-    )
-    
     status: Mapped[CartStatus] = mapped_column(
         db.Enum(
             CartStatus,
@@ -61,6 +59,12 @@ class Cart(TimeStampModel):
         "CartItem",
         back_populates="cart",
         cascade="all, delete-orphan"
+    )
+
+    # for stripe checkout session buyer does not need login
+    total_amount: Mapped[int] = mapped_column(
+        Decimal,
+        nullable=False
     )
 
 class CartItem(TimeStampModel):
