@@ -23,7 +23,10 @@ from sqlalchemy import (
     UniqueConstraint)
 from decimal import Decimal, InvalidOperation
 from typing import Optional
-from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy.orm import (
+    mapped_column, 
+    Mapped,
+    relationship)
 from flask_migrate import Migrate
 from sqlalchemy.sql import func
 

@@ -2,12 +2,11 @@
 
 # filename: /backend/app/models/orders.py
 # descr: relationship with product, user, invoice. The cart model has an order
+# declarative maping with annotations
+# do not import model where foreignkey is back_populating to prevent circular import
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from decimal import Decimal
 from sqlite3.dbapi2 import Timestamp
-from sqlalchemy.orm import relationship
-
 import enum
 from app.extensions import (
     db,
@@ -24,7 +23,8 @@ from app.extensions import (
     Index,
     Integer,
     Decimal,
-    Enum
+    Enum,
+    Decimal
 )
 
 
@@ -63,7 +63,7 @@ class Order(TimeStampModel):
         unique=True, 
         nullable=False
     )
-
+    # idempotency stripe webhook help to avoid double payments
     stripe_payment_intent_id: Mapped[str] = mapped_column(
         String(200), 
         unique=True, 
@@ -152,8 +152,17 @@ class Order(TimeStampModel):
         uselist=False, # one order produces one invoice
     )
 
+    cart_id: Mapped[int] = mapped_column(
+        BigInteger,
+        unique=True,
+        nullable=False
+    )
+
 
 class OrderItem(TimeStampModel):
+    """
+    Should determine where inventory is stored and how updated
+        """
     __tablename__ = 'order_items'
     __table_args__ = (
         Index("ix_order_items_order_id", "order_id"),
@@ -169,7 +178,7 @@ class OrderItem(TimeStampModel):
     quantity: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
-    )
+    ) 
 
     order_id: Mapped[int] = mapped_column(
         BigInteger,
@@ -198,4 +207,15 @@ class OrderItem(TimeStampModel):
     order: Mapped["Order"] = db.relationship(
         "Order",
         back_populates="items"
+    )
+
+    product_variant_id: Mapped[int] = mapped_column(
+        BigInteger,
+        db.ForeignKey("product_variants.id"),
+        nullable=False,
+    )
+
+    product_variant: Mapped[list["ProductVariant"]] = db.relationship(
+        "ProductVariant",
+        back_populates="order_items",
     )

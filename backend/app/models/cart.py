@@ -5,8 +5,6 @@
 
 
 import enum
-from decimal import Decimal
-from sqlalchemy.orm import relationship
 from app.extensions import (
     db,
     Mapped,
@@ -14,7 +12,10 @@ from app.extensions import (
     BigInteger,
     Numeric,
     TimeStampModel,
-    Integer
+    Integer,
+    String,
+    Decimal,
+    relationship
 )
     
 
@@ -62,8 +63,8 @@ class Cart(TimeStampModel):
     )
 
     # for stripe checkout session buyer does not need login
-    total_amount: Mapped[int] = mapped_column(
-        Decimal,
+    total_amount: Mapped[Decimal] = mapped_column(
+        Numeric(10, 2),
         nullable=False
     )
 

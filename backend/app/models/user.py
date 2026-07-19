@@ -38,11 +38,6 @@ class User(TimeStampModel):
         index=True
     )
     
-    orders: Mapped[list["Order"]] = db.relationship(
-        "Order",
-        back_populates="user"
-    )
-
     carts: Mapped["carts"] = db.relationship(
         "Cart",
         back_populates="user",

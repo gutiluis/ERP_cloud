@@ -1,16 +1,14 @@
 #!/user/bin/env python3
 
 # filename: products.py
-# descr: static catalog. relationship with orders.py
+# descr: static catalog. relationship with orders.py. declarative mapping with annotations
 
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from decimal import Decimal
-from sqlalchemy.orm import relationship
-
 from app.extensions import (
     db,
     Mapped,
+    # mapped_column() construct with additional ORM-specifig configuration capabilities
     mapped_column,
     BigInteger,
     String,
@@ -20,13 +18,18 @@ from app.extensions import (
     Optional,
     Integer,
     Text,
-    text
+    text,
+    relationship,
+    Decimal
 )
 
 if TYPE_CHECKING:
     from .orders import Order
 
 class Product(TimeStampModel):
+    """
+    Related to orderitem model
+    """
     __tablename__ = 'products'
     id: Mapped[int] = mapped_column(
         BigInteger, 
