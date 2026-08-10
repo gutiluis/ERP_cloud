@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: "docker"
-    directory: "/ERP"
+    directory: "/ERP_cloud"
     schedule:
       interval: "weekly"
     target-branch: "testing" # This routes the PRs directly to your testing branch. not the main which is default under security and quality
