@@ -13,11 +13,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - dockerfile: ./ERP_cloud/docker/backend.Dockerfile
+          - dockerfile: ./docker/backend.Dockerfile
             image-name: backend
-          - dockerfile: ./ERP_cloud/docker/frontend.Dockerfile
+          - dockerfile: ./docker/frontend.Dockerfile
             image-name: frontend
-          - dockerfile: ./ERP_cloud/docker/nginx.Dockerfile
+          - dockerfile: ./docker/nginx.Dockerfile
             image-name: nginx
 
     steps:
@@ -30,7 +30,7 @@ jobs:
       - name: Build Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./ERP_cloud
+          context: .
           # ${{ expression }} to dinamycally reference a value from a matrix strategy loop
           file: ${{ matrix.dockerfile }}
           tags: ${{ matrix.image-name }}:latest
