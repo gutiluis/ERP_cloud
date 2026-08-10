@@ -5,8 +5,7 @@
 
 from app import db
 from app.models import Product, ProductVariant
-from flask import (Blueprint, render_template, request, 
-                   redirect, url_for, flash, abort)
+from flask import (Blueprint, render_template, request, redirect, url_for, flash, abort)
 from app.extensions import login_required, Decimal, InvalidOperation
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
@@ -82,6 +81,7 @@ def add_product():
         product_name = data.get(
             "product_name", ""
             ).strip(),
+        # nullable=False
         brand = data.get(
             "brand", ""
             ).strip(),

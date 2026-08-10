@@ -37,12 +37,7 @@ class User(TimeStampModel):
         nullable=False, 
         index=True
     )
-    
-    carts: Mapped["carts"] = db.relationship(
-        "Cart",
-        back_populates="user",
-    )
-    
+ 
     additional_notes: Mapped[Optional[str]] = mapped_column(
         Text, 
         nullable=True

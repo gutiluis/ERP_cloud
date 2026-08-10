@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # filename: backend/app/__init__.py
-# descr: factory orchestrator does not load models. app factory
+# descr: factory orchestrator does not load models. app factory for routes
 
 
 # enable for api docstring for api documentation with marshmallow
@@ -20,6 +20,10 @@ def register_error_handlers(app):
 
 
 def create_app(config_object=Config):
+    """
+    Make app
+    Export routes apis for admin and cart
+    """
     app = Flask(__name__)
     app.config.from_object(config_object)
     # initialize extensions
@@ -33,13 +37,12 @@ def create_app(config_object=Config):
 #    swagger = Swagger(app)
 
     register_error_handlers(app)
-    # absolute import
-    #from app.auth.routes import auth_bp
-    #app.register_blueprint(auth_bp)
+
+    from .routes.cart import cart_bp
+    app.register_blueprint(cart_bp)
     
     from .routes.stripe import stripe_bp
     app.register_blueprint(stripe_bp)
-
 
     from .auth.routes import auth_bp
     app.register_blueprint(auth_bp)

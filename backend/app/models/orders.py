@@ -82,11 +82,6 @@ class Order(TimeStampModel):
         index=True
     )
 
-    user: Mapped["User"] = db.relationship(
-        "User",
-        back_populates="orders",
-    )
-
     created_by_user_id: Mapped[int] = mapped_column(
         BigInteger,
         db.ForeignKey('adminUsers.id'),
@@ -212,10 +207,10 @@ class OrderItem(TimeStampModel):
     product_variant_id: Mapped[int] = mapped_column(
         BigInteger,
         db.ForeignKey("product_variants.id"),
-        nullable=False,
+        nullable=False
     )
 
     product_variant: Mapped[list["ProductVariant"]] = db.relationship(
         "ProductVariant",
-        back_populates="order_items",
+        back_populates="order_items"
     )

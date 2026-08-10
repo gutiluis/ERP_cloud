@@ -81,7 +81,7 @@ class Product(TimeStampModel):
         Text, 
         nullable=False
     )
-    
+    # under Product not ProductVariant
     order_items: Mapped[list["OrderItem"]] = db.relationship(
         "OrderItem",
         back_populates="product"
@@ -204,6 +204,11 @@ class ProductVariant(TimeStampModel):
         'Product',
         back_populates='variants',
     ))
+
+    order_items: Mapped[list["OrderItem"]] = db.relationship(
+        "OrderItem",
+        back_populates="product_variant"
+    )
     
     @property
     def is_in_stock(self) -> bool:
