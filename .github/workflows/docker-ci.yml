@@ -30,8 +30,8 @@ jobs:
       - name: Build Docker image
         uses: docker/build-push-action@v6
         with:
-          context: .                    
+          context: ./ERP_cloud
           # ${{ expression }} to dinamycally reference a value from a matrix strategy loop
-          file: ${{ matrix.dockerfile }}    
+          file: ${{ matrix.dockerfile }}
           tags: ${{ matrix.image-name }}:latest
           push: false
