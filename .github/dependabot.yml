@@ -1,1 +1,13 @@
+version: 2
+updates:
+  - package-ecosystem: "docker"
+    directory: "/ERP"
+    schedule:
+      interval: "weekly"
+    target-branch: "testing"
 
+  - package-ecosystem: "docker"
+    directory: "/ERP/docker"
+    schedule:
+      interval: "weekly"
+    target-branch: "testing"
