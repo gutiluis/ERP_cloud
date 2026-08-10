@@ -1,15 +1,3 @@
-<<<<<<< HEAD
-# how it works
-
-cp .env.example .env
-
----
-
-### development
-
-### 1 - start all services same time
-
-=======
 >[!WARNING]
 >CURRENTLY UNDER DEVELOPMENT
 
@@ -18,24 +6,17 @@ cp .env.example .env
 
 ---
 
-## how it works:
+## how it works
 
 ```
 cp .env.example .env
 ```
 
----
-
-## development:
-
-### 1 - start all services same time:
+### - start all services same time
 
 ```
->>>>>>> e0b2da3cd25bef2bb4b477a807411a10688f5bc8
 docker compose up -d --build
 ```
-
----
 
 ### 2 - check mysql db connection with docker, or preferred way
 
@@ -43,40 +24,26 @@ docker compose up -d --build
 
 ### does not require password
 
-<<<<<<< HEAD
-docker compose exec db bash # enter service name not container name
-
-# -interactive -pseudo tty terminal makes a session active
-
-=======
 ```
-docker compose exec db bash # enter service name not container name
+docker compose exec db bash
 ```
 
-# -interactive -pseudo tty terminal makes a session active
+### -interactive -pseudo tty terminal makes a session active
+
 ```
->>>>>>> e0b2da3cd25bef2bb4b477a807411a10688f5bc8
 docker compose exec -it db bash
 docker compose exec -it api bash
 ```
 
 ### 2.1 - or check mysql prompt without entering first bash. needs the password. without opening container shell first. enter password
-<<<<<<< HEAD
 
-docker compose exec db mysql -u erp -p erp
 
 ### 2.2 - or run command with docker compose passing shell and mysql
 
-=======
-
 ```
 docker compose exec db mysql -u erp -p erp
 ```
-
-### 2.2 - or run command with docker compose passing shell and mysql 
-
 ```
->>>>>>> e0b2da3cd25bef2bb4b477a807411a10688f5bc8
 docker compose exec db mysql -u erp -perp -e "SHOW DATABASES;"
 docker compose exec db mysql -u erp -perp erp -e "SHOW TABLES;"
 ```
@@ -89,26 +56,20 @@ docker compose exec db mysql -u erp -perp erp -e "SHOW TABLES;"
 
 ### 3.1 - check route ok
 
-<http://127.0.0.1:8000/health>
-<http://127.0.0.1:8000/> # still in flask. shoud be UI
-<http://127.0.0.1:8000/api/admin/customers/>
+http://127.0.0.1:8000/health
+http://127.0.0.1:8000/ # still in flask. shoud be UI
+http://127.0.0.1:8000/api/admin/customers/
 
 ### 3.2 - cheeck logs
 
+```
 docker compose logs -f --tail 10 -t
+```
 
 ---
 
 ### 4.1 - run flask migrations after building all containers
 
-<<<<<<< HEAD
-cd /ERP
-docker compose exec api flask --app wsgi db init
-docker compose exec api flask --app wsgi db migrate -m "initial schema" # when models change
-
-# when erp.customers table is not found even though the migrations folder exists
-
-=======
 ```
 cd /ERP
 docker compose exec api flask --app wsgi db init
@@ -118,31 +79,22 @@ docker compose exec api flask --app wsgi db migrate -m "initial schema" # when m
 # when erp.customers table is not found even though the migrations folder exists
 
 ```
->>>>>>> e0b2da3cd25bef2bb4b477a807411a10688f5bc8
 docker compose exec api flask --app wsgi db migrate -m "map tables"
 docker compose exec api flask --app wsgi db upgrade # apply migration
 ```
 
 ### 4.2 check migrations
 
-<<<<<<< HEAD
-docker compose exec api flask db history
-docker compose exec api flask db current
-docker compose exec -it servicename sh
-
-### 4.3 check routes
-
-=======
 ```
 docker compose exec api flask db history
 docker compose exec api flask db current
 docker compose exec -it servicename sh
+
 ```
 
 ### 4.3 check routes
 
 ```
->>>>>>> e0b2da3cd25bef2bb4b477a807411a10688f5bc8
 docker compose exec api flask routes
 ```
 
@@ -150,26 +102,18 @@ docker compose exec api flask routes
 
 ### 5 - check tables were mapped
 
-<<<<<<< HEAD
-cd /ERP
-docker compose exec db mysql -u root -p
-=======
 ```
 cd /ERP
 docker compose exec db mysql -u root -p
 ```
->>>>>>> e0b2da3cd25bef2bb4b477a807411a10688f5bc8
 
 ---
 
 ### 6 - update migrations and frontend even though table rows are in the container
 
-<<<<<<< HEAD
-docker compose up --build -d api
 
 ### or
 
-=======
 ```
 docker compose up --build -d api
 ```
@@ -177,15 +121,14 @@ docker compose up --build -d api
 ### or 
 
 ```
->>>>>>> e0b2da3cd25bef2bb4b477a807411a10688f5bc8
 docker compose restart api
 ```
 
 ---
 
-<<<<<<< HEAD
 ### 7 - enter admin in the db and create adminuser table in mysql
 
+```
 docker compose exec api bash
 flask shell
 from app import db
@@ -199,18 +142,14 @@ password_hash=generate_password_hash("some password")
 )
 db.session.add(admin)
 db.session.commit()
+```
+
 
 ### 7.1 - make/load customer-model either from frontend or backend model/route
 
 ### 7.2 - make cart with customer/seller
-=======
-### 7 - enter admin
 
-```
-docker compose exec api bash
-flask shell
-```
->>>>>>> e0b2da3cd25bef2bb4b477a807411a10688f5bc8
+
 
 ---
 
@@ -218,6 +157,7 @@ flask shell
 
 ### make order needed for checkout, webhook
 
+```
 docker compose exec api bash
 flask shell
 from app import db
@@ -229,9 +169,11 @@ order = Order(
 )
 db.session.add(order)
 db.session.flush()
+```
 
 ### make items
 
+```
 for item in cart.items:
     order_item = OrderItem(
         order_id=order.id,
@@ -243,44 +185,42 @@ for item in cart.items:
     db.session.add(order_item)
 
 db.session.commit()
+```
 
-select * from orders;
 
-## 8.1 after order
+### 8.1 after order
 
-npx stripe listen --forward-to localhost:8000/api/admin/stripe/webhook
+```
+stripe listen --forward-to localhost:8000/api/admin/stripe/webhook
+```
 
-# second terminal
+### second terminal
 
+```
 npx stripe trigger payment_intent.succeeded
 npx stripe trigger checkout.session.completed
+```
 
 ---
 
 ### TODO
 
-### 7 -  make pytest for app/models
+### oracle vm
 
-### 8 - design frontend: vire, react, tailwind
+### buy domain
 
----
+### one user admin account to manage everything
 
-# TODO
+### finish tests for backend and frontend
 
-# oracle vm
+### finish docs
 
-# buy domain
+### finish frontend
 
-# one user admin account to manage everything
-
-# finish tests for backend and frontend
-
-# finish docs
-
-# finish frontend
+### http to https
 
 ---
-<<<<<<< HEAD
+
 buyer
 cart
 add/remove cartItem
@@ -294,7 +234,8 @@ wbhook
     payment creation
     invoice creation
     update inventory
-=======
+
+---
 
 ## Tech-Stack
 
@@ -342,4 +283,3 @@ Info on reporting bugs, getting help, finding third-party tools and sample apps,
 ## License
 
 [MIT LICENSE](LICENSE)
->>>>>>> e0b2da3cd25bef2bb4b477a807411a10688f5bc8
