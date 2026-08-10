@@ -9,6 +9,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        include:
+          - dockerfile: ./ERP_cloud/docker/backend.Dockerfile
+            image-name: backend
+          - dockerfile: ./ERP_cloud/docker/frontend.Dockerfile
+            image-name: frontend
+          - dockerfile: ./ERP_cloud/docker/nginx.Dockerfile
+            image-name: nginx
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -17,8 +28,10 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
-          context: .
-          file: ./ERP_cloud/docker  # Update this path if your Dockerfile is nested differently inside /docker/
-          push: false                 # Only build to test; don't push to a registry yet
+          context: .                    
+          # ${{ expression }} to dinamycally reference a value from a matrix strategy loop
+          file: ${{ matrix.dockerfile }}    
+          tags: ${{ matrix.image-name }}:latest
+          push: false
