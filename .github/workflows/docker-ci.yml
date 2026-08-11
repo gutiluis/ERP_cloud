@@ -34,4 +34,5 @@ jobs:
           context: .
           file: ${{ matrix.dockerfile }}
           tags: ${{ matrix.image-name }}:latest
+          # add docker/login-action and switch to true for the cloud environment
           push: false
