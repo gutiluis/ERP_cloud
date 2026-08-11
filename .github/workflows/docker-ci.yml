@@ -23,10 +23,10 @@ jobs:
             image-name: nginx
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7 # Updated to a stable, currently supported major version
+        uses: actions/checkout@v7
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4 # Adjusted to match standard available versions
+        uses: docker/setup-buildx-action@v4
 
       - name: Build Docker image and push
         uses: docker/build-push-action@v7
