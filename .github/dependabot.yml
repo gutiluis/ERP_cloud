@@ -4,4 +4,7 @@ updates:
     directory: "/docker"
     schedule:
       interval: "weekly"
+    # change after to main
     target-branch: "testing" # This routes the PRs directly to your testing branch. not the main which is default under security and quality
+    allow:
+      - dependency-type: "direct"
