@@ -1,0 +1,37 @@
+name: Docker CI
+
+on:
+  push:
+    branches: [ "testing" ]
+  pull_request:
+    branches: [ "testing" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        include:
+          - dockerfile: ./docker/backend.Dockerfile
+            image-name: backend
+          - dockerfile: ./docker/frontend.Dockerfile
+            image-name: frontend
+          - dockerfile: ./docker/nginx.Dockerfile
+            image-name: nginx
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build Docker image and push
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          # ${{ expression }} to dinamycally reference a value from a matrix strategy loop
+          file: ${{ matrix.dockerfile }}
+          tags: ${{ matrix.image-name }}:latest
+          push: false
