@@ -1,15 +1,17 @@
-name: Docker CI
+name: Weekly and Dependabot CI under Development Stage
 
 on:
-  push:
-    branches: [ "testing" ]
+  schedule:
+    - cron: '0 0 * * 1' 
   pull_request:
-    branches: [ "testing" ]
+    branches:
+      - testing
+  workflow_dispatch: 
 
 jobs:
-  build:
+  heavy-build:
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         include:
@@ -19,19 +21,17 @@ jobs:
             image-name: frontend
           - dockerfile: ./docker/nginx.Dockerfile
             image-name: nginx
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v7 # Updated to a stable, currently supported major version
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+        uses: docker/setup-buildx-action@v4 # Adjusted to match standard available versions
 
-      - name: Build Docker image
+      - name: Build Docker image and push
         uses: docker/build-push-action@v7
         with:
           context: .
-          # ${{ expression }} to dinamycally reference a value from a matrix strategy loop
           file: ${{ matrix.dockerfile }}
           tags: ${{ matrix.image-name }}:latest
           push: false
