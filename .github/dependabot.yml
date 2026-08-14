@@ -1,5 +1,13 @@
 version: 2
 updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    target-branch: "testing"
+    allow:
+      - dependency-type: "direct"
+
   - package-ecosystem: "docker"
     directory: "/docker"
     schedule:
