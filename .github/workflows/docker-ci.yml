@@ -1,15 +1,16 @@
-name: Weekly and Dependabot CI under Development Stage
+name: Weekly and Dependabot Docker CI
 
 on:
   schedule:
-    - cron: '0 0 * * 1'
+    - cron: "0 0 * * 1"
   pull_request:
     branches:
       - testing
   workflow_dispatch:
 
 jobs:
-  heavy-build:
+  docker-build:
+    name: Build Docker images
     runs-on: ubuntu-latest
 
     strategy:
@@ -21,6 +22,7 @@ jobs:
             image-name: frontend
           - dockerfile: ./docker/nginx.Dockerfile
             image-name: nginx
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -28,11 +30,10 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
-      - name: Build Docker image and push
+      - name: Build Docker image
         uses: docker/build-push-action@v7
         with:
           context: .
           file: ${{ matrix.dockerfile }}
           tags: ${{ matrix.image-name }}:latest
-          # add docker/login-action and switch to true for the cloud environment
           push: false

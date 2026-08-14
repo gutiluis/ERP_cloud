@@ -26,12 +26,14 @@ services:
     build:
       context: .
       dockerfile: docker/frontend.Dockerfile
+    container_name: erp_frontend
 
 
   nginx:
     build:
       context: .
       dockerfile: docker/nginx.Dockerfile
+    container_name: erp_nginx
     ports:
       - "80:80"
     depends_on:
