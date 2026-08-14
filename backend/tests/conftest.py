@@ -1,6 +1,4 @@
-#!/bin/env python
-
-'''
+"""
 Script to set up a test database running with docker, for the customer class for instance using pytest
 
 
@@ -24,16 +22,18 @@ the services, state, or other operating environments set up by fixtures are acce
 - pytest does not run with python REPL
 
 
-'''
+"""
 
 import pytest
 from app import create_app
 from app.extensions import db
 
+
 class TestConfig:
     TESTING = True
     SQLALCHEMY_DATABASE_URI = "mysql+pymysql://erp:erp@127.0.0.1:3307/erp_test"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
 
 @pytest.fixture(scope="session")
 def app():
@@ -41,11 +41,13 @@ def app():
     with app.app_context():
         yield app
 
+
 @pytest.fixture(scope="session")
 def db_(app):
     db.create_all()
     yield db
     db.drop_all()
+
 
 @pytest.fixture(scope="function")
 def session(db_):

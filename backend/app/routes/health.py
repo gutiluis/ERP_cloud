@@ -1,8 +1,5 @@
-#!/usr/bin/env python3
-
 # file: backend/app/routes/health.py
 # descr: /health rest api endpint
-
 
 
 from flask import Blueprint, jsonify

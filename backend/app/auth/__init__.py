@@ -1,14 +1,8 @@
-#!/usr/bin/env python3
-
-
-
-
 # file: /app/auth/__init__.py
 # descr: user_loader. logged in and anonymoususermixin. creating and configuring app
 
 
-
-from app.extensions import login_manager, db
+from app.extensions import db, login_manager
 from app.models import AdminUser
 
 

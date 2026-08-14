@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # filename: entrypoint.sh
- 
+
 # descr: run flask migrations after containers run to check models are mapping to the mysql db
 # before flask app starts
 # after the db container is starting
@@ -32,5 +32,5 @@ echo "[INFO] Running application..."
 # any lines after exec will never execute
 # after exec the terminal closes
 # it wasnt debugging so added defualt.conf file and changed frontend.Dockerfile and nging.Dockerfile
-# the [warning] log comes from the --reload 
+# the [warning] log comes from the --reload
 exec gunicorn -b 0.0.0.0:5000 wsgi:app --log-level=debug --reload

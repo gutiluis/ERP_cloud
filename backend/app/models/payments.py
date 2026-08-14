@@ -1,34 +1,30 @@
-#!/usr/bin/env python3
-
-
-
 # file: /backend/app/models/payments.py
 # descr: payments model
 
 from __future__ import annotations
-from typing import TYPE_CHECKING
+
 from datetime import datetime, timezone
-from sqlalchemy.orm import relationship
-from app.extensions import (
-    db,
-    TimeStampModel,
-    Mapped,
-    mapped_column,
-    String,
+from decimal import Decimal
+from typing import TYPE_CHECKING
+
+from sqlalchemy import (
     BigInteger,
     DateTime,
-    Decimal,
     Numeric,
-    Optional,
-    Text
+    String,
+    Text,
 )
+from sqlalchemy.orm import Mapped, mapped_column
+
+from app.extensions import db
+from app.models.mixin import TimeStampModel
 
 if TYPE_CHECKING:
     from .invoice import Invoice
 
 
 class Payment(TimeStampModel):
-    __tablename__ = 'payments'
+    __tablename__ = "payments"
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
 
     # external systems stripe. requires strings
@@ -37,14 +33,12 @@ class Payment(TimeStampModel):
     )
     invoice_id: Mapped[int] = mapped_column(
         BigInteger,
-        db.ForeignKey('invoices.id', ondelete='restrict'),
+        db.ForeignKey("invoices.id", ondelete="restrict"),
         nullable=False,
         index=True,
     )
 
-    payment_amount: Mapped[Decimal] = mapped_column(
-        Numeric(10, 2), nullable=False
-    )
+    payment_amount: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     payment_date: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=False,
@@ -53,14 +47,11 @@ class Payment(TimeStampModel):
     payment_reference: Mapped[str] = mapped_column(
         String(100), nullable=False, unique=True
     )
-    payment_method: Mapped[str] = mapped_column(
-        String(50), nullable=False
-    )
+    payment_method: Mapped[str] = mapped_column(String(50), nullable=False)
 
-    invoice: Mapped["Invoice"] = db.relationship(
-        'Invoice', back_populates='payments',
-        uselist=False
+    invoice: Mapped[Invoice] = db.relationship(
+        "Invoice", back_populates="payments", uselist=False
     )
 
     # from sqlalchemy docs typing library
-    additional_info: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    additional_info: Mapped[str | None] = mapped_column(Text, nullable=True)

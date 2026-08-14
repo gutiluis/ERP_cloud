@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
+import pymysql
 
-'''
+"""
 
 filename: test_connection.py
 descr: script to check connection of mysql db inside the docker container
@@ -9,8 +9,9 @@ descr: script to check connection of mysql db inside the docker container
 # the host is not db serice name
 do not forget to give the permissions to the user rookie
 
-'''
-'''
+"""
+
+"""
 # second test
 import pymysql.cursors
 connection = pymysql.connect(host="127.0.0.1",
@@ -26,8 +27,7 @@ with connection:
 #        result = cursor.fetchone() # return first database returned only
         result = cursor.fetchall()
         print(result)
-'''
-import pymysql
+"""
 
 conn = pymysql.connect(
     host="127.0.0.1",
@@ -37,9 +37,8 @@ conn = pymysql.connect(
     port=3307,
 )
 
-with conn:
-    with conn.cursor() as cursor:
-        sql = "SHOW DATABASES;"
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        print(result)
+with conn, conn.cursor() as cursor:
+    sql = "SHOW DATABASES;"
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    print(result)

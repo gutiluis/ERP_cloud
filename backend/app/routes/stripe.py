@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-
-
 """
 # file: /app/routes/stripe.py
 
@@ -15,37 +12,30 @@
 # idempotency guarantees that no more than one object is created
 """
 
-
 import stripe
-from stripe.error import SignatureVerificationError
-from flask import Blueprint, request, current_app, abort, redirect
 from app import db
-from app.extensions import login_required, Decimal
-from app.models.invoice import Invoice
-from app.models.orders import Order, OrderItem
 from app.models.cart import Cart
-from app import config
+from app.models.invoice import Invoice, InvoiceItem
+from app.models.orders import Order, OrderItem
+from app.models.payments import Payment
+from flask import Blueprint, abort, current_app, request
 
-stripe_bp = Blueprint(
-    "stripe",
-    __name__,
-    url_prefix="/api/admin"
-)
+stripe_bp = Blueprint("stripe", __name__, url_prefix="/api/admin")
 
 
 @stripe_bp.route("/checkout", methods=["POST"])
-#@login_required # remove for testing
+# @login_required # remove for testing
 def checkout():
     """
     cart is created/managed by react frontend
     order is created by flask backend. the order is made by the function and needs to be constructed before the webhook
     load cart before checkout with order
     Stripe checkout session creation for webhook. webhook needs order and other models
-        """
+    """
     data = request.get_json()
     cart_id = data["cart_id"]
     # the cart is a buyer session
-    cart = Cart.query.get(cart_id) # load from cart model
+    cart = Cart.query.get(cart_id)  # load from cart model
 
     if not cart:
         return {"error": "Cart not found"}, 404
@@ -53,24 +43,19 @@ def checkout():
     if not cart.items:
         return {"error": "Cart is empty"}, 400
 
-    existing_order = Order.query.filter_by(
-        cart_id=cart.id,
-        status="pending"
-    ).first()
+    existing_order = Order.query.filter_by(cart_id=cart.id, status="pending").first()
     if existing_order:
         return {"error", "Checkout already started for this cart"}, 409
 
     try:
-        
-        
         # cart and order products come from the customers model
         order = Order(
             customer_id=cart.customer_id,
             status="pending",
-            total_amount=cart.total_amount
+            total_amount=cart.total_amount,
         )
         db.session.add(order)
-        db.session.flush() # gets order.id before commit
+        db.session.flush()  # gets order.id before commit
         # add order items
         for item in cart.items:
             db.session.add(
@@ -78,7 +63,7 @@ def checkout():
                     order_id=order.id,
                     product_id=item.product_id,
                     quantity=item.quantity,
-                    unit_price=item.price
+                    unit_price=item.price,
                 )
             )
 
@@ -98,9 +83,7 @@ def checkout():
                 }
                 for item in cart.items
             ],
-            metadata={
-                "order_id": str(order.id)
-            },
+            metadata={"order_id": str(order.id)},
             success_url="https://yourapp.com/success",
             cancel_url="https://yourapp.com/cart",
         )
@@ -111,11 +94,7 @@ def checkout():
     except Exception as err:
         db.session.rollback()
         current_app.logger.exception("Checkout Failed")
-        return {
-            "error", str(err)
-        }, 500
-
-
+        return {"error", str(err)}, 500
 
 
 # Stripe-Should-Retry # header for idempotency
@@ -146,7 +125,7 @@ def webhook():
             sig_header,
             # import config.py
             # endpoint secret associated parameter for construct_event
-            current_app.config["STRIPE_WEBHOOK_SECRET"]
+            current_app.config["STRIPE_WEBHOOK_SECRET"],
         )
         print("EVENT TYPE:", event["type"])
     except ValueError as e:
@@ -165,8 +144,8 @@ def webhook():
 
     print("EVENT:", event["type"])
     print("SESSION ID:", session.get("id"))
-    print("METADATA:", session.get("metadata")) # no metadata
- 
+    print("METADATA:", session.get("metadata"))  # no metadata
+
     stripe_session_id = session.get("id")
     payment_intent = session.get("payment_intent")
     order_id = session.get("metadata", {}).get("order_id")
@@ -184,9 +163,7 @@ def webhook():
         return {"error": "missing_order_id"}, 400
 
     order = (
-        db.session.query(Order)
-        .filter_by(stripe_session_id=stripe_session_id)
-        .first()
+        db.session.query(Order).filter_by(stripe_session_id=stripe_session_id).first()
     )
 
     # needs a session
@@ -199,13 +176,8 @@ def webhook():
     if order.status == "paid":
         return {"ok": True}, 200
 
-
     # idempotency duplicate invoice
-    existing_invoice = (
-        db.session.query(Invoice)
-        .filter_by(order_id=order.id)
-        .first()
-    )
+    existing_invoice = db.session.query(Invoice).filter_by(order_id=order.id).first()
     if existing_invoice:
         return {"ok": True}, 200
 
@@ -225,8 +197,7 @@ def webhook():
             variant = order_item.product_variant
             variant.stock_quantity -= order_item.quantity
 
-
-        # payment class instantiation 
+        # payment class instantiation
         payment = Payment(
             order_id=order.id,
             customer_id=order.customer_id,
@@ -237,7 +208,7 @@ def webhook():
         )
         db.session.add(payment)
         # invoice instantiation
-        invoice=Invoice(
+        invoice = Invoice(
             order_id=order.id,
             status="paid",
             currency=session.get("currency"),

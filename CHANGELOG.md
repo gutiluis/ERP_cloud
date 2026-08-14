@@ -8,21 +8,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-* **routes/invoices.py:** invoice index, void, detail routes 
+* **routes/invoices.py:** invoice index, void, detail routes
 * **routes/products.py:** products and product variants admin public routes
 
 ## [1.1.1] - [2026-06-25]
 
 ### Added
 * **app/auth:** add flask-login authentication. Impelement further on
-* **routes/customers.py:** add customers login_required 
+* **routes/customers.py:** add customers login_required
 
 ## [1.1.0] - [2026-06-19]
 
 
 ### Added
 
-* **admin/customers:** implemented flasgger documentation for customer details 
+* **admin/customers:** implemented flasgger documentation for customer details
 
 
 ## [0.1.0] - [2026-06-18]

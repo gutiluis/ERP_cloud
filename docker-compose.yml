@@ -12,7 +12,7 @@ services:
       # does not mean its running in localhost:5000
       - "8000:5000"
 
-      # erp_api reads 
+      # erp_api reads
     env_file: # read by erp_api not erp_db
       - .env
     depends_on:
@@ -26,7 +26,7 @@ services:
     build:
       context: .
       dockerfile: docker/frontend.Dockerfile
- 
+
 
   nginx:
     build:

@@ -1,12 +1,10 @@
-#!/usr/bin/env python3
-
 # file: backend/app/config.py
 # descr: load flask flash secret key, and flask_login secret key
 
 
+import os
 
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 
@@ -20,4 +18,3 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # change to os.environ for production
     STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
-

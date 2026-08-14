@@ -3,6 +3,7 @@
 
 # ERP SaaS
 
+Admin Panel, CRUD operations, public frontend
 
 ---
 
@@ -30,7 +31,7 @@ docker compose exec db bash
 
 ### -interactive -pseudo tty terminal makes a session active
 
-```
+```sh
 docker compose exec -it db bash
 docker compose exec -it api bash
 ```
@@ -38,14 +39,19 @@ docker compose exec -it api bash
 ### 2.1 - or check mysql prompt without entering first bash. needs the password. without opening container shell first. enter password
 
 
-### 2.2 - or run command with docker compose passing shell and mysql
+### 2.2 - or run command with docker compose passing shell and mysql. this is inside the db container
 
-```
+```sh
 docker compose exec db mysql -u erp -p erp
-```
-```
 docker compose exec db mysql -u erp -perp -e "SHOW DATABASES;"
 docker compose exec db mysql -u erp -perp erp -e "SHOW TABLES;"
+```
+
+### pytest testig db from inside db container
+### test erp_test database inside the db container. connection context.
+
+```sh
+docker compose exec db mysql -u erp -p -h localhost erp_test
 ```
 
 ### 2.3 - or check with pymysql
@@ -62,7 +68,7 @@ http://127.0.0.1:8000/api/admin/customers/
 
 ### 3.2 - cheeck logs
 
-```
+```sh
 docker compose logs -f --tail 10 -t
 ```
 
@@ -70,22 +76,22 @@ docker compose logs -f --tail 10 -t
 
 ### 4.1 - run flask migrations after building all containers
 
-```
+```sh
 cd /ERP
 docker compose exec api flask --app wsgi db init
 docker compose exec api flask --app wsgi db migrate -m "initial schema" # when models change
 ```
 
-# when erp.customers table is not found even though the migrations folder exists
+### when erp.customers table is not found even though the migrations folder exists
 
-```
+```sh
 docker compose exec api flask --app wsgi db migrate -m "map tables"
-docker compose exec api flask --app wsgi db upgrade # apply migration
+docker compose exec api flask --app wsgi db upgrade
 ```
 
 ### 4.2 check migrations
 
-```
+```sh
 docker compose exec api flask db history
 docker compose exec api flask db current
 docker compose exec -it servicename sh
@@ -94,7 +100,7 @@ docker compose exec -it servicename sh
 
 ### 4.3 check routes
 
-```
+```sh
 docker compose exec api flask routes
 ```
 
@@ -102,7 +108,7 @@ docker compose exec api flask routes
 
 ### 5 - check tables were mapped
 
-```
+```sh
 cd /ERP
 docker compose exec db mysql -u root -p
 ```
@@ -114,13 +120,13 @@ docker compose exec db mysql -u root -p
 
 ### or
 
-```
+```sh
 docker compose up --build -d api
 ```
 
-### or 
+### or
 
-```
+```sh
 docker compose restart api
 ```
 
@@ -157,7 +163,7 @@ db.session.commit()
 
 ### make order needed for checkout, webhook
 
-```
+```sh
 docker compose exec api bash
 flask shell
 from app import db
@@ -173,7 +179,7 @@ db.session.flush()
 
 ### make items
 
-```
+```python
 for item in cart.items:
     order_item = OrderItem(
         order_id=order.id,
@@ -190,13 +196,13 @@ db.session.commit()
 
 ### 8.1 after order
 
-```
+```sh
 stripe listen --forward-to localhost:8000/api/admin/stripe/webhook
 ```
 
 ### second terminal
 
-```
+```sh
 npx stripe trigger payment_intent.succeeded
 npx stripe trigger checkout.session.completed
 ```

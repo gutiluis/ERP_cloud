@@ -28,7 +28,7 @@ export function loadEnv() {
   }
 
   const requiredVars = ['VITE_AUTH_URL'];
-  
+
   for (const key of requiredVars) {
     if (!process.env[key]) {
       throw new Error(`Startup failed: Missing required environment variable: ${key}`);
