@@ -8,6 +8,6 @@ gunicorn==26.0.0
 PyMySQL==1.2.0
 python-dotenv==1.2.2
 cryptography==50.0.0
-SQLAlchemy==2.0.50
+SQLAlchemy==2.0.52
 Flask-Login==0.6.3
 stripe==15.5.0
