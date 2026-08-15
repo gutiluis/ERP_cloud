@@ -80,7 +80,7 @@ repos:
       # Backend tests
       - id: pytest
         name: Run backend tests
-        entry: pytest backend/tests
+        entry: env DATABASE_URL=mysql+pymysql://erp:erp@127.0.0.1:3307/erp_test python -m pytest backend/tests
         language: system
         # ^ start of string
         # .* any characters including subdirectories

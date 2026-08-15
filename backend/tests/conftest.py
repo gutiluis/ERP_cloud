@@ -24,20 +24,23 @@ the services, state, or other operating environments set up by fixtures are acce
 
 """
 
+import os
 import pytest
+
 from app import create_app
 from app.extensions import db
 
 
 class TestConfig:
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://erp:erp@127.0.0.1:3307/erp_test"
+    SQLALCHEMY_DATABASE_URI = os.environ["DATABASE_URL"]
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 @pytest.fixture(scope="session")
 def app():
     app = create_app(TestConfig)
+
     with app.app_context():
         yield app
 
@@ -45,16 +48,18 @@ def app():
 @pytest.fixture(scope="session")
 def db_(app):
     db.create_all()
+
     yield db
+
     db.drop_all()
 
 
 @pytest.fixture(scope="function")
 def session(db_):
-    connection = db.engine.connect()
+    connection = db_.engine.connect()
     transaction = connection.begin()
 
-    session = db.session
+    session = db_.session
     session.bind = connection
 
     yield session
@@ -62,3 +67,4 @@ def session(db_):
     session.rollback()
     transaction.rollback()
     connection.close()
+    session.remove()
