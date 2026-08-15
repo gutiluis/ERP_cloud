@@ -54,5 +54,14 @@ jobs:
         run: |
           pip install -r requirements.txt
 
+      - name: MySQL connection test
+        run: |
+          mysql \
+            -h 127.0.0.1 \
+            -P 3306 \
+            -u erp \
+            -perp \
+            -e "SELECT 1;" erp_test
+
       - name: Run pytest
         run: python -m pytest backend/tests
