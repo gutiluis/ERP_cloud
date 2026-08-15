@@ -13,8 +13,8 @@ jobs:
 
     services:
       mysql:
-        image: mysq:8.0
-        environment:
+        image: mysql:8.0
+        env:
           MYSQL_ROOT_PASSWORD: erp
           MYSQL_DATABASE: erp_test
           MYSQL_USER: erp
