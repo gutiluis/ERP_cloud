@@ -1,0 +1,45 @@
+name: MySQL Connection Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  mysql-test:
+    runs-on: ubuntu-latest
+
+    env:
+      DATABASE_URL: mysql+pymysql://erp:erp@127.0.0.1:3306/erp_test
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: erp
+          MYSQL_DATABASE: erp_test
+          MYSQL_USER: erp
+          MYSQL_PASSWORD: erp
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -u root -perp"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+    steps:
+      - name: Check MySQL connection
+        run: |
+          mysqladmin ping \
+            -h 127.0.0.1 \
+            -P 3306 \
+            -u erp \
+            -perp
+
+      - name: Check database connection
+        run: |
+          mysql \
+            -h 127.0.0.1 \
+            -P 3306 \
+            -u erp \
+            -perp \
+            -e "SELECT 1;" erp_test
