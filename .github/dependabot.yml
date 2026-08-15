@@ -7,6 +7,7 @@ updates:
     target-branch: "testing"
     allow:
       - dependency-type: "direct"
+    open-pull-requests-limit: 10
 
   - package-ecosystem: "docker"
     directory: "/docker"
