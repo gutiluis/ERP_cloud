@@ -30,17 +30,13 @@ def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-
         admin = authenticate_user(username, password)
-
-        if admin:
+        if not admin:
+            flash("Invalid username or password", "error")
+        else:
             login_user(admin)
-
-            next_page = request.args.get("next")
-            return redirect(next_page or url_for("customers.index_all_customers"))
-
-        flash("Invalid username or password", "error")
-
+            flash("Logged in successfully")
+            return redirect(url_for("index"))
     return render_template("auth/auth_login.html")
 
 
