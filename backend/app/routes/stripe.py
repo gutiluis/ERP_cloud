@@ -91,10 +91,10 @@ def checkout():
         db.session.commit()
 
         return {"checkout_url": session.url}
-    except Exception as err:
+    except Exception:
         db.session.rollback()
         current_app.logger.exception("Checkout Failed")
-        return {"error", str(err)}, 500
+        return {"error": "Checkout Failed. Please Try Again Later."}, 500
 
 
 # Stripe-Should-Retry # header for idempotency
