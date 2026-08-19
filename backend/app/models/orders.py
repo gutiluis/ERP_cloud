@@ -58,8 +58,8 @@ class Order(TimeStampModel):
         server_default="pending",
         index=True,
     )
-
-    created_by_user_id: Mapped[int] = mapped_column(
+    # admin does not create orders
+    operator_admin_id: Mapped[int] = mapped_column(
         BigInteger, db.ForeignKey("adminUsers.id"), nullable=False
     )
 
