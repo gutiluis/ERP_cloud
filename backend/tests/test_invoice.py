@@ -68,7 +68,7 @@ def create_cart(session):
 def create_order(session, admin, customer, cart):
     order = Order(
         stripe_session_id="cs_invoice_test_001",
-        created_by_user_id=admin.id,
+        operator_admin_id=admin.id,
         customer_id=customer.id,
         cart_id=cart.id,
         status=OrderStatus.PENDING,
