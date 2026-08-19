@@ -68,3 +68,8 @@ def session(db_):
     transaction.rollback()
     connection.close()
     session.remove()
+
+
+@pytest.fixture
+def client(app):
+    return app.test_client()

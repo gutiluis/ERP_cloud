@@ -150,20 +150,13 @@ db.session.add(admin)
 db.session.commit()
 ```
 
-
-### 7.1 - make/load customer-model either from frontend or backend model/route
-
-### 7.2 - make cart with customer/seller
-
-
-
 ---
 
 ### 8 - stripe testing after stripe cli and stripe login config
 
 ### make order needed for checkout, webhook
 
-```sh
+```
 docker compose exec api bash
 flask shell
 from app import db
@@ -193,7 +186,6 @@ for item in cart.items:
 db.session.commit()
 ```
 
-
 ### 8.1 after order
 
 ```sh
@@ -206,24 +198,6 @@ stripe listen --forward-to localhost:8000/api/admin/stripe/webhook
 npx stripe trigger payment_intent.succeeded
 npx stripe trigger checkout.session.completed
 ```
-
----
-
-### TODO
-
-### oracle vm
-
-### buy domain
-
-### one user admin account to manage everything
-
-### finish tests for backend and frontend
-
-### finish docs
-
-### finish frontend
-
-### http to https
 
 ---
 
