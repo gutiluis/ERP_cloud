@@ -3,7 +3,7 @@ name: Pytest CI
 on:
   pull_request:
     branches:
-      - testing
+      - main
   workflow_dispatch:
 
 jobs:
