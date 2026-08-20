@@ -1,0 +1,31 @@
+{% extends "products/layout.html" %}
+
+{% block actions %}
+    <a class="home-btn" href="{{ url_for('products.index_all_products') }}">
+        Return to All Products List
+    </a>
+{% endblock %}
+
+{% block title %}
+    Edit Product
+{% endblock %}
+
+{% block product_content %}
+
+
+{% set form_action = url_for('products.update_product', product_id=product.product_id) %}
+
+<form action="{{ form_action }}" method="POST">
+
+
+
+    {% include "products/_product_form.html" %}
+
+    {% for variant in variants %}
+        {% include "products/_product_variant_form.html" %}
+    {% endfor %}
+
+    <button type="submit">Update Product</button>
+    <button type="reset">Reset Form</button>
+</form>
+{% endblock %}

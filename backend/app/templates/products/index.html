@@ -1,0 +1,55 @@
+{% extends "products/layout.html" %}
+
+{% block title %}
+    Products Home Page
+{% endblock %}
+
+
+{% block actions %}
+    <div class="actions">
+        <form action="{{ url_for('products.add_product') }}">
+            <button type="submit">Create New Product</button>
+        </form>
+        {{ super() }}
+    </div>
+{% endblock %}
+
+
+{% block product_content %}
+    <div>
+        {% if products %}
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product ID</th>
+                            <th>Product Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                            <tr>
+                                <td>{{ product.product_id }}</td>
+                                <td>{{ product.product_name }}</td>
+                                <td>
+                                    <a href="{{ url_for('products.product_detail',
+                                                    product_id=product.product_id) }}">
+                                       Product Detail
+                                    </a>
+
+                                    <a href="{{ url_for('products.edit_product',
+                                                    product_id=product.product_id) }}">
+                                        Edit product
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+        <p>Fetched empty list. products unavailable.</p>
+        {% endif %}
+    </div>
+{% endblock %}

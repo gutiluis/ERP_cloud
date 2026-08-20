@@ -1,7 +1,18 @@
 version: 2
 updates:
-  - package-ecosystem: "docker"
-    directory: "/ERP"
-    target-branch: "testing"
+  - package-ecosystem: "pip"
+    directory: "/"
     schedule:
       interval: "weekly"
+    target-branch: "testing"
+    allow:
+      - dependency-type: "direct"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "docker"
+    directory: "/docker"
+    schedule:
+      interval: "weekly"
+    target-branch: "testing"
+    allow:
+      - dependency-type: "direct"

@@ -1,0 +1,95 @@
+{% extends "products/layout.html" %}
+
+{% block actions %}
+{% endblock %}
+
+{% block title %}
+    Product Details
+{% endblock %}
+
+{% block product_content %}
+    <section class="header">
+        <h1>{{ product.product_name }}</h1>
+        <p>{{ product.product_id }}</p>
+        <p>{{ product.created.strftime('%Y-%m-%d') }}</p>
+    </section>
+    <div>
+        <section id="product_detail">
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Brand</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>URL</th>
+                            <th>URL TAG</th>
+                            <th>Additional Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ product.product_id }}</td>
+                            <td>{{ product.product_name }}</td>
+                            <td>{{ product.brand }}</td>
+                            <td>{{ product.category }}</td>
+                            <td>{{ product.description }}</td>
+                            <td>{{ product.url }}</td>
+                            <td>{{ product.url_tag }}</td>
+                            <td>{{ product.additional_notes }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section id="product-variants">
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Color</th>
+                            <th>Size</th>
+                            <th>Stock</th>
+                            <th>Price</th>
+                            <th>Stock Keepig Unit</th>
+                            <th>External Source</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {# for variants is not one_or_404 like single product query #}
+                        {% for variant in product.variants %}
+                            <tr>
+                                <td>{{ variant.color }}</td>
+                                <td>{{ variant.size }}</td>
+                                <td>{{ variant.stock_quantity }}</td>
+                                <td>{{ variant.price }}</td>
+                                <td>{{ variant.sku }}</td>
+
+                                <td>
+
+                                    {% if variant.is_external %}
+                                        <section>
+                                            <h3>External Source</h3>
+                                            <p>Source: {{ variant.external_source }}</p>
+                                            <p>ID: {{ variant.external_product_id }}</p>
+                                        </section>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    <section id="edit-delete">
+        <a href="{{ url_for('products.edit_product', product_id=product.product_id) }}">
+            Edit Product
+        </a>
+        <a href="{{ url_for('products.delete_product', product_id=product.product_id) }}">
+            Delete Product
+        </a>
+    </section>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "products/layout.html" %}
+
+
+{% block title %}
+    Product Form
+{% endblock %}
+
+{% block actions %}
+    {{ super() }}
+
+    <a class="home-btn" href="{{ url_for('products.index_all_products') }}">
+        Return to All Products List
+    </a>
+{% endblock %}
+
+
+{% block product_content %}
+
+{% set form_action = url_for('products.add_product') %}
+
+<form action="{{ form_action }}" method="POST">
+
+    {% set product = None %}
+    {% include "products/_product_form.html" %}
+
+    {% set variant = None %}
+    {% include "products/_product_variant_form.html" %}
+
+    <button type="submit">Create Product</button>
+    <button type="reset">Reset Form</button>
+
+</form>
+{% endblock %}

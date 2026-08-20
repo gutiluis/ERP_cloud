@@ -1,0 +1,115 @@
+{% extends "invoices/layout.html" %}
+
+{% block actions %}
+{% endblock %}
+
+{% block title %}
+    Invoice Details
+{% endblock %}
+
+{% block invoice_content %}
+    <section class="header">
+        <h1>{{ product.invoice_id }}</h1>
+        <p>{{ order.invoice_id }}</p>
+        <p>{{ invoice.invoice_id }}</p>
+        <p>{{ invoice.created.strftime('%Y-%m-%d') }}</p>
+    </section>
+    <div>
+        <section id="invoice-detail">
+            <div>
+                <dl>
+                    <dt>Invoice ID</dt>
+                    <dd>{{ invoice.invoice_id }}</dd>
+
+                    <dt>Buyer's Name</dt>
+                    <dd>{{ invoice.user_name }}</dd>
+
+                    <dt>Seller's Name</dt>
+                    <dd>{{ invoice.customer_name }}</dd>
+
+                    <dt>Status</dt>
+                    <dd>{{ invoice.status }}</dd>
+
+
+                    <dt>Issue Date</dt>
+                    <dd>{{ invoice.invoice_date }}</dd>
+
+
+                    <dt>Due Date</dt>
+                    <dd>{{ invoice.invoice_due_date }}</dd>
+
+                    <dt>Payments</dt>
+                    <dd>{{ invoice.payments }}</dd>
+
+                    <dt>Taxes</dt>
+                    <dd>{{ invoice.taxes }}</dd>
+
+
+                    <dt>Total Amount</dt>
+                    <dd>{{ invoice.total_amount }}</dd>
+
+                    <dt>Currency</dt>
+                    <dd>{{ invoice.currency }}</dd>
+
+
+                    <dt>Discount Amount</dt>
+                    <dd>{{ invoice.discount_amount }}</dd>
+
+
+                    <dt>Discount Percentage</dt>
+                    <dd>{{ invoice.discount_percentage }}</dd>
+
+                    <dt>Additional Notes</dt>
+                    <dd>{{ invoice.additional_notes }}</dd>
+                </dl>
+
+            </div>
+        </section>
+        <section id="invoice-items">
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in invoice.items %}
+                            <tr>
+                                <td>{{ item.quantity }}</td>
+                                <td>{{ item.unit_price }}</td>
+
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </secton>
+        <section id="invoice-taxes">
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tax Type</th>
+                            <th>Tax Rate Percentage</th>
+                            <th>Tax Amount</th>
+                            <th>Tax Base</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tax in invoice.taxes %}
+                        <tr>
+                            <td>{{ tax.tax_type }}</td>
+                            <td>{{ tax.tax_rate_percent }}</td>
+                            <td>{{ tax.tax_amount }}</td>
+                            <td>{{ tax.tax_base }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    </section>
+{% endblock %}

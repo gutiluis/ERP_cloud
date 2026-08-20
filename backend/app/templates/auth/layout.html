@@ -1,0 +1,5 @@
+{% if current_user.is_authenticated %}
+    <form method="GET" action="{{ url_for('auth.logout') }}">
+        <button type="submit">Logout</button>
+    </form>
+{% endif %}

@@ -1,0 +1,22 @@
+{% extends "customers/layout.html" %}
+
+{% block actions %}
+    <a class="home-btn" href="{{ url_for('customers.index_all_customers') }}">
+        Return to All Customers List
+    </a>
+{% endblock %}
+
+{% block title %}
+    Edit Customer
+{% endblock %}
+
+{% block customer_content %}
+
+{% set form_action = url_for(
+    'customers.update_customer',
+    customer_id=customer.customer_id
+) %}
+
+{% include "customers/_customer_form.html" %}
+
+{% endblock %}

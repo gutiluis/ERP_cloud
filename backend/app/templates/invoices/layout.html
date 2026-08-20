@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        {% block title %}
+        {% endblock %}
+        <meta name="description" content="product_layout">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+
+        <header>
+            <h1>Admin Invoice Management</h1>
+
+            <nav>
+                <h2>Invoice Module:</h2>
+            </nav>
+        </header>
+
+        {% block actions %}
+            <div class="actions">
+                {% if current_user.is_authenticated %}
+                    <form action="{{ url_for('auth.logout') }}" method="POST">
+                        <button type="submit">Logout</button>
+                    </form>
+                {% endif %}
+            </div>
+        {% endblock %}
+
+        <main>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class=flashes>
+                        {% for message in messages %}
+                            <div class="flash">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- list all invoices from the /api/admin/invoices route udner invoices/index.html -->
+            {% block invoice_content %}
+            {% endblock %}
+
+        </main>
+
+    </body>
+</html>

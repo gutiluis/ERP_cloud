@@ -1,0 +1,23 @@
+{% extends "customers/layout.html" %}
+
+
+{% block title %}
+    Customer Form
+{% endblock %}
+
+{% block actions %}
+    {{ super() }}
+
+    <a class="home-btn" href="{{ url_for('customers.index_all_customers') }}">
+        Return to All Customers List
+    </a>
+{% endblock %}
+
+{% block customer_content %}
+
+{% set form_action = url_for('customers.submit_customer_form') %}
+{% set customer = None %}
+
+{% include "customers/_customer_form.html" %}
+
+{% endblock %}

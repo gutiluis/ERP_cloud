@@ -1,0 +1,40 @@
+{% extends "customers/layout.html" %}
+
+{% block actions %}
+    <a class="nav-link" href="{{ url_for('customers.index_all_customers') }}">
+        Return to All Customers List
+    </a>
+{% endblock %}
+
+{% block title %}
+    Customer Details
+{% endblock %}
+
+{% block customer_content %}
+    <a class="nav-link" href="mailto:{{ customer.customer_email }}">Send Email</a>
+    <section class="header">
+        <h1>{{ customer.customer_name }}</h1>
+        <p>{{ customer.customer_id }}</p>
+        <p>{{ customer.created.strftime('%Y-%m-%d') }}</p>
+    </section>
+
+    <section id="customer_info">
+        <h2>Contact Information</h2>
+            <ul>
+                <li>Email: {{ customer.customer_email }}</li>
+                <li>Phone: {{ customer.customer_phone }}</li>
+                <li>Address: {{ customer.customer_address }}</li>
+                <li>Status: {{ customer.customer_status.name.lower() }}</li>
+                <li>Type: {{ customer.customer_type.name.lower() }}</li>
+                <li>Notes: {{ customer.additional_notes }}</li>
+            </ul>
+    </section>
+    <section id="edit-delete">
+        <a href="{{ url_for('customers.edit_customer', customer_id=customer.customer_id) }}">
+            Edit Customer
+        </a>
+        <a href="{{ url_for('customers.delete_customer', customer_id=customer.customer_id) }}">
+            Delete Customer
+        </a>
+    </section>
+{% endblock %}

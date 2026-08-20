@@ -1,0 +1,49 @@
+{% extends "invoices/layout.html" %}
+
+{% block title %}
+    Invoices Home Page
+{% endblock %}
+
+
+{% block actions %}
+    <div>
+        {{ super() }}
+    </div>
+{% endblock %}
+
+
+{% block invoice_content %}
+    <div>
+        {% if invoices %}
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Invoice ID</th>
+                            <th>Invoice Customer</th>
+                            <th>Invoice Buyer</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for invoice in invoices %}
+                            <tr>
+                                <td>{{ invoice.invoice_id }}</td>
+                                <td>{{ invoice.customer_name }}</td>
+                                <td>{{ invoice.user }}</td>
+                                <td>
+                                    <a href="{{ url_for('invoices.invoice_detail',
+                                                    invoice_id=invoice.invoice_id) }}">
+                                       invoice Detail
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+        <p>[INFO] Fetched empty Invoice List. Invoices Unavailable. Add invoices.</p>
+        {% endif %}
+    </div>
+{% endblock %}

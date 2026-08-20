@@ -1,0 +1,98 @@
+# repos is a key
+repos:
+  # ---------------------------------------------------------
+  # General file checks
+  # ---------------------------------------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-added-large-files
+      - id: detect-private-key
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  # ---------------------------------------------------------
+  # Python linting
+  # ---------------------------------------------------------
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.8
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
+  # ---------------------------------------------------------
+  # Python security
+  # ---------------------------------------------------------
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.8.6
+    hooks:
+      - id: bandit
+        args:
+          - -r
+          - backend
+        exclude: ^backend/tests/
+
+  # ---------------------------------------------------------
+  # Dockerfile linting
+  # ---------------------------------------------------------
+  - repo: https://github.com/shenxianpeng/hadolint-pre-commit
+    rev: v2.14.0.1
+    hooks:
+      - id: hadolint
+        # (^|/) start at the beginning of the path, or find a directory boundary
+        # ^ start of string/path
+        # / directory separator
+        # .+ one or more characters
+        # \. a literal
+        # $ end of path
+        files: (^|/).+\.Dockerfile$
+
+  # ---------------------------------------------------------
+  # YAML linting
+  # ---------------------------------------------------------
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.37.1
+    hooks:
+      - id: yamllint
+        args:
+          - -d
+          - relaxed
+
+  # ---------------------------------------------------------
+  # Local ERP project checks
+  # ---------------------------------------------------------
+  - repo: local
+    hooks:
+
+      # Validate Docker Compose
+      # hook(id="docker-compose-config")
+      - id: docker-compose-config
+        name: Validate Docker Compose
+        entry: docker compose -f docker-compose.yml config --quiet
+        language: system
+        files: ^docker-compose\.ya?ml$
+        pass_filenames: false
+
+      # Backend tests
+      - id: pytest
+        name: Run backend tests
+        entry: env DATABASE_URL=mysql+pymysql://erp:erp@127.0.0.1:3307/erp_test python -m pytest backend/tests
+        language: system
+        # ^ start of string
+        # .* any characters including subdirectories
+        # \.py literal .py extension
+        # $ end of string
+        files: ^backend/.*\.py$
+        pass_filenames: false
+
+      # Frontend TypeScript
+      #- id: typescript
+      #  name: TypeScript type check
+      #  entry: npm run type-check
+      #  language: system
+      #  files: ^frontend/.*\.(ts|tsx)$
+      #  pass_filenames: false
