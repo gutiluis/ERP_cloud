@@ -13,7 +13,8 @@ updates:
     directory: "/docker"
     schedule:
       interval: "weekly"
-    # change after to main
+    # dependabot development updates target testing
+    # main remains the protected release/production branch
     target-branch: "testing" # This routes the PRs directly to your testing branch. not the main which is default under security and quality
     allow:
       - dependency-type: "direct"
