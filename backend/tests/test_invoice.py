@@ -72,6 +72,7 @@ def create_order(session, admin, customer, cart):
         customer_id=customer.id,
         cart_id=cart.id,
         status=OrderStatus.PENDING,
+        total_amount=Decimal("100.00"),
         shipping_address_1="123 Test Street",
         shipping_country="Mexico",
         shipping_city="Guadalajara",

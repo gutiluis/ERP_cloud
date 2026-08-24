@@ -1,21 +1,40 @@
 >[!WARNING]
 >CURRENTLY UNDER DEVELOPMENT
 
+---
+
 # ERP SaaS
 
-Admin Panel, CRUD operations, public frontend
+Admin Panel, CRUD operations, public frontend, e-commerce, CI/CD, Containers, Web Frameworks
+
+**Flow**
+buyer
+cart
+add/remove cartItem
+checkout
+flask api load cart
+create order pending status
+create stripe checkout session
+buyer pays stripe
+webhook
+    paid order status update
+    payment creation
+    invoice creation
+    update inventory
 
 ---
 
 ## how it works
 
-```
+```sh
+git clone https://github.com/gutiluis/ERP_cloud.git
+cd ERP_cloud/
 cp .env.example .env
 ```
 
-### - start all services same time
+### 1 - Start all services
 
-```
+```sh
 docker compose up -d --build
 ```
 
@@ -25,7 +44,7 @@ docker compose up -d --build
 
 ### does not require password
 
-```
+```sh
 docker compose exec db bash
 ```
 
@@ -54,19 +73,16 @@ docker compose exec db mysql -u erp -perp erp -e "SHOW TABLES;"
 docker compose exec db mysql -u erp -p -h localhost erp_test
 ```
 
-### 2.3 - or check with pymysql
-
-/tests/test_connection.py
-
 ---
 
-### 3.1 - check route ok
+### 3.1 - Testing Endpoint Routes
 
-http://127.0.0.1:8000/health
-http://127.0.0.1:8000/ # still in flask. shoud be UI
-http://127.0.0.1:8000/api/admin/customers/
+```sh
+curl -i [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
+curl -i [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+```
 
-### 3.2 - cheeck logs
+### 3.2 - Testing Live Docker Logs
 
 ```sh
 docker compose logs -f --tail 10 -t
@@ -74,51 +90,60 @@ docker compose logs -f --tail 10 -t
 
 ---
 
-### 4.1 - run flask migrations after building all containers
+### 4 - Testing Database and pre-commit hooks
 
 ```sh
-cd /ERP
-docker compose exec api flask --app wsgi db init
-docker compose exec api flask --app wsgi db migrate -m "initial schema" # when models change
+docker compose exec db mysql -u root -p
 ```
 
-### when erp.customers table is not found even though the migrations folder exists
+### 4.1 - Create MySQL Testing DB for Pytest inside pre-commit and apply migrations
+
+```sql
+CREATE DATABASE erp_test
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+SHOW DATABASES LIKE 'erp_test';
+GRANT ALL PRIVILEGES ON erp_test.* TO 'erp'@'%';
+FLUSH PRIVILEGES;
+```
+
+### 4.2 - Run Flask Db Migrations
 
 ```sh
-docker compose exec api flask --app wsgi db migrate -m "map tables"
+cd /ERP_cloud
+docker compose exec api flask --app wsgi db init
+docker compose exec api flask --app wsgi db migrate -m "initial schema"
 docker compose exec api flask --app wsgi db upgrade
 ```
 
-### 4.2 check migrations
+### 4.3 Populate Testing Database with migrations
 
 ```sh
 docker compose exec api flask db history
 docker compose exec api flask db current
 docker compose exec -it servicename sh
-
 ```
 
-### 4.3 check routes
+### 4.4 Testing Migrations Endpoint HTTP Method Routes
 
 ```sh
 docker compose exec api flask routes
 ```
 
----
-
-### 5 - check tables were mapped
+### 4.5 - Testing Pre-commit hooks
 
 ```sh
-cd /ERP
-docker compose exec db mysql -u root -p
+cd ERP_cloud
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+pre-commit run --all-files
 ```
 
 ---
 
 ### 6 - update migrations and frontend even though table rows are in the container
 
-
-### or
 
 ```sh
 docker compose up --build -d api
@@ -132,7 +157,9 @@ docker compose restart api
 
 ---
 
-### 7 - enter admin in the db and create adminuser table in mysql
+## Admin User Setup
+
+### 7 - Enter admin in the db and create adminuser table in mysql
 
 ```
 docker compose exec api bash
@@ -152,41 +179,8 @@ db.session.commit()
 
 ---
 
-### 8 - stripe testing after stripe cli and stripe login config
+### 8 - Testing Stripe testing after stripe cli and stripe login config, after order
 
-### make order needed for checkout, webhook
-
-```
-docker compose exec api bash
-flask shell
-from app import db
-from app.models.orders import Order
-order = Order(
-    customer_id=customer.id, # needs customer
-    status="pending",
-    total_amount=cart.total_amount
-)
-db.session.add(order)
-db.session.flush()
-```
-
-### make items
-
-```python
-for item in cart.items:
-    order_item = OrderItem(
-        order_id=order.id,
-        product_id=item.product_id,
-        quantity=item.quantity,
-        unit_price=item.price
-    )
-
-    db.session.add(order_item)
-
-db.session.commit()
-```
-
-### 8.1 after order
 
 ```sh
 stripe listen --forward-to localhost:8000/api/admin/stripe/webhook
@@ -201,22 +195,6 @@ npx stripe trigger checkout.session.completed
 
 ---
 
-buyer
-cart
-add/remove cartItem
-checkout
-flask api load cart
-create order pending status
-create stripe checkout session
-buyer pays stripe
-wbhook
-    paid order status update
-    payment creation
-    invoice creation
-    update inventory
-
----
-
 ## Tech-Stack
 
 - Python
@@ -224,6 +202,23 @@ wbhook
 - Gunicorn
 - Docker
 - MySQL
+- Stripe
+- CLI
+- Pytest
+- JavaScript
+- JSON
+- YAML
+- Pre-commit
+- SQLAlchemy
+- Flask SQLAlchemy
+- Flask Migrations
+- Python dotenv
+- Jinja2
+- werkzeug
+- Ruff
+- Bash
+- GitHub/Git
+- Oracle Cloud
 
 ---
 

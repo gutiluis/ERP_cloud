@@ -58,6 +58,12 @@ class Order(TimeStampModel):
         server_default="pending",
         index=True,
     )
+
+    total_amount: Mapped[Decimal] = mapped_column(
+        Numeric(10, 2),
+        nullable=False,
+    )
+
     # admin does not create orders
     operator_admin_id: Mapped[int] = mapped_column(
         BigInteger, db.ForeignKey("adminUsers.id"), nullable=False
@@ -96,7 +102,8 @@ class Order(TimeStampModel):
     invoice: Mapped[Invoice] = db.relationship(
         "Invoice",
         back_populates="order",
-        uselist=False,  # one order produces one invoice
+        # one order produces one invoice
+        uselist=False,
     )
 
     cart_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False)
