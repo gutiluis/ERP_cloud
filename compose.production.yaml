@@ -1,0 +1,47 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    restart: unless-stopped
+    container_name: erp_api
+    ports:
+      # does not mean docker compose erp_api is running in localhost:5000
+      # does not mean its running in localhost:5000
+      - "8000:5000"
+      # erp_api reads
+    env_file: # read by erp_api not erp_db
+      - .env
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+    container_name: erp_frontend
+
+
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx.Dockerfile
+    container_name: erp_nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - api
+
+  db:
+    image: mysql:8.0
+    container_name: erp_db
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+volumes:
+  mysql_data:
