@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   api:
     build:
@@ -8,17 +6,14 @@ services:
     restart: unless-stopped
     container_name: erp_api
     ports:
-      # does not mean docker compose erp_api is running in localhost:5000
-      # does not mean its running in localhost:5000
+      # erp_api not running in localhost:5000
       - "8000:5000"
 
-      # erp_api reads
-    env_file: # read by erp_api not erp_db
+      # erp_api reads. not erp_db
+    env_file:
       - .env
-#    volumes:
-      # remove for production
-      # mount migrations in host
-#      - ./backend:/app
+    volumes:
+      - ./backend:/app
     depends_on:
       - db
 

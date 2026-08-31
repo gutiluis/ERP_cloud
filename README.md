@@ -38,6 +38,12 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
+### 1.1 - Development
+
+```sh
+docker compose -f compose.production.yaml up -d --build
+```
+
 ### 2 - check mysql db connection with docker, or preferred way
 
 ### test connection with docker compose, programming languages, or sql
