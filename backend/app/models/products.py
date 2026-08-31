@@ -66,18 +66,17 @@ class Product(TimeStampModel):
     # 3072 bytes = 768 characters in utf8mb4
     url: Mapped[str] = mapped_column(String(760), unique=True, nullable=True)
     url_tag: Mapped[str] = mapped_column(String(100), nullable=True)
-
     additional_notes: Mapped[str | None] = mapped_column(Text, nullable=True)
-
     cart_items: Mapped[list[CartItem]] = db.relationship(
         "CartItem", back_populates="product"
     )
-
-    variants = db.relationship(
+    variants: Mapped[list[ProductVariant]] = db.relationship(
         "ProductVariant",
         back_populates="product",
-        cascade="all, delete-orphan",  # parent-child ownership
-        lazy="selectin",  # avoids n+1 queries when loading products with variants
+        # parent-child ownership
+        cascade="all, delete-orphan",
+        # avoids n+1 queries when loading products with variants
+        lazy="selectin",
     )
 
 
@@ -89,29 +88,28 @@ class ProductVariant(TimeStampModel):
         ),
     )
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-
-    product_id: Mapped[str] = mapped_column(
-        String(50), db.ForeignKey("products.product_id"), nullable=False, index=True
+    product_id: Mapped[int] = mapped_column(
+        BigInteger, db.ForeignKey("products.id"), nullable=False, index=True
     )
-
     is_active: Mapped[bool] = mapped_column(
         Boolean,
         nullable=False,
         server_default=text("1"),  # db
     )
+    cart_items: Mapped[list[CartItem]] = db.relationship(
+        "CartItem",
+        back_populates="product_variant",
+    )
     color: Mapped[str | None] = mapped_column(String(100), nullable=True)
     size: Mapped[str | None] = mapped_column(String(100), nullable=True)
     price: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
-
     stock_quantity: Mapped[int] = mapped_column(
         Integer,
         # text('0') is sql expression not Text column types
         nullable=False,
         server_default=text("0"),
     )
-
     sku: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
-
     stripe_price_id: Mapped[str | None] = mapped_column(
         String(255), nullable=True, index=True
     )
@@ -119,20 +117,15 @@ class ProductVariant(TimeStampModel):
     stripe_product_id: Mapped[str | None] = mapped_column(
         String(255), nullable=True, index=True
     )
-
     is_external: Mapped[bool] = mapped_column(
         Boolean, nullable=False, server_default=text("0")
     )
-
     external_source: Mapped[str | None] = mapped_column(String(200), nullable=True)
-
     external_product_id: Mapped[str | None] = mapped_column(String(200), nullable=True)
-
     product: Mapped[Product] = db.relationship(
         "Product",
         back_populates="variants",
     )
-
     order_items: Mapped[list[OrderItem]] = db.relationship(
         "OrderItem", back_populates="product_variant"
     )

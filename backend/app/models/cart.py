@@ -5,7 +5,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING  # allow Mapped["annotation"], Mapped[list[Product]]
 
 if TYPE_CHECKING:
-    from app.models.products import Product
+    from app.models.products import Product, ProductVariant
+    from app.models.customer import Customer
+    from app.models.orders import Order
 
 import enum
 from decimal import Decimal
@@ -48,11 +50,24 @@ class Cart(TimeStampModel):
         server_default=CartStatus.PENDING.value,
         index=True,
     )
-
+    customer_id: Mapped[int] = mapped_column(
+        BigInteger,
+        db.ForeignKey("customers.id"),
+        nullable=False,
+        index=True,
+    )
+    customer: Mapped[Customer] = db.relationship(
+        "Customer",
+        back_populates="carts",
+    )
+    order: Mapped[Order] = db.relationship(
+        "Order",
+        back_populates="cart",
+        uselist=False,
+    )
     items: Mapped[list[CartItem]] = db.relationship(
         "CartItem", back_populates="cart", cascade="all, delete-orphan"
     )
-
     # for stripe checkout session buyer does not need login
     total_amount: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
 
@@ -71,3 +86,13 @@ class CartItem(TimeStampModel):
     unit_price: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     cart: Mapped[Cart] = db.relationship("Cart", back_populates="items")
     product: Mapped[Product] = db.relationship("Product", back_populates="cart_items")
+    product_variant_id: Mapped[int] = mapped_column(
+        BigInteger,
+        db.ForeignKey("product_variants.id"),
+        nullable=False,
+        index=True,
+    )
+    product_variant: Mapped[ProductVariant] = db.relationship(
+        "ProductVariant",
+        back_populates="cart_items",
+    )

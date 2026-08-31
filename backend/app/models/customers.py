@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from app.models.invoice import Invoice
     from app.models.orders import Order
     from app.models.products import Product
+    from app.models.cart import Cart
 
 import enum
 
@@ -47,30 +48,29 @@ class Customer(TimeStampModel):
         UniqueConstraint("customer_id"),
         {"mysql_engine": "InnoDB"},
     )
-
     # backup in mysql too
     # biginteger does not increment automatically in sqlite. and does not autogenerate the id
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-
     # exception integrity error
     # every customer has an invoice
     customer_id: Mapped[str] = mapped_column(
         String(50), index=True, unique=True, nullable=False
     )
-
     # exception integrity error
     customer_name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
-
     # exception integrityerror
     customer_email: Mapped[str | None] = mapped_column(
         String(200), nullable=True, unique=True, index=True
     )
-
     customer_phone: Mapped[str | None] = mapped_column(
         String(50), nullable=True
     )  # phone numbers are identifiers. not numbers/integers
-
     customer_address: Mapped[str] = mapped_column(Text, nullable=True)
+
+    carts: Mapped[list[Cart]] = db.relationship(
+        "Cart",
+        back_populates="customer",
+    )
 
     products: Mapped[list[Product]] = db.relationship(
         "Product", back_populates="customer"

@@ -92,7 +92,7 @@ def test_create_product_variant(session):
     session.flush()
 
     variant = ProductVariant(
-        product_id=product.product_id,
+        product_id=product.id,
         sku="SKU-003",
         price=Decimal("19.99"),
         stock_quantity=100,
@@ -105,7 +105,7 @@ def test_create_product_variant(session):
     retrieved = session.query(ProductVariant).filter_by(sku="SKU-003").first()
 
     assert retrieved is not None
-    assert retrieved.product_id == product.product_id
+    assert retrieved.product_id == product.id
     assert retrieved.sku == "SKU-003"
     assert retrieved.price == Decimal("19.99")
     assert retrieved.stock_quantity == 100
@@ -132,13 +132,13 @@ def test_product_children_variants_relationship(session):
     session.flush()
 
     v1 = ProductVariant(
-        product_id=product.product_id,
+        product_id=product.id,
         sku="SKU-004-A",
         price=Decimal("10.00"),
         stock_quantity=5,
     )
     v2 = ProductVariant(
-        product_id=product.product_id,
+        product_id=product.id,
         sku="SKU-004-B",
         price=Decimal("20.00"),
         stock_quantity=10,
@@ -177,7 +177,7 @@ def test_product_and_variant_timestamps(session):
     assert product.updated is not None
 
     variant = ProductVariant(
-        product_id=product.product_id,
+        product_id=product.id,
         sku="SKU-005",
         price=Decimal("1.00"),
         stock_quantity=0,

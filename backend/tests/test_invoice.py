@@ -55,9 +55,10 @@ def create_product(session, customer):
     return product
 
 
-def create_cart(session):
+def create_cart(session, customer):
     cart = Cart(
         cart_token="invoice-test-cart-001",
+        customer_id=customer.id,
         total_amount=Decimal("100.00"),
     )
     session.add(cart)
@@ -100,7 +101,7 @@ def create_invoice(session, customer, order):
 def test_create_invoice(session):
     admin = create_admin(session)
     customer = create_customer(session)
-    cart = create_cart(session)
+    cart = create_cart(session, customer)
     order = create_order(session, admin, customer, cart)
 
     invoice = create_invoice(session, customer, order)
@@ -115,7 +116,7 @@ def test_create_invoice(session):
 def test_create_invoice_with_amounts_and_notes(session):
     admin = create_admin(session)
     customer = create_customer(session)
-    cart = create_cart(session)
+    cart = create_cart(session, customer)
     order = create_order(session, admin, customer, cart)
 
     invoice = Invoice(
@@ -142,7 +143,7 @@ def test_create_invoice_with_amounts_and_notes(session):
 def test_invoice_status_enum(session):
     admin = create_admin(session)
     customer = create_customer(session)
-    cart = create_cart(session)
+    cart = create_cart(session, customer)
     order = create_order(session, admin, customer, cart)
 
     invoice = create_invoice(session, customer, order)
@@ -170,7 +171,7 @@ def test_invoice_item(session):
     admin = create_admin(session)
     customer = create_customer(session)
     product = create_product(session, customer)
-    cart = create_cart(session)
+    cart = create_cart(session, customer)
     order = create_order(session, admin, customer, cart)
     invoice = create_invoice(session, customer, order)
 
@@ -196,7 +197,7 @@ def test_invoice_item(session):
 def test_invoice_tax(session):
     admin = create_admin(session)
     customer = create_customer(session)
-    cart = create_cart(session)
+    cart = create_cart(session, customer)
     order = create_order(session, admin, customer, cart)
     invoice = create_invoice(session, customer, order)
 
@@ -223,7 +224,7 @@ def test_invoice_tax(session):
 def test_customer_invoices_relationship(session):
     admin = create_admin(session)
     customer = create_customer(session)
-    cart = create_cart(session)
+    cart = create_cart(session, customer)
     order = create_order(session, admin, customer, cart)
 
     invoice = create_invoice(session, customer, order)
@@ -237,7 +238,7 @@ def test_customer_invoices_relationship(session):
 def test_invoice_timestamps(session):
     admin = create_admin(session)
     customer = create_customer(session)
-    cart = create_cart(session)
+    cart = create_cart(session, customer)
     order = create_order(session, admin, customer, cart)
 
     invoice = create_invoice(session, customer, order)

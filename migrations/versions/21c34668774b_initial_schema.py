@@ -1,8 +1,8 @@
 """initial schema
 
-Revision ID: d4c3b7079f2d
+Revision ID: 21c34668774b
 Revises:
-Create Date: 2026-08-23 22:55:04.654706
+Create Date: 2026-08-26 04:23:49.241688
 
 """
 
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = "d4c3b7079f2d"
+revision = "21c34668774b"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -49,44 +49,6 @@ def upgrade():
         batch_op.create_index(
             batch_op.f("ix_adminUsers_username"), ["username"], unique=True
         )
-
-    op.create_table(
-        "carts",
-        sa.Column("id", sa.BigInteger(), autoincrement=True, nullable=False),
-        sa.Column("cart_token", sa.String(length=64), nullable=False),
-        sa.Column(
-            "status",
-            sa.Enum(
-                "PENDING",
-                "ACTIVE",
-                "ABANDONED",
-                "CONVERTED",
-                name="cartstatus",
-                native_enum=False,
-            ),
-            server_default="pending",
-            nullable=False,
-        ),
-        sa.Column("total_amount", sa.Numeric(precision=10, scale=2), nullable=False),
-        sa.Column(
-            "created",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=False,
-        ),
-        sa.Column(
-            "updated",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=False,
-        ),
-        sa.PrimaryKeyConstraint("id"),
-    )
-    with op.batch_alter_table("carts", schema=None) as batch_op:
-        batch_op.create_index(
-            batch_op.f("ix_carts_cart_token"), ["cart_token"], unique=True
-        )
-        batch_op.create_index(batch_op.f("ix_carts_status"), ["status"], unique=False)
 
     op.create_table(
         "customers",
@@ -163,35 +125,24 @@ def upgrade():
         batch_op.create_index(batch_op.f("ix_users_email"), ["email"], unique=True)
 
     op.create_table(
-        "orders",
+        "carts",
         sa.Column("id", sa.BigInteger(), autoincrement=True, nullable=False),
-        sa.Column("stripe_session_id", sa.String(length=200), nullable=False),
-        sa.Column("stripe_payment_intent_id", sa.String(length=200), nullable=True),
+        sa.Column("cart_token", sa.String(length=64), nullable=False),
         sa.Column(
             "status",
             sa.Enum(
                 "PENDING",
-                "PAID",
-                "SHIPPED",
-                "COMPLETED",
-                "FAILED",
-                "REFUNDED",
-                name="orderstatus",
+                "ACTIVE",
+                "ABANDONED",
+                "CONVERTED",
+                name="cartstatus",
                 native_enum=False,
             ),
             server_default="pending",
             nullable=False,
         ),
-        sa.Column("total_amount", sa.Numeric(precision=10, scale=2), nullable=False),
-        sa.Column("operator_admin_id", sa.BigInteger(), nullable=False),
         sa.Column("customer_id", sa.BigInteger(), nullable=False),
-        sa.Column("shipping_address_1", sa.String(length=200), nullable=False),
-        sa.Column("shipping_address_2", sa.String(length=200), nullable=True),
-        sa.Column("shipping_country", sa.String(length=50), nullable=False),
-        sa.Column("shipping_city", sa.String(length=50), nullable=False),
-        sa.Column("shipping_zip_code", sa.String(length=50), nullable=False),
-        sa.Column("shipping_state", sa.String(length=50), nullable=False),
-        sa.Column("cart_id", sa.BigInteger(), nullable=False),
+        sa.Column("total_amount", sa.Numeric(precision=10, scale=2), nullable=False),
         sa.Column(
             "created",
             sa.DateTime(timezone=True),
@@ -208,25 +159,16 @@ def upgrade():
             ["customer_id"],
             ["customers.id"],
         ),
-        sa.ForeignKeyConstraint(
-            ["operator_admin_id"],
-            ["adminUsers.id"],
-        ),
         sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("cart_id"),
-        sa.UniqueConstraint("shipping_address_1"),
-        sa.UniqueConstraint("shipping_address_2"),
-        sa.UniqueConstraint("shipping_city"),
-        sa.UniqueConstraint("shipping_country"),
-        sa.UniqueConstraint("shipping_state"),
-        sa.UniqueConstraint("shipping_zip_code"),
-        sa.UniqueConstraint("stripe_payment_intent_id"),
-        sa.UniqueConstraint("stripe_session_id"),
-        mysql_charset="utf8mb4",
-        mysql_engine="InnoDB",
     )
-    with op.batch_alter_table("orders", schema=None) as batch_op:
-        batch_op.create_index(batch_op.f("ix_orders_status"), ["status"], unique=False)
+    with op.batch_alter_table("carts", schema=None) as batch_op:
+        batch_op.create_index(
+            batch_op.f("ix_carts_cart_token"), ["cart_token"], unique=True
+        )
+        batch_op.create_index(
+            batch_op.f("ix_carts_customer_id"), ["customer_id"], unique=False
+        )
+        batch_op.create_index(batch_op.f("ix_carts_status"), ["status"], unique=False)
 
     op.create_table(
         "products",
@@ -272,12 +214,141 @@ def upgrade():
         )
 
     op.create_table(
+        "orders",
+        sa.Column("id", sa.BigInteger(), autoincrement=True, nullable=False),
+        sa.Column("stripe_session_id", sa.String(length=200), nullable=False),
+        sa.Column("stripe_payment_intent_id", sa.String(length=200), nullable=True),
+        sa.Column(
+            "status",
+            sa.Enum(
+                "PENDING",
+                "PAID",
+                "SHIPPED",
+                "COMPLETED",
+                "FAILED",
+                "REFUNDED",
+                name="orderstatus",
+                native_enum=False,
+            ),
+            server_default="pending",
+            nullable=False,
+        ),
+        sa.Column("total_amount", sa.Numeric(precision=10, scale=2), nullable=False),
+        sa.Column("operator_admin_id", sa.BigInteger(), nullable=False),
+        sa.Column("customer_id", sa.BigInteger(), nullable=False),
+        sa.Column("shipping_address_1", sa.String(length=200), nullable=False),
+        sa.Column("shipping_address_2", sa.String(length=200), nullable=True),
+        sa.Column("shipping_country", sa.String(length=50), nullable=False),
+        sa.Column("shipping_city", sa.String(length=50), nullable=False),
+        sa.Column("shipping_zip_code", sa.String(length=50), nullable=False),
+        sa.Column("shipping_state", sa.String(length=50), nullable=False),
+        sa.Column("cart_id", sa.BigInteger(), nullable=False),
+        sa.Column(
+            "created",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.ForeignKeyConstraint(
+            ["cart_id"],
+            ["carts.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["customer_id"],
+            ["customers.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["operator_admin_id"],
+            ["adminUsers.id"],
+        ),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("shipping_address_1"),
+        sa.UniqueConstraint("shipping_address_2"),
+        sa.UniqueConstraint("shipping_city"),
+        sa.UniqueConstraint("shipping_country"),
+        sa.UniqueConstraint("shipping_state"),
+        sa.UniqueConstraint("shipping_zip_code"),
+        sa.UniqueConstraint("stripe_payment_intent_id"),
+        sa.UniqueConstraint("stripe_session_id"),
+        mysql_charset="utf8mb4",
+        mysql_engine="InnoDB",
+    )
+    with op.batch_alter_table("orders", schema=None) as batch_op:
+        batch_op.create_index(batch_op.f("ix_orders_cart_id"), ["cart_id"], unique=True)
+        batch_op.create_index(batch_op.f("ix_orders_status"), ["status"], unique=False)
+
+    op.create_table(
+        "product_variants",
+        sa.Column("id", sa.BigInteger(), autoincrement=True, nullable=False),
+        sa.Column("product_id", sa.BigInteger(), nullable=False),
+        sa.Column(
+            "is_active", sa.Boolean(), server_default=sa.text("1"), nullable=False
+        ),
+        sa.Column("color", sa.String(length=100), nullable=True),
+        sa.Column("size", sa.String(length=100), nullable=True),
+        sa.Column("price", sa.Numeric(precision=10, scale=2), nullable=False),
+        sa.Column(
+            "stock_quantity", sa.Integer(), server_default=sa.text("0"), nullable=False
+        ),
+        sa.Column("sku", sa.String(length=255), nullable=False),
+        sa.Column("stripe_price_id", sa.String(length=255), nullable=True),
+        sa.Column("stripe_product_id", sa.String(length=255), nullable=True),
+        sa.Column(
+            "is_external", sa.Boolean(), server_default=sa.text("0"), nullable=False
+        ),
+        sa.Column("external_source", sa.String(length=200), nullable=True),
+        sa.Column("external_product_id", sa.String(length=200), nullable=True),
+        sa.Column(
+            "created",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.ForeignKeyConstraint(
+            ["product_id"],
+            ["products.id"],
+        ),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint(
+            "external_source", "external_product_id", name="uq_external_product"
+        ),
+        sa.UniqueConstraint("sku"),
+    )
+    with op.batch_alter_table("product_variants", schema=None) as batch_op:
+        batch_op.create_index(
+            batch_op.f("ix_product_variants_product_id"), ["product_id"], unique=False
+        )
+        batch_op.create_index(
+            batch_op.f("ix_product_variants_stripe_price_id"),
+            ["stripe_price_id"],
+            unique=False,
+        )
+        batch_op.create_index(
+            batch_op.f("ix_product_variants_stripe_product_id"),
+            ["stripe_product_id"],
+            unique=False,
+        )
+
+    op.create_table(
         "cart_items",
         sa.Column("id", sa.BigInteger(), autoincrement=True, nullable=False),
         sa.Column("cart_id", sa.BigInteger(), nullable=False),
         sa.Column("product_id", sa.BigInteger(), nullable=False),
         sa.Column("quantity", sa.Integer(), nullable=False),
         sa.Column("unit_price", sa.Numeric(precision=10, scale=2), nullable=False),
+        sa.Column("product_variant_id", sa.BigInteger(), nullable=False),
         sa.Column(
             "created",
             sa.DateTime(timezone=True),
@@ -298,6 +369,10 @@ def upgrade():
             ["product_id"],
             ["products.id"],
         ),
+        sa.ForeignKeyConstraint(
+            ["product_variant_id"],
+            ["product_variants.id"],
+        ),
         sa.PrimaryKeyConstraint("id"),
     )
     with op.batch_alter_table("cart_items", schema=None) as batch_op:
@@ -306,6 +381,11 @@ def upgrade():
         )
         batch_op.create_index(
             batch_op.f("ix_cart_items_product_id"), ["product_id"], unique=False
+        )
+        batch_op.create_index(
+            batch_op.f("ix_cart_items_product_variant_id"),
+            ["product_variant_id"],
+            unique=False,
         )
 
     op.create_table(
@@ -392,26 +472,13 @@ def upgrade():
         )
 
     op.create_table(
-        "product_variants",
+        "order_items",
         sa.Column("id", sa.BigInteger(), autoincrement=True, nullable=False),
-        sa.Column("product_id", sa.String(length=50), nullable=False),
-        sa.Column(
-            "is_active", sa.Boolean(), server_default=sa.text("1"), nullable=False
-        ),
-        sa.Column("color", sa.String(length=100), nullable=True),
-        sa.Column("size", sa.String(length=100), nullable=True),
-        sa.Column("price", sa.Numeric(precision=10, scale=2), nullable=False),
-        sa.Column(
-            "stock_quantity", sa.Integer(), server_default=sa.text("0"), nullable=False
-        ),
-        sa.Column("sku", sa.String(length=255), nullable=False),
-        sa.Column("stripe_price_id", sa.String(length=255), nullable=True),
-        sa.Column("stripe_product_id", sa.String(length=255), nullable=True),
-        sa.Column(
-            "is_external", sa.Boolean(), server_default=sa.text("0"), nullable=False
-        ),
-        sa.Column("external_source", sa.String(length=200), nullable=True),
-        sa.Column("external_product_id", sa.String(length=200), nullable=True),
+        sa.Column("quantity", sa.Integer(), nullable=False),
+        sa.Column("order_id", sa.BigInteger(), nullable=False),
+        sa.Column("product_id", sa.BigInteger(), nullable=False),
+        sa.Column("unit_price", sa.Numeric(precision=10, scale=2), nullable=False),
+        sa.Column("product_variant_id", sa.BigInteger(), nullable=False),
         sa.Column(
             "created",
             sa.DateTime(timezone=True),
@@ -425,29 +492,22 @@ def upgrade():
             nullable=False,
         ),
         sa.ForeignKeyConstraint(
+            ["order_id"],
+            ["orders.id"],
+        ),
+        sa.ForeignKeyConstraint(
             ["product_id"],
-            ["products.product_id"],
+            ["products.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["product_variant_id"],
+            ["product_variants.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint(
-            "external_source", "external_product_id", name="uq_external_product"
-        ),
-        sa.UniqueConstraint("sku"),
     )
-    with op.batch_alter_table("product_variants", schema=None) as batch_op:
-        batch_op.create_index(
-            batch_op.f("ix_product_variants_product_id"), ["product_id"], unique=False
-        )
-        batch_op.create_index(
-            batch_op.f("ix_product_variants_stripe_price_id"),
-            ["stripe_price_id"],
-            unique=False,
-        )
-        batch_op.create_index(
-            batch_op.f("ix_product_variants_stripe_product_id"),
-            ["stripe_product_id"],
-            unique=False,
-        )
+    with op.batch_alter_table("order_items", schema=None) as batch_op:
+        batch_op.create_index("ix_order_items_order_id", ["order_id"], unique=False)
+        batch_op.create_index("ix_order_items_product_id", ["product_id"], unique=False)
 
     op.create_table(
         "invoice_items",
@@ -526,44 +586,6 @@ def upgrade():
         batch_op.create_index("ix_invoice_tax_type", ["tax_type"], unique=False)
 
     op.create_table(
-        "order_items",
-        sa.Column("id", sa.BigInteger(), autoincrement=True, nullable=False),
-        sa.Column("quantity", sa.Integer(), nullable=False),
-        sa.Column("order_id", sa.BigInteger(), nullable=False),
-        sa.Column("product_id", sa.String(length=50), nullable=False),
-        sa.Column("unit_price", sa.Numeric(precision=10, scale=2), nullable=False),
-        sa.Column("product_variant_id", sa.BigInteger(), nullable=False),
-        sa.Column(
-            "created",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=False,
-        ),
-        sa.Column(
-            "updated",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=False,
-        ),
-        sa.ForeignKeyConstraint(
-            ["order_id"],
-            ["orders.id"],
-        ),
-        sa.ForeignKeyConstraint(
-            ["product_id"],
-            ["products.product_id"],
-        ),
-        sa.ForeignKeyConstraint(
-            ["product_variant_id"],
-            ["product_variants.id"],
-        ),
-        sa.PrimaryKeyConstraint("id"),
-    )
-    with op.batch_alter_table("order_items", schema=None) as batch_op:
-        batch_op.create_index("ix_order_items_order_id", ["order_id"], unique=False)
-        batch_op.create_index("ix_order_items_product_id", ["product_id"], unique=False)
-
-    op.create_table(
         "payments",
         sa.Column("id", sa.BigInteger(), autoincrement=True, nullable=False),
         sa.Column("public_payment_id", sa.String(length=50), nullable=False),
@@ -609,11 +631,6 @@ def downgrade():
         batch_op.drop_index(batch_op.f("ix_payments_invoice_id"))
 
     op.drop_table("payments")
-    with op.batch_alter_table("order_items", schema=None) as batch_op:
-        batch_op.drop_index("ix_order_items_product_id")
-        batch_op.drop_index("ix_order_items_order_id")
-
-    op.drop_table("order_items")
     with op.batch_alter_table("invoice_taxes", schema=None) as batch_op:
         batch_op.drop_index("ix_invoice_tax_type")
         batch_op.drop_index("ix_invoice_tax_invoice_id")
@@ -626,12 +643,11 @@ def downgrade():
         batch_op.drop_index(batch_op.f("ix_invoice_items_invoice_id"))
 
     op.drop_table("invoice_items")
-    with op.batch_alter_table("product_variants", schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f("ix_product_variants_stripe_product_id"))
-        batch_op.drop_index(batch_op.f("ix_product_variants_stripe_price_id"))
-        batch_op.drop_index(batch_op.f("ix_product_variants_product_id"))
+    with op.batch_alter_table("order_items", schema=None) as batch_op:
+        batch_op.drop_index("ix_order_items_product_id")
+        batch_op.drop_index("ix_order_items_order_id")
 
-    op.drop_table("product_variants")
+    op.drop_table("order_items")
     with op.batch_alter_table("invoices", schema=None) as batch_op:
         batch_op.drop_index(batch_op.f("ix_invoices_order_id"))
         batch_op.drop_index(batch_op.f("ix_invoices_invoice_id"))
@@ -642,20 +658,34 @@ def downgrade():
 
     op.drop_table("invoices")
     with op.batch_alter_table("cart_items", schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f("ix_cart_items_product_variant_id"))
         batch_op.drop_index(batch_op.f("ix_cart_items_product_id"))
         batch_op.drop_index(batch_op.f("ix_cart_items_cart_id"))
 
     op.drop_table("cart_items")
+    with op.batch_alter_table("product_variants", schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f("ix_product_variants_stripe_product_id"))
+        batch_op.drop_index(batch_op.f("ix_product_variants_stripe_price_id"))
+        batch_op.drop_index(batch_op.f("ix_product_variants_product_id"))
+
+    op.drop_table("product_variants")
+    with op.batch_alter_table("orders", schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f("ix_orders_status"))
+        batch_op.drop_index(batch_op.f("ix_orders_cart_id"))
+
+    op.drop_table("orders")
     with op.batch_alter_table("products", schema=None) as batch_op:
         batch_op.drop_index(batch_op.f("ix_products_product_id"))
         batch_op.drop_index(batch_op.f("ix_products_category"))
         batch_op.drop_index(batch_op.f("ix_products_brand"))
 
     op.drop_table("products")
-    with op.batch_alter_table("orders", schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f("ix_orders_status"))
+    with op.batch_alter_table("carts", schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f("ix_carts_status"))
+        batch_op.drop_index(batch_op.f("ix_carts_customer_id"))
+        batch_op.drop_index(batch_op.f("ix_carts_cart_token"))
 
-    op.drop_table("orders")
+    op.drop_table("carts")
     with op.batch_alter_table("users", schema=None) as batch_op:
         batch_op.drop_index(batch_op.f("ix_users_email"))
 
@@ -665,11 +695,6 @@ def downgrade():
         batch_op.drop_index(batch_op.f("ix_customers_customer_email"))
 
     op.drop_table("customers")
-    with op.batch_alter_table("carts", schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f("ix_carts_status"))
-        batch_op.drop_index(batch_op.f("ix_carts_cart_token"))
-
-    op.drop_table("carts")
     with op.batch_alter_table("adminUsers", schema=None) as batch_op:
         batch_op.drop_index(batch_op.f("ix_adminUsers_username"))
         batch_op.drop_index(batch_op.f("ix_adminUsers_email"))

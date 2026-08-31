@@ -15,6 +15,10 @@ services:
       # erp_api reads
     env_file: # read by erp_api not erp_db
       - .env
+#    volumes:
+      # remove for production
+      # mount migrations in host
+#      - ./backend:/app
     depends_on:
       - db
 

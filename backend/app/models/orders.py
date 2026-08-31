@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from app.models.customers import Customer
     from app.models.invoice import Invoice
     from app.models.products import Product, ProductVariant
+    from app.models.cart import Cart
 
 import enum
 from decimal import Decimal
@@ -86,27 +87,31 @@ class Order(TimeStampModel):
     shipping_address_2: Mapped[str] = mapped_column(
         String(200), unique=True, nullable=True
     )
-
     shipping_country: Mapped[str] = mapped_column(
         String(50), unique=True, nullable=False
     )
-
     shipping_city: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
-
     shipping_zip_code: Mapped[str] = mapped_column(
         String(50), unique=True, nullable=False
     )
-
     shipping_state: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
-
     invoice: Mapped[Invoice] = db.relationship(
         "Invoice",
         back_populates="order",
         # one order produces one invoice
         uselist=False,
     )
-
-    cart_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False)
+    cart_id: Mapped[int] = mapped_column(
+        BigInteger,
+        db.ForeignKey("carts.id"),
+        unique=True,
+        nullable=False,
+        index=True,
+    )
+    cart: Mapped[Cart] = db.relationship(
+        "Cart",
+        back_populates="order",
+    )
 
 
 class OrderItem(TimeStampModel):
@@ -126,15 +131,12 @@ class OrderItem(TimeStampModel):
         Integer,
         nullable=False,
     )
-
     order_id: Mapped[int] = mapped_column(
         BigInteger, db.ForeignKey("orders.id"), nullable=False
     )
-
-    product_id: Mapped[str] = mapped_column(
-        String(50), db.ForeignKey("products.product_id"), nullable=False
+    product_id: Mapped[int] = mapped_column(
+        BigInteger, db.ForeignKey("products.id"), nullable=False
     )
-
     product: Mapped[Product] = db.relationship("Product", back_populates="order_items")
 
     unit_price: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
@@ -145,6 +147,6 @@ class OrderItem(TimeStampModel):
         BigInteger, db.ForeignKey("product_variants.id"), nullable=False
     )
 
-    product_variant: Mapped[list[ProductVariant]] = db.relationship(
+    product_variant: Mapped[ProductVariant] = db.relationship(
         "ProductVariant", back_populates="order_items"
     )
