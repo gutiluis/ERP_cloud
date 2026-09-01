@@ -15,8 +15,8 @@
 import stripe
 from app import db
 from app.models.cart import Cart
-from app.models.invoice import Invoice, InvoiceItem
-from app.models.orders import Order, OrderItem
+from app.models.invoice import Invoice, InvoiceItem, InvoiceStatus
+from app.models.orders import Order, OrderItem, OrderStatus
 from app.models.payments import Payment
 from flask import Blueprint, abort, current_app, request
 
@@ -73,7 +73,7 @@ def checkout():
             line_items=[
                 {
                     "price_data": {
-                        "currency": "usd",
+                        "currency": "mxn",
                         "product_data": {
                             "name": item.product.name,
                         },
@@ -187,46 +187,52 @@ def webhook():
 
             if not variant.is_in_stock:
                 db.session.rollback()
-                return {"error", "Product is out of stock"}, 409
+                return {"error": "Product is out of stock"}, 409
 
             if variant.stock_quantity < order_item.quantity:
                 db.session.rollback()
-                return {"error", "Insufficient stock"}, 409
+                return {"error": "Insufficient stock"}, 409
         # reduce inventory
         for order_item in order.items:
             variant = order_item.product_variant
             variant.stock_quantity -= order_item.quantity
 
-        # payment class instantiation
-        payment = Payment(
-            order_id=order.id,
-            customer_id=order.customer_id,
-            stripe_payment_intent_id=payment_intent,
-            status="paid",
-            amount=order.total_amount,
-            currency=session.get("currency"),
-        )
-        db.session.add(payment)
-        # invoice instantiation
+        order.stripe_payment_intent_id = payment_intent
+
         invoice = Invoice(
+            invoice_id=f"INV-{order.id}",
             order_id=order.id,
-            status="paid",
-            currency=session.get("currency"),
             customer_id=order.customer_id,
+            status=InvoiceStatus.PAID,
+            total_amount=order.total_amount,
+            currency=session.get("currency") or "MXN",
         )
 
         db.session.add(invoice)
+        db.session.flush()
 
-        for copy_item_from_order in order.items:
+        for order_item in order.items:
             invoice.items.append(
                 InvoiceItem(
-                    product_id=copy_item_from_order.product_id,
-                    quantity=copy_item_from_order.quantity,
-                    unit_price=copy_item_from_order.unit_price,
+                    product_id=order_item.product_id,
+                    quantity=order_item.quantity,
+                    unit_price=order_item.unit_price,
                 )
             )
 
-        order.status = "paid"
+        db.session.flush()
+
+        payment = Payment(
+            public_payment_id=f"PAY-{order.id}",
+            invoice_id=invoice.id,
+            payment_amount=order.total_amount,
+            payment_reference=payment_intent,
+            payment_method="card",
+        )
+
+        db.session.add(payment)
+
+        order.status = OrderStatus.PAID
 
         try:
             db.session.commit()

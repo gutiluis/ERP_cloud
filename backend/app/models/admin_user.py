@@ -2,8 +2,6 @@
 # descr: admin user model for flask_login
 
 
-# from __future__ import annotations
-# from typing import TYPE_CHECKING
 from flask_login import UserMixin
 from sqlalchemy import (
     BigInteger,
@@ -14,12 +12,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.mixin import TimeStampModel
 
-# if TYPE_CHECKING:
-#    pass
 
-
-# usermixin is the reason of is_authenticated(), and is_active for the route
-# UserMixin is not for db columns. has: is_authenticated, is_active, is_anonymous, get_id()
 class AdminUser(UserMixin, TimeStampModel):
     __tablename__ = "adminUsers"
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
@@ -38,15 +31,4 @@ class AdminUser(UserMixin, TimeStampModel):
 
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    # UserMixin is not for a db column. The column is overriding the property of UserMixin
-    # is_active: Mapped[bool] = mapped_column(
-    #    Boolean,
-    #    nullable=False,
-    #    index=True,
-    #    server_default=text("0")
-    # )
-
     additional_notes: Mapped[str | None] = mapped_column(Text, nullable=True)
-    # can I use get_id() from the UserMixin clas form flask_login instead for the class AdminUser
-    # def get_id(self):
-    #   return self.admin_id
