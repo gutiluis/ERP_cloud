@@ -89,10 +89,18 @@ repos:
         files: ^backend/.*\.py$
         pass_filenames: false
 
-      # Frontend TypeScript
-      #- id: typescript
-      #  name: TypeScript type check
-      #  entry: npm run type-check
-      #  language: system
-      #  files: ^frontend/.*\.(ts|tsx)$
-      #  pass_filenames: false
+      # frontend linting
+      - id: frontend-lint
+        name: Run frontend lint
+        entry: npm --prefix frontend run lint
+        language: system
+        files: ^frontend/.*\.(js|jsx)$
+        pass_filenames: false
+
+      # frontend tests
+      - id: vitest
+        name: Run frontend tests
+        entry: npm --prefix frontend run test
+        language: system
+        files: ^frontend/.*\.(js|jsx)$
+        pass_filenames: false
