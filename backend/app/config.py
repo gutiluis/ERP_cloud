@@ -18,3 +18,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # change to os.environ for production
     STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
+
+
+class TestConfig(Config):
+    SQLALCHEMY_DATABASE_URI = os.environ["TEST_DATABASE_URL"]
