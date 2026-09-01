@@ -109,7 +109,6 @@ class Customer(TimeStampModel):
         lazy="selectin",
     )
 
-    # class attribute orders.
     # lazy='selectin' is a relationship loading style
     # back_populates is not a parameter of the class attribute. is a parameter of relationship()
     orders: Mapped[list[Order]] = db.relationship(
