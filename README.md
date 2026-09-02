@@ -226,11 +226,17 @@ npx stripe trigger checkout.session.completed
 - Flask Migrations
 - Python dotenv
 - Jinja2
-- werkzeug
+- Werkzeug
 - Ruff
 - Bash
 - GitHub/Git
 - Oracle Cloud
+- React
+- Vite
+- Tailwind CSS
+- Vitest
+- Jsdom
+- ESLint
 
 ---
 

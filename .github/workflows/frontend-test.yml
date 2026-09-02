@@ -1,10 +1,10 @@
-name: Unit Tests # all tests for electron-vite-react modules
+name: Frontend Unit Tests
 
 on:
-  #push:
-  #  branches: [ main ]
-  #pull_request:
-  #  branches: [ main ]
+  push:
+    branches: [testing]
+  pull_request:
+    branches: [testing]
   workflow_dispatch:
 
 jobs:
@@ -16,10 +16,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install dependencies
+        working-directory: frontend
         run: npm ci
 
       - name: Run all Vitest tests
-        run: npx vitest run
+        working-directory: frontend
+        # npx vitest run lives under package.json
+        run: npm test
