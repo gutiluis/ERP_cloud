@@ -1,4 +1,4 @@
-name: Unit Tests # all tests for electron-vite-react modules
+name: Frontend Unit Tests
 
 on:
   push:
@@ -19,7 +19,10 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
+        working-directory: frontend
         run: npm ci
 
       - name: Run all Vitest tests
-        run: npx vitest run
+        working-directory: frontend
+        # npx vitest run lives under package.json
+        run: npm test
