@@ -2,7 +2,8 @@
 
 # filename: entrypoint.sh
 
-# descr: run flask migrations after containers run to check models are mapping to the mysql db
+# descr: production entrypoint.
+# run flask migrations after containers run to check models are mapping to the mysql db
 # before flask app starts
 # after the db container is starting
 # 1. docker starts api container
@@ -13,24 +14,19 @@
 # 6. gunicorn starts
 #
 
-
 set -e
 date -u
-
 
 echo "[INFO] Waiting for DB..."
 # 3306 networking
 while ! nc -z db 3306; do
     echo "[INFO] Waiting for database..."
     sleep 1
-done;
+done
 
-echo "[WARN] DEBUG MODE IS ON!!! TURN IT OFF IN PRODUCTION ROOKIE!!"
 echo "[INFO] DB is up..."
 echo "[INFO] Running application..."
 # gunicorn upfront and nginx behind. # put nginx upfront and gunicorn behind for production.
 # any lines after exec will never execute
 # after exec the terminal closes
-# it wasnt debugging so added defualt.conf file and changed frontend.Dockerfile and nging.Dockerfile
-# the [warning] log comes from the --reload
-exec gunicorn -b 0.0.0.0:5000 wsgi:app --log-level=debug --reload
+exec gunicorn -b 0.0.0.0:5000 wsgi:app --log-level=info
