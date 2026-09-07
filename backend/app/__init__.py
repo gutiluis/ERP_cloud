@@ -20,7 +20,7 @@ def register_error_handlers(app):
 def create_app(config_object=Config):
     """
     Make app
-    Export routes apis for admin and cart
+    Export routes apis for admin, public frontend and cart
     """
     app = Flask(__name__)
     app.config.from_object(config_object)
@@ -64,10 +64,12 @@ def create_app(config_object=Config):
 
     app.register_blueprint(product_bp)
 
+    from .routes.public_products import public_product_bp
+
+    app.register_blueprint(public_product_bp)
+
     from .routes.invoices import invoice_bp
 
     app.register_blueprint(invoice_bp)
-
-    # from . import models
 
     return app

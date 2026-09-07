@@ -130,7 +130,7 @@ docker compose exec api flask db current
 docker compose exec -it servicename sh
 ```
 
-### 4.3.1 - Move migrations into local host from container
+### 4.3.1 - Move migrations into /backend/migrations host from container
 
 ```sh
 docker cp erp_api:/app/migrations ./migrations

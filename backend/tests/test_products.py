@@ -190,3 +190,156 @@ def test_product_and_variant_timestamps(session):
     assert retrieved_variant is not None
     assert retrieved_variant.created is not None
     assert retrieved_variant.updated is not None
+
+
+def test_public_products(client, session):
+    customer = create_customer(session, "Customer-PUBLIC-001")
+
+    product = Product(
+        product_id="PID-PUBLIC-001",
+        product_name="Public Test Product",
+        customer_id=customer.customer_id,
+        brand="PublicBrand",
+        category="Electronics",
+        description="A public product.",
+    )
+    session.add(product)
+    session.flush()
+
+    variant = ProductVariant(
+        product_id=product.id,
+        sku="SKU-PUBLIC-001",
+        price=Decimal("29.99"),
+        stock_quantity=10,
+        color="Black",
+        size="M",
+        is_active=True,
+    )
+    session.add(variant)
+    session.commit()
+
+    response = client.get("/api/products")
+
+    assert response.status_code == 200
+
+    data = response.get_json()
+
+    assert "products" in data
+    assert len(data["products"]) == 1
+
+    public_product = data["products"][0]
+
+    assert public_product["product_id"] == "PID-PUBLIC-001"
+    assert public_product["product_name"] == "Public Test Product"
+    assert public_product["brand"] == "PublicBrand"
+    assert public_product["category"] == "Electronics"
+    assert public_product["description"] == "A public product."
+
+    assert len(public_product["variants"]) == 1
+
+    public_variant = public_product["variants"][0]
+
+    assert public_variant["sku"] == "SKU-PUBLIC-001"
+    assert public_variant["price"] == "29.99"
+    assert public_variant["stock_quantity"] == 10
+    assert public_variant["color"] == "Black"
+    assert public_variant["size"] == "M"
+    assert public_variant["is_in_stock"] is True
+
+
+def test_public_products_excludes_inactive_products(client, session):
+    customer = create_customer(session, "Customer-PUBLIC-002")
+
+    active_product = Product(
+        product_id="PID-PUBLIC-ACTIVE",
+        product_name="Active Product",
+        customer_id=customer.customer_id,
+        brand="Brand",
+        category="Category",
+        description="Active product.",
+        is_active=True,
+    )
+
+    inactive_product = Product(
+        product_id="PID-PUBLIC-INACTIVE",
+        product_name="Inactive Product",
+        customer_id=customer.customer_id,
+        brand="Brand",
+        category="Category",
+        description="Inactive product.",
+        is_active=False,
+    )
+
+    session.add_all([active_product, inactive_product])
+    session.commit()
+
+    response = client.get("/api/products")
+
+    assert response.status_code == 200
+
+    data = response.get_json()
+
+    product_ids = {product["product_id"] for product in data["products"]}
+
+    assert "PID-PUBLIC-ACTIVE" in product_ids
+    assert "PID-PUBLIC-INACTIVE" not in product_ids
+
+
+def test_public_products_excludes_inactive_variants(client, session):
+    customer = create_customer(session, "Customer-PUBLIC-003")
+
+    product = Product(
+        product_id="PID-PUBLIC-VARIANTS",
+        product_name="Variant Test Product",
+        customer_id=customer.customer_id,
+        brand="Brand",
+        category="Category",
+        description="Variant test product.",
+    )
+
+    session.add(product)
+    session.flush()
+
+    active_variant = ProductVariant(
+        product_id=product.id,
+        sku="SKU-PUBLIC-ACTIVE",
+        price=Decimal("10.00"),
+        stock_quantity=5,
+        is_active=True,
+    )
+
+    inactive_variant = ProductVariant(
+        product_id=product.id,
+        sku="SKU-PUBLIC-INACTIVE",
+        price=Decimal("20.00"),
+        stock_quantity=5,
+        is_active=False,
+    )
+
+    session.add_all([active_variant, inactive_variant])
+    session.commit()
+
+    response = client.get("/api/products")
+
+    assert response.status_code == 200
+
+    data = response.get_json()
+
+    public_product = data["products"][0]
+
+    variant_skus = {variant["sku"] for variant in public_product["variants"]}
+
+    assert "SKU-PUBLIC-ACTIVE" in variant_skus
+    assert "SKU-PUBLIC-INACTIVE" not in variant_skus
+
+
+def test_public_products_requires_no_authentication(client, session):
+    response = client.get("/api/products")
+
+    assert response.status_code == 200
+
+    def test_public_products_empty_catalog(client):
+        response = client.get("/api/products")
+
+        assert response.status_code == 200
+        assert response.get_json() == {"products": []}
