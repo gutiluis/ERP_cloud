@@ -7,6 +7,7 @@
 
 Admin Panel, CRUD operations, public frontend, e-commerce, CI/CD, Containers, Web Frameworks
 
+```
 **Flow**
 buyer
 cart
@@ -21,6 +22,7 @@ webhook
     payment creation
     invoice creation
     update inventory
+```
 
 ---
 

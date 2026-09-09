@@ -74,6 +74,13 @@ class Cart(TimeStampModel):
 
 class CartItem(TimeStampModel):
     __tablename__ = "cart_items"
+    __table_args__ = (
+        db.UniqueConstraint(
+            "cart_id",
+            "product_variant_id",
+            name="uq_cart_product_variant",
+        ),
+    )
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     cart_id: Mapped[int] = mapped_column(

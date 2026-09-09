@@ -45,9 +45,7 @@ class Product(TimeStampModel):
         String(50), db.ForeignKey("customers.customer_id"), nullable=False
     )
 
-    customer: Mapped[list[Customer]] = db.relationship(
-        "Customer", back_populates="products"
-    )
+    customer: Mapped[Customer] = db.relationship("Customer", back_populates="products")
 
     brand: Mapped[str] = mapped_column(String(200), nullable=False, index=True)
 
