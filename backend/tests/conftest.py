@@ -203,6 +203,43 @@ def order_with_inventory(session):
 
 
 @pytest.fixture
+def cart_product_variant(session):
+    """
+    test_cart.py fixture returning customer, product and variant
+    """
+    customer = Customer(
+        customer_id="customer_cart_001",
+        customer_name="Cart Test Customer",
+        customer_email="cart_test@example.com",
+    )
+
+    product = Product(
+        product_id="product_cart_001",
+        product_name="Cart Test Product",
+        customer_id=customer.customer_id,
+        brand="Test Brand",
+        category="Test Category",
+        description="Cart test product",
+    )
+
+    session.add_all([customer, product])
+    session.flush()
+
+    variant = ProductVariant(
+        product_id=product.id,
+        is_active=True,
+        price=Decimal("25.00"),
+        stock_quantity=10,
+        sku="CART-TEST-SKU-001",
+    )
+
+    session.add(variant)
+    session.flush()
+
+    return customer, product, variant
+
+
+@pytest.fixture
 def successful_order(session):
     admin = AdminUser(
         admin_id="admin_success_001",

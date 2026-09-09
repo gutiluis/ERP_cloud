@@ -1,4 +1,4 @@
-# file: /public_products.py
+# file: /routes/public_products.py
 # descr: public product api route
 
 
@@ -38,15 +38,13 @@ def public_products():
                     "brand": product.brand,
                     "category": product.category,
                     "description": product.description,
-                    "url": product.url,
-                    "url_tag": product.url_tag,
                     "variants": [
                         {
+                            "id": variant.id,
                             "price": str(variant.price),
                             "stock_quantity": variant.stock_quantity,
                             "color": variant.color,
                             "size": variant.size,
-                            "sku": variant.sku,
                             "is_in_stock": variant.is_in_stock,
                         }
                         for variant in product.variants
