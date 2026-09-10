@@ -16,7 +16,7 @@ describe('ProductCard', () => {
             description: 'A test product description.',
             variants: [
                 {
-                    sku: 'SKU-001',
+                    id: 1,
                     price: '19.99',
                     stock_quantity: 10,
                     color: 'Blue',
@@ -38,7 +38,6 @@ describe('ProductCard', () => {
             screen.getByText('A test product description.'),
         ).toBeInTheDocument()
 
-        expect(screen.getByText('SKU: SKU-001')).toBeInTheDocument()
         expect(screen.getByText('Price: $19.99')).toBeInTheDocument()
         expect(screen.getByText('In stock')).toBeInTheDocument()
     })
@@ -52,7 +51,7 @@ describe('ProductCard', () => {
             description: 'Unavailable product.',
             variants: [
                 {
-                    sku: 'SKU-002',
+                    id: 1,
                     price: '29.99',
                     stock_quantity: 0,
                     color: 'Black',

@@ -2,7 +2,7 @@
 // descr: extract product rendering into reusable ProductCard react component and tailwind CSS after functionality and tests. react controls what gets rendered and tailwind utility classes how it looks. React components file
 
 // 1 react component. component count is based in react component definitions, not the number of jsx elements
-function ProductCard({ product }) {
+function ProductCard({ product, onAddToCart }) {
     return (
         // jsx elements
         // tailwind CSS classes
@@ -27,14 +27,10 @@ function ProductCard({ product }) {
             <div className="space-y-3">
                 {product.variants.map((variant) => (
                     <div
-                        key={variant.sku}
+                        key={variant.id}
                         className="rounded-md bg-gray-50 p-4"
                     >
                         <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-500">
-                                SKU: {variant.sku}
-                            </span>
-
                             <span className="font-semibold text-gray-900">
                                 Price: ${variant.price}
                             </span>
@@ -66,6 +62,16 @@ function ProductCard({ product }) {
                                 ? 'In stock'
                                 : 'Out of stock'}
                         </p>
+
+                        {variant.is_in_stock && (
+                            <button
+                                type="button"
+                                onClick={() => onAddToCart(variant.id)}
+                                className="mt-3 rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+                            >
+                                Add to cart
+                            </button>
+                        )}
                     </div>
                 ))}
             </div>

@@ -23,7 +23,6 @@ services:
       dockerfile: docker/frontend.Dockerfile
     container_name: erp_frontend
 
-
   nginx:
     build:
       context: .
