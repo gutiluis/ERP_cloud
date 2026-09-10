@@ -1,7 +1,7 @@
 # multi-stage build
 # react + nginx
+# nginx.Dockerfile builds the react app inside the nginx image
 
-# used for production. DEBUGGING IS OFF!!
 
 FROM node:26-alpine AS builder
 
@@ -12,7 +12,7 @@ RUN npm ci
 
 COPY frontend/ .
 RUN npm run build
-
+# download image
 FROM nginx:alpine
 
 COPY --from=builder /app/dist /usr/share/nginx/html

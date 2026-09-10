@@ -1,0 +1,28 @@
+(venv) [21:15:09]-ttys000-bash:~/GitHub/ERP_cloud$ git commit -m "add: frontend cart api"
+[WARNING] Unstaged files detected.
+[INFO] Stashing unstaged files to /Users/lg/.cache/pre-commit/patch1789010114-97200.
+check json...............................................................Passed
+check for merge conflicts................................................Passed
+check for added large files..............................................Passed
+detect private key.......................................................Passed
+check yaml...............................................................Passed
+fix end of files.........................................................Failed
+- hook id: end-of-file-fixer
+- exit code: 1
+- files were modified by this hook
+
+Fixing frontend/src/api/cart.test.js
+
+trim trailing whitespace.................................................Passed
+ruff check...........................................(no files to check)Skipped
+ruff format..........................................(no files to check)Skipped
+bandit...............................................(no files to check)Skipped
+Lint Dockerfiles.........................................................Passed
+yamllint.................................................................Passed
+Validate Docker Compose..............................(no files to check)Skipped
+Run backend tests....................................(no files to check)Skipped
+Run frontend lint........................................................Passed
+Run frontend tests.......................................................Passed
+[WARNING] Stashed changes conflicted with hook auto-fixes... Rolling back fixes...
+[INFO] Restored changes from /Users/lg/.cache/pre-commit/patch1789010114-97200.
+(venv) [21:15:15]-ttys000-bash:~/GitHub/ERP_cloud$

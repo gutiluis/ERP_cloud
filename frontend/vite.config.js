@@ -15,5 +15,7 @@ export default defineConfig({
     test: {
         environment: 'jsdom',
         setupFiles: './src/setupTests.js',
+        // auto cleanup to manage TestingLibraryElementError found multiple elements error
+        globals: true,
     },
 })

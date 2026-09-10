@@ -5,12 +5,18 @@
 
 import { useEffect, useState } from 'react'
 import { getProducts } from '../../api/products'
+import { createCart, addCartItem } from '../../api/cart'
 import ProductCard from '../../components/ProductCard'
 
 function ProductCatalog() {
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    // survive page refresh
+    const [cartToken, setCartToken] = useState(
+        () => localStorage.getItem('cart_token')
+    )
+
 
     useEffect(() => {
         async function loadProducts() {
@@ -48,6 +54,18 @@ function ProductCatalog() {
         )
     }
 
+    async function handleAddToCart(productVariantId) {
+        try {
+            const data = cartToken
+                ? await addCartItem(cartToken, productVariantId, 1)
+                : await createCart(productVariantId, 1)
+
+            setCartToken(data.cart_token)
+        } catch {
+            setError('Unable to add product to cart.')
+        }
+    }
+
     if (products.length === 0) {
         return (
             <main className="mx-auto max-w-7xl px-6 py-12">
@@ -79,6 +97,7 @@ function ProductCatalog() {
                     <ProductCard
                         key={product.product_id}
                         product={product}
+                        onAddToCart={handleAddToCart}
                     />
                 ))}
             </section>
