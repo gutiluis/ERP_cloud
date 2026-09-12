@@ -12,7 +12,7 @@ function ProductCatalog() {
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
-    // survive page refresh
+    // survive page refresh // initialize react state
     const [cartToken, setCartToken] = useState(
         () => localStorage.getItem('cart_token')
     )
@@ -57,10 +57,16 @@ function ProductCatalog() {
     async function handleAddToCart(productVariantId) {
         try {
             const data = cartToken
+                // ? if cartToken exists await addCartItem(carToken, productVariantId, 1)
+                // ? ternary operator
                 ? await addCartItem(cartToken, productVariantId, 1)
+                // : else await createCart(productVariantId, 1)
+                // : ternary operator
                 : await createCart(productVariantId, 1)
 
-            setCartToken(data.cart_token)
+            const newCartToken = data.cart_token
+            setCartToken(newCartToken)
+            localStorage.setItem('cart_token', newCartToken)
         } catch {
             setError('Unable to add product to cart.')
         }
