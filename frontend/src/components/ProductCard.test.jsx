@@ -1,7 +1,7 @@
 // file: ProductCard.test.jsx
 // descr:
 
-
+// needs DOM environment from jsdom
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import ProductCard from './ProductCard'
@@ -32,6 +32,7 @@ describe('ProductCard', () => {
             screen.getByRole('heading', { name: 'Test Product' }),
         ).toBeInTheDocument()
 
+        // getByText is jsdom // toBeInTheDocument is jsdom
         expect(screen.getByText('TestBrand')).toBeInTheDocument()
         expect(screen.getByText('Electronics')).toBeInTheDocument()
         expect(

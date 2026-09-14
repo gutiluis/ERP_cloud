@@ -1,5 +1,24 @@
 // file: api/cart.js
-// descr: cart frontend api which matches backend cart api routes and methods
+// descr: cart frontend api module. which matches backend cart api routes and methods. createCart POST, getCart GET, addCartItem POST, updateCartItem PATCH, deleteCartItem DELETE function endpoints
+// /api/cart, /api/cart/:cartToken, /api/cart:cartToken/items, /api/cart/:cartToken/items/:itemId. /api/cart:cartToken/items/:itemId
+
+
+async function handleResponse(response) {
+    const contentType = response.headers.get('content-type')
+
+    if (!contentType?.includes('application/json')) {
+        throw new Error(`Request failed with status ${response.status}`)
+    }
+
+    const data = await response.json()
+
+    if (!response.ok) {
+        throw new Error(data.error || `Request failed with status ${response.status}`)
+    }
+
+    return data
+}
+
 
 export async function createCart(productVariantId, quantity) {
     // fetc() takes one mandatory argument path to resources. returning a promise
@@ -19,21 +38,14 @@ export async function createCart(productVariantId, quantity) {
         }),
     })
 
-    if (!response.ok) {
-        throw new Error('Failed to create cart')
-    }
+    return handleResponse(response)
 
-    return response.json()
 }
 
 export async function getCart(cartToken) {
     const response = await fetch(`/api/cart/${cartToken}`)
 
-    if (!response.ok) {
-        throw new Error('Failed to fetch cart')
-    }
-
-    return response.json()
+    return handleResponse(response)
 }
 
 export async function addCartItem(cartToken, productVariantId, quantity) {
@@ -48,11 +60,7 @@ export async function addCartItem(cartToken, productVariantId, quantity) {
         }),
     })
 
-    if (!response.ok) {
-        throw new Error('Failed to add cart item')
-    }
-
-    return response.json()
+    return handleResponse(response)
 }
 
 export async function updateCartItem(cartToken, itemId, quantity) {
@@ -66,11 +74,8 @@ export async function updateCartItem(cartToken, itemId, quantity) {
         }),
     })
 
-    if (!response.ok) {
-        throw new Error('Failed to update cart item')
-    }
+    return handleResponse(response)
 
-    return response.json()
 }
 
 export async function deleteCartItem(cartToken, itemId) {
@@ -78,9 +83,5 @@ export async function deleteCartItem(cartToken, itemId) {
         method: 'DELETE',
     })
 
-    if (!response.ok) {
-        throw new Error('Failed to delete cart item')
-    }
-
-    return response.json()
+    return handleResponse(response)
 }

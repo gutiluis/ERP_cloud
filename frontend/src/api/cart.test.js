@@ -13,10 +13,29 @@ import {
     deleteCartItem,
 } from './cart'
 
+
 describe('cart API', () => {
     beforeEach(() => {
         vi.restoreAllMocks()
     })
+
+    function mockFetchResponse(
+        responseData,
+        {
+            ok = true,
+            status = 200,
+            contentType = 'application/json',
+        } = {},
+    ) {
+        vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+            ok,
+            status,
+            headers: {
+                get: () => contentType,
+            },
+            json: async () => responseData,
+        })
+    }
 
     test('creates a cart', async () => {
         const responseData = {
@@ -24,10 +43,7 @@ describe('cart API', () => {
             cart_token: 'abc123',
         }
 
-        vi.spyOn(globalThis, 'fetch').mockResolvedValue({
-            ok: true,
-            json: vi.fn().mockResolvedValue(responseData),
-        })
+        mockFetchResponse(responseData)
 
         const result = await createCart(25, 2)
 
@@ -52,10 +68,7 @@ describe('cart API', () => {
             total_amount: '0.00',
         }
 
-        vi.spyOn(globalThis, 'fetch').mockResolvedValue({
-            ok: true,
-            json: vi.fn().mockResolvedValue(responseData),
-        })
+        mockFetchResponse(responseData)
 
         const result = await getCart('abc123')
 
@@ -77,10 +90,7 @@ describe('cart API', () => {
             total_amount: '39.98',
         }
 
-        vi.spyOn(globalThis, 'fetch').mockResolvedValue({
-            ok: true,
-            json: vi.fn().mockResolvedValue(responseData),
-        })
+        mockFetchResponse(responseData)
 
         const result = await addCartItem('abc123', 25, 2)
 
@@ -112,10 +122,7 @@ describe('cart API', () => {
             total_amount: '59.97',
         }
 
-        vi.spyOn(globalThis, 'fetch').mockResolvedValue({
-            ok: true,
-            json: vi.fn().mockResolvedValue(responseData),
-        })
+        mockFetchResponse(responseData)
 
         const result = await updateCartItem('abc123', 1, 3)
 
@@ -139,10 +146,7 @@ describe('cart API', () => {
             total_amount: '0.00',
         }
 
-        vi.spyOn(globalThis, 'fetch').mockResolvedValue({
-            ok: true,
-            json: vi.fn().mockResolvedValue(responseData),
-        })
+        mockFetchResponse(responseData)
 
         const result = await deleteCartItem('abc123', 1)
 
@@ -151,5 +155,29 @@ describe('cart API', () => {
         })
 
         expect(result).toEqual(responseData)
+    })
+
+    test('throws the API error when the request fails', async () => {
+        mockFetchResponse(
+            { error: 'Cart not found' },
+            { ok: false, status: 404 },
+        )
+
+        await expect(getCart('abc123')).rejects.toThrow('Cart not found')
+    })
+
+    test('throws a status error for a non-JSON response', async () => {
+        mockFetchResponse(
+            '<html>Not Found</html>',
+            {
+                ok: false,
+                status: 404,
+                contentType: 'text/html',
+            },
+        )
+
+        await expect(getCart('abc123')).rejects.toThrow(
+            'Request failed with status 404',
+        )
     })
 })
