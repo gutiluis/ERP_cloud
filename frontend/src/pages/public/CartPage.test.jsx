@@ -1,3 +1,6 @@
+// file: public/CartPage.test.jsx
+// descr: unit/component/integration testing
+
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
@@ -11,6 +14,7 @@ import {
 
 import userEvent from '@testing-library/user-event'
 
+// frontend integration-style testing the cart page calling api layer
 vi.mock('../../api/cart', () => ({
     getCart: vi.fn(),
     updateCartItem: vi.fn(),
@@ -81,16 +85,13 @@ describe('CartPage', () => {
             total_amount: '89.97',
         })
 
+        // import user
+        const user = userEvent.setup()
+
         render(<CartPage />)
 
         const quantityInput = await screen.findByLabelText('Quantity')
 
-        fireEvent.change(quantityInput, {
-            target: { value: '3' },
-        })
-
-        // import user
-        const user = userEvent.setup()
         // onChange event patch
         await user.clear(quantityInput)
         // onBlur event patch
@@ -105,7 +106,6 @@ describe('CartPage', () => {
                 3,
             )
         })
-        console.log(updateCartItem.mock.calls)
 
         expect(await screen.findByDisplayValue('3')).toBeInTheDocument()
         expect(screen.getByText('Total: $89.97')).toBeInTheDocument()

@@ -33,6 +33,8 @@ def checkout():
     Stripe checkout session creation for webhook. webhook needs order and other models
     """
     data = request.get_json()
+    # checkout contract expects cart_id which is seen in the frontend against cart_token
+    # buyer frontend has cart_token in the api
     cart_id = data["cart_id"]
     # the cart is a buyer session
     cart = Cart.query.get(cart_id)  # load from cart model
@@ -45,7 +47,7 @@ def checkout():
 
     existing_order = Order.query.filter_by(cart_id=cart.id, status="pending").first()
     if existing_order:
-        return {"error", "Checkout already started for this cart"}, 409
+        return {"error": "Checkout already started for this cart"}, 409
 
     try:
         # cart and order products come from the customers model

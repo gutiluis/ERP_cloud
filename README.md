@@ -5,28 +5,22 @@
 
 # ERP SaaS
 
-Admin Panel, CRUD operations, public frontend, e-commerce, CI/CD, Containers, Web Frameworks
+Full-stack e-commerce plattform with an admin Panel, CRUD operations, public frontend, CI/CD, and containerization.
 
-```
-**Flow**
-buyer
-cart
-add/remove cartItem
-checkout
-flask api load cart
-create order pending status
-create stripe checkout session
-buyer pays stripe
-webhook
-    paid order status update
-    payment creation
-    invoice creation
-    update inventory
-```
+## Core Features
+
+- Admin panel
+- Product and product variant management
+- Product catalog
+- Shopping cart
+- E-commerce checkout
+- Stripe payments
+- Inventory management
+- Order processing
 
 ---
 
-## how it works
+## How it works
 
 ```sh
 git clone https://github.com/gutiluis/ERP_cloud.git
