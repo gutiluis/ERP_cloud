@@ -72,4 +72,8 @@ def create_app(config_object=Config):
 
     app.register_blueprint(invoice_bp)
 
+    from .routes.checkout import checkout_bp
+
+    app.register_blueprint(checkout_bp)
+
     return app

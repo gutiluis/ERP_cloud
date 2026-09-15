@@ -277,7 +277,7 @@ def test_add_item_different_seller(client, cart_product_variant, session):
 
     product_b = Product(
         product_id="product_cart_002",
-        product_name="Cart Test Product 2",
+        name="Cart Test Product 2",
         customer_id=customer_b.customer_id,
         brand="Test Brand",
         category="Test Category",

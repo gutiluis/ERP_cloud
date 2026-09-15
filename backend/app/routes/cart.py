@@ -23,9 +23,10 @@ def create_cart():
     data = request.get_json(silent=True) or {}
     product_variant_id = data.get("product_variant_id")
     quantity = data.get("quantity")
-
+    # invaid input 400
     if not isinstance(product_variant_id, int):
         return jsonify({"error": "product_variant_id is required"}), 400
+    # invalid input 400
     if not isinstance(quantity, int) or quantity <= 0:
         return jsonify({"error": "quantity must be greater than zero"}), 400
 
@@ -39,7 +40,7 @@ def create_cart():
         .scalars()
         .first()
     )
-
+    # missing resources 404
     if variant is None:
         return jsonify({"error": "Product variant not found"}), 404
     if quantity > variant.stock_quantity:

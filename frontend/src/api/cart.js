@@ -20,6 +20,9 @@ async function handleResponse(response) {
 }
 
 
+
+
+// not an api endpoint
 export async function createCart(productVariantId, quantity) {
     // fetc() takes one mandatory argument path to resources. returning a promise
     const response = await fetch('/api/cart', {

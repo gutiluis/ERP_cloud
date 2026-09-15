@@ -42,6 +42,8 @@ class TestConfig:
     SQLALCHEMY_DATABASE_URI = os.environ["TEST_DATABASE_URL"]
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     STRIPE_WEBHOOK_SECRET = "test_stripe.pyPassword"
+    STRIPE_SUCCESS_URL = "http://localhost:5173/success"
+    STRIPE_CANCEL_URL = "http://localhost:5173/cart"
 
 
 @pytest.fixture(scope="session")
@@ -106,7 +108,6 @@ def paid_order(session):
         stripe_session_id="cs_test_paid",
         status=OrderStatus.PAID,
         total_amount=100.00,
-        operator_admin_id=admin.id,
         customer_id=customer.id,
         cart_id=cart.id,
         shipping_address_1="123 Test Street",
@@ -149,7 +150,7 @@ def order_with_inventory(session):
 
     product = Product(
         product_id="product_inventory_001",
-        product_name="Stripe Test Product",
+        name="Stripe Test Product",
         customer_id=customer.customer_id,
         brand="Test Brand",
         category="Test Category",
@@ -174,7 +175,6 @@ def order_with_inventory(session):
         stripe_session_id="cs_test_inventory",
         status=OrderStatus.PENDING,
         total_amount=Decimal("20.00"),
-        operator_admin_id=admin.id,
         customer_id=customer.id,
         cart_id=cart.id,
         shipping_address_1="123 Test Street",
@@ -215,7 +215,7 @@ def cart_product_variant(session):
 
     product = Product(
         product_id="product_cart_001",
-        product_name="Cart Test Product",
+        name="Cart Test Product",
         customer_id=customer.customer_id,
         brand="Test Brand",
         category="Test Category",
@@ -265,7 +265,7 @@ def successful_order(session):
 
     product = Product(
         product_id="product_success_001",
-        product_name="Stripe Success Product",
+        name="Stripe Success Product",
         customer_id=customer.customer_id,
         brand="Test Brand",
         category="Test Category",
@@ -290,7 +290,6 @@ def successful_order(session):
         stripe_session_id="cs_test_success",
         status=OrderStatus.PENDING,
         total_amount=Decimal("20.00"),
-        operator_admin_id=admin.id,
         customer_id=customer.id,
         cart_id=cart.id,
         shipping_address_1="123 Test Street",
