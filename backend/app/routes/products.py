@@ -52,7 +52,7 @@ def add_product():
     """
     product_required_fields = [
         "product_id",
-        "product_name",
+        "name",
         "brand",
         "category",
         "description",
@@ -81,7 +81,7 @@ def add_product():
 
     product = Product(
         product_id=data.get("product_id", "").strip(),
-        product_name=data.get("product_name", "").strip(),
+        name=data.get("name", "").strip(),
         # nullable=False
         brand=data.get("brand", "").strip(),
         category=data.get("category", "").strip(),
@@ -145,7 +145,7 @@ def update_product(product_id):
     """
     Admin edit product form for db
     """
-    product_required_fields = ["product_name", "brand", "category", "description"]
+    product_required_fields = ["name", "brand", "category", "description"]
 
     variant_required_fields = [
         "price",
@@ -172,8 +172,8 @@ def update_product(product_id):
 
         variant = ProductVariant.query.filter_by(product_id=product.id).first_or_404()
 
-        product.product_name = data.get(
-            "product_name", ""
+        product.name = data.get(
+            "name", ""
         ).strip()  # if im updating a product name is it or None? use or None under nullable=True in the model
         product.brand = data.get("brand", "").strip()
         product.category = data.get("category", "").strip()

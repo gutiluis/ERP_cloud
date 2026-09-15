@@ -39,7 +39,7 @@ class Product(TimeStampModel):
         String(50), index=True, unique=True, nullable=False
     )
 
-    product_name: Mapped[str] = mapped_column(String(200), nullable=False)
+    name: Mapped[str] = mapped_column(String(200), nullable=False)
 
     customer_id: Mapped[str] = mapped_column(
         String(50), db.ForeignKey("customers.customer_id"), nullable=False

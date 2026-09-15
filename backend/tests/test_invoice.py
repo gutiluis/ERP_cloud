@@ -43,7 +43,7 @@ def create_customer(session):
 def create_product(session, customer):
     product = Product(
         product_id="PROD-TEST-001",
-        product_name="Invoice Test Product",
+        name="Invoice Test Product",
         customer_id=customer.customer_id,
         brand="Test Brand",
         category="Test Category",
@@ -69,7 +69,6 @@ def create_cart(session, customer):
 def create_order(session, admin, customer, cart):
     order = Order(
         stripe_session_id="cs_invoice_test_001",
-        operator_admin_id=admin.id,
         customer_id=customer.id,
         cart_id=cart.id,
         status=OrderStatus.PENDING,

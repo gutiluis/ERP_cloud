@@ -34,6 +34,10 @@ class CartStatus(str, enum.Enum):
 
 
 class Cart(TimeStampModel):
+    """
+    Public checkout needs cart_token, customer_id, items, total_amount, order
+    """
+
     __tablename__ = "carts"
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
 

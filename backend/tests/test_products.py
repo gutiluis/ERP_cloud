@@ -28,7 +28,7 @@ def test_create_product(session):
 
     product = Product(
         product_id="PID-001",
-        product_name="Test Product",
+        name="Test Product",
         customer_id=customer.customer_id,
         brand="TestBrand",
         category="Electronics",
@@ -40,7 +40,7 @@ def test_create_product(session):
     retrieved = session.query(Product).filter_by(product_id="PID-001").first()
 
     assert retrieved is not None
-    assert retrieved.product_name == "Test Product"
+    assert retrieved.name == "Test Product"
     assert retrieved.product_id == "PID-001"
     assert retrieved.customer_id == customer.customer_id
     assert retrieved.brand == "TestBrand"
@@ -57,7 +57,7 @@ def test_create_product_with_optionals(session):
 
     product = Product(
         product_id="PID-002",
-        product_name="Product With URL",
+        name="Product With URL",
         customer_id=customer.customer_id,
         brand="Brand",
         category="Category",
@@ -82,7 +82,7 @@ def test_create_product_variant(session):
 
     product = Product(
         product_id="PID-003",
-        product_name="Parent Product",
+        name="Parent Product",
         customer_id=customer.customer_id,
         brand="Brand",
         category="Category",
@@ -122,7 +122,7 @@ def test_product_children_variants_relationship(session):
 
     product = Product(
         product_id="PID-004",
-        product_name="Product With Variants",
+        name="Product With Variants",
         customer_id=customer.customer_id,
         brand="Brand",
         category="Category",
@@ -164,7 +164,7 @@ def test_product_and_variant_timestamps(session):
 
     product = Product(
         product_id="PID-005",
-        product_name="Timestamp Product",
+        name="Timestamp Product",
         customer_id=customer.customer_id,
         brand="Brand",
         category="Category",
@@ -197,7 +197,7 @@ def test_public_products(client, session):
 
     product = Product(
         product_id="PID-PUBLIC-001",
-        product_name="Public Test Product",
+        name="Public Test Product",
         customer_id=customer.customer_id,
         brand="PublicBrand",
         category="Electronics",
@@ -230,7 +230,7 @@ def test_public_products(client, session):
     public_product = data["products"][0]
 
     assert public_product["product_id"] == "PID-PUBLIC-001"
-    assert public_product["product_name"] == "Public Test Product"
+    assert public_product["name"] == "Public Test Product"
     assert public_product["brand"] == "PublicBrand"
     assert public_product["category"] == "Electronics"
     assert public_product["description"] == "A public product."
@@ -251,7 +251,7 @@ def test_public_products_excludes_inactive_products(client, session):
 
     active_product = Product(
         product_id="PID-PUBLIC-ACTIVE",
-        product_name="Active Product",
+        name="Active Product",
         customer_id=customer.customer_id,
         brand="Brand",
         category="Category",
@@ -261,7 +261,7 @@ def test_public_products_excludes_inactive_products(client, session):
 
     inactive_product = Product(
         product_id="PID-PUBLIC-INACTIVE",
-        product_name="Inactive Product",
+        name="Inactive Product",
         customer_id=customer.customer_id,
         brand="Brand",
         category="Category",
@@ -289,7 +289,7 @@ def test_public_products_excludes_inactive_variants(client, session):
 
     product = Product(
         product_id="PID-PUBLIC-VARIANTS",
-        product_name="Variant Test Product",
+        name="Variant Test Product",
         customer_id=customer.customer_id,
         brand="Brand",
         category="Category",

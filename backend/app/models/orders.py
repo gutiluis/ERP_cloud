@@ -44,8 +44,9 @@ class Order(TimeStampModel):
     __table_args__ = ({"mysql_engine": "InnoDB", "mysql_charset": "utf8mb4"},)
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
 
+    # nullable until stripe session exists
     stripe_session_id: Mapped[str] = mapped_column(
-        String(200), unique=True, nullable=False
+        String(200), unique=True, nullable=True
     )
     # idempotency stripe webhook help to avoid double payments
     stripe_payment_intent_id: Mapped[str] = mapped_column(
@@ -63,11 +64,6 @@ class Order(TimeStampModel):
     total_amount: Mapped[Decimal] = mapped_column(
         Numeric(10, 2),
         nullable=False,
-    )
-
-    # admin does not create orders
-    operator_admin_id: Mapped[int] = mapped_column(
-        BigInteger, db.ForeignKey("adminUsers.id"), nullable=False
     )
 
     customer_id: Mapped[int] = mapped_column(

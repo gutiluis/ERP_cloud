@@ -34,7 +34,7 @@ def public_products():
             "products": [
                 {
                     "product_id": product.product_id,
-                    "product_name": product.product_name,
+                    "name": product.name,
                     "brand": product.brand,
                     "category": product.category,
                     "description": product.description,
