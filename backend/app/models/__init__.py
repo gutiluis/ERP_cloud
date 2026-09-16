@@ -10,7 +10,7 @@ from app.models.admin_user import AdminUser
 
 # cart is the cart.py filename
 from app.models.cart import Cart, CartItem, CartStatus
-from app.models.customers import Customer
+from app.models.customers import Customer, CustomerDeliveryZone
 from app.models.invoice import Invoice, InvoiceItem, InvoiceStatus, InvoiceTax
 from app.models.orders import Order, OrderItem
 from app.models.payments import Payment
@@ -23,6 +23,7 @@ __all__ = [
     "CartItem",
     "CartStatus",
     "Customer",
+    "CustomerDeliveryZone",
     "Invoice",
     "InvoiceItem",
     "InvoiceStatus",

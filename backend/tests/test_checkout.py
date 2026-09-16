@@ -4,7 +4,7 @@
 
 from decimal import Decimal
 from unittest.mock import MagicMock
-
+from app.models.customers import CustomerDeliveryZone
 from app.models.cart import Cart, CartItem
 from app.models.orders import Order, OrderStatus
 
@@ -14,6 +14,12 @@ def test_checkout_success(client, cart_product_variant, session, monkeypatch):
     create the cart and cartitem
     """
     customer, product, variant = cart_product_variant
+
+    delivery_zone = CustomerDeliveryZone(
+        customer_id=customer.id,
+        zip_code="45000",
+    )
+    session.add(delivery_zone)
 
     cart = Cart(
         cart_token="checkout-test-token",
@@ -279,7 +285,12 @@ def test_checkout_stripe_creation_failed(
         unit_price=Decimal("25.00"),
     )
 
-    session.add(cart_item)
+    delivery_zone = CustomerDeliveryZone(
+        customer_id=customer.id,
+        zip_code="45000",
+    )
+
+    session.add_all([delivery_zone, cart_item])
     session.commit()
 
     def raise_stripe_error(**kwargs):
