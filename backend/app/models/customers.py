@@ -120,3 +120,45 @@ class Customer(TimeStampModel):
     def ensure_editable(self):
         if self.status == CustomerStatus.BLOCKED:
             raise ValueError("[ERROR] Customer blocked. Contact Admin.")
+
+    delivery_zones: Mapped[list[CustomerDeliveryZone]] = db.relationship(
+        "CustomerDeliveryZone",
+        back_populates="customer",
+        cascade="all, delete-orphan",
+    )
+
+
+class CustomerDeliveryZone(TimeStampModel):
+    __tablename__ = "customer_delivery_zones"
+    __table_args__ = (
+        UniqueConstraint(
+            "customer_id",
+            "zip_code",
+            name="uq_customer_delivery_zone",
+        ),
+        {"mysql_engine": "InnoDB"},
+    )
+
+    id: Mapped[int] = mapped_column(
+        BigInteger,
+        primary_key=True,
+        autoincrement=True,
+    )
+
+    customer_id: Mapped[int] = mapped_column(
+        BigInteger,
+        db.ForeignKey("customers.id"),
+        nullable=False,
+        index=True,
+    )
+
+    zip_code: Mapped[str] = mapped_column(
+        String(50),
+        nullable=False,
+        index=True,
+    )
+
+    customer: Mapped[Customer] = db.relationship(
+        "Customer",
+        back_populates="delivery_zones",
+    )
