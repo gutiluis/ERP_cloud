@@ -1,5 +1,6 @@
 // file: public/CartPage.test.jsx
-// descr: unit/component/integration testing
+// descr: unit/component/integration testing of cart page. frontend integration-style testing the cart page calling api layer
+
 
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
@@ -13,8 +14,10 @@ import {
 } from '../../api/cart'
 
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router-dom'
 
-// frontend integration-style testing the cart page calling api layer
+
+
 vi.mock('../../api/cart', () => ({
     getCart: vi.fn(),
     updateCartItem: vi.fn(),
@@ -44,7 +47,11 @@ describe('CartPage', () => {
             total_amount: '59.98',
         })
 
-        render(<CartPage />)
+        render(
+            <MemoryRouter>
+                <CartPage />
+            </MemoryRouter>,
+        )
 
         expect(
             await screen.findByText('Product variant 1'),
@@ -85,18 +92,17 @@ describe('CartPage', () => {
             total_amount: '89.97',
         })
 
-        // import user
         const user = userEvent.setup()
 
-        render(<CartPage />)
+        render(
+            <MemoryRouter>
+                <CartPage />
+            </MemoryRouter>,
+        )
 
         const quantityInput = await screen.findByLabelText('Quantity')
-
-        // onChange event patch
         await user.clear(quantityInput)
-        // onBlur event patch
         await user.type(quantityInput, '3')
-        // onKeyDown event patch
         await user.keyboard('{Enter}')
 
         await waitFor(() => {
@@ -134,7 +140,11 @@ describe('CartPage', () => {
             total_amount: '0.00',
         })
 
-        render(<CartPage />)
+        render(
+            <MemoryRouter>
+                <CartPage />
+            </MemoryRouter>,
+        )
 
         await screen.findByText('Product variant 1')
 
@@ -152,5 +162,19 @@ describe('CartPage', () => {
         ).toBeInTheDocument()
 
         expect(screen.getByText('Your cart')).toBeInTheDocument()
+    })
+
+    test('shows a link to continue shopping when the cart is empty', async () => {
+        render(
+            <MemoryRouter>
+                <CartPage />
+            </MemoryRouter>,
+        )
+
+        expect(
+            await screen.findByRole('link', {
+                name: 'Continue Shopping',
+            }),
+        ).toHaveAttribute('href', '/')
     })
 })

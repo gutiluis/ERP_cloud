@@ -6,6 +6,7 @@
 import { useEffect, useState } from 'react'
 import { getProducts } from '../../api/products'
 import { createCart, addCartItem } from '../../api/cart'
+import { Link } from 'react-router-dom'
 import ProductCard from '../../components/ProductCard'
 
 function ProductCatalog() {
@@ -88,14 +89,23 @@ function ProductCatalog() {
 
     return (
         <main className="mx-auto max-w-7xl px-6 py-12">
-            <header className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-900">
-                    Products
-                </h1>
+            <header className="mb-8 flex items-start justify-between">
+                <div>
+                    <h1 className="text-3xl font-bold text-gray-900">
+                        Products
+                    </h1>
 
-                <p className="mt-2 text-gray-600">
-                    Browse our available products.
-                </p>
+                    <p className="mt-2 text-gray-600">
+                        Browse our available products.
+                    </p>
+                </div>
+
+                <Link
+                    to="/cart"
+                    className="font-medium text-blue-700 hover:text-blue-900"
+                >
+                    View cart
+                </Link>
             </header>
 
             <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

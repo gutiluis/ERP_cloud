@@ -9,7 +9,7 @@ function ProductCard({ product, onAddToCart }) {
         <article className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
             <div className="mb-4">
                 <h2 className="text-xl font-semibold text-gray-900">
-                    {product.product_name}
+                    {product.name}
                 </h2>
 
                 <p className="mt-1 text-sm text-gray-500">

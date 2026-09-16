@@ -10,7 +10,7 @@ describe('ProductCard', () => {
     it('renders product information and variants', () => {
         const product = {
             product_id: 'PID-001',
-            product_name: 'Test Product',
+            name: 'Test Product',
             brand: 'TestBrand',
             category: 'Electronics',
             description: 'A test product description.',
@@ -32,7 +32,6 @@ describe('ProductCard', () => {
             screen.getByRole('heading', { name: 'Test Product' }),
         ).toBeInTheDocument()
 
-        // getByText is jsdom // toBeInTheDocument is jsdom
         expect(screen.getByText('TestBrand')).toBeInTheDocument()
         expect(screen.getByText('Electronics')).toBeInTheDocument()
         expect(
@@ -46,7 +45,7 @@ describe('ProductCard', () => {
     it('shows out of stock for unavailable variants', () => {
         const product = {
             product_id: 'PID-002',
-            product_name: 'Out Of Stock Product',
+            name: 'Out Of Stock Product',
             brand: 'TestBrand',
             category: 'Electronics',
             description: 'Unavailable product.',
