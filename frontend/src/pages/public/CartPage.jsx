@@ -1,9 +1,15 @@
+// file: CartPage.jsx
+// descr: Cart Page
+
+
+
 import { useEffect, useState } from 'react'
 import {
     getCart,
     updateCartItem,
     deleteCartItem,
 } from '../../api/cart'
+import { Link } from 'react-router-dom'
 
 function CartPage() {
     const [cart, setCart] = useState(null)
@@ -109,6 +115,7 @@ function CartPage() {
         )
     }
 
+    // empty cart section
     if (cart.items.length === 0) {
         return (
             <main className="mx-auto max-w-7xl px-6 py-12">
@@ -119,6 +126,13 @@ function CartPage() {
                 <p className="mt-4 text-gray-600">
                     Your cart is empty.
                 </p>
+
+                <Link
+                    to="/"
+                    className="mt-6 inline-block font-medium text-blue-700 hover:text-blue-900"
+                >
+                    Continue Shopping
+                </Link>
             </main>
         )
     }

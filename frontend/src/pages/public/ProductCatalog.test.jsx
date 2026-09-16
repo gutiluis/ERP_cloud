@@ -5,6 +5,7 @@
 
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
+import { MemoryRouter } from 'react-router-dom'
 import ProductCatalog from './ProductCatalog'
 import { getProducts } from '../../api/products'
 
@@ -15,7 +16,7 @@ vi.mock('../../api/products', () => ({
 vi.mock('../../components/ProductCard', () => ({
     default: ({ product }) => (
         <article>
-            <h2>{product.product_name}</h2>
+            <h2>{product.name}</h2>
             <p>{product.brand}</p>
         </article>
     ),
@@ -25,7 +26,11 @@ describe('ProductCatalog', () => {
     it('renders the loading state', () => {
         getProducts.mockReturnValue(new Promise(() => { }))
 
-        render(<ProductCatalog />)
+        render(
+            <MemoryRouter>
+                <ProductCatalog />
+            </MemoryRouter>,
+        )
 
         expect(screen.getByText('Loading products...')).toBeInTheDocument()
     })
@@ -33,7 +38,11 @@ describe('ProductCatalog', () => {
     it('renders the error state when the API call fails', async () => {
         getProducts.mockRejectedValue(new Error('API error'))
 
-        render(<ProductCatalog />)
+        render(
+            <MemoryRouter>
+                <ProductCatalog />
+            </MemoryRouter>,
+        )
 
         expect(
             await screen.findByRole('alert'),
@@ -43,7 +52,11 @@ describe('ProductCatalog', () => {
     it('renders the empty state when no products are returned', async () => {
         getProducts.mockResolvedValue([])
 
-        render(<ProductCatalog />)
+        render(
+            <MemoryRouter>
+                <ProductCatalog />
+            </MemoryRouter>,
+        )
 
         expect(
             await screen.findByText('No products available.'),
@@ -57,13 +70,12 @@ describe('ProductCatalog', () => {
         getProducts.mockResolvedValue([
             {
                 product_id: 1,
-                product_name: 'Test Product',
+                name: 'Test Product',
                 category: 'Electronics',
                 brand: 'Test Brand',
                 description: 'Test description',
                 variants: [
                     {
-                        sku: 'TEST-001',
                         price: 19.99,
                         color: 'Black',
                         size: 'Medium',
@@ -73,7 +85,11 @@ describe('ProductCatalog', () => {
             },
         ])
 
-        render(<ProductCatalog />)
+        render(
+            <MemoryRouter>
+                <ProductCatalog />
+            </MemoryRouter>,
+        )
 
         expect(
             await screen.findByRole('heading', {
@@ -82,5 +98,27 @@ describe('ProductCatalog', () => {
         ).toBeInTheDocument()
 
         expect(screen.getByText('Test Brand')).toBeInTheDocument()
+    })
+
+    it('shows a link to the cart', async () => {
+        getProducts.mockResolvedValue([
+            {
+                product_id: 1,
+                name: 'Test product',
+                variants: [],
+            },
+        ])
+
+        render(
+            <MemoryRouter>
+                <ProductCatalog />
+            </MemoryRouter>,
+        )
+
+        expect(
+            await screen.findByRole('link', {
+                name: 'View cart',
+            }),
+        ).toHaveAttribute('href', '/cart')
     })
 })

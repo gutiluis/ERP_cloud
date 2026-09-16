@@ -35,7 +35,7 @@ describe('App', () => {
                 products: [
                     {
                         product_id: 'PID-001',
-                        product_name: 'Test Product',
+                        name: 'Test Product',
                         brand: 'TestBrand',
                         category: 'Electronics',
                         description: 'A test product description.',
@@ -107,7 +107,7 @@ describe('App', () => {
                     products: [
                         {
                             product_id: 'PID-001',
-                            product_name: 'Test Product',
+                            name: 'Test Product',
                             brand: 'TestBrand',
                             category: 'Electronics',
                             description: 'A test product description.',
@@ -166,7 +166,7 @@ describe('App', () => {
                     products: [
                         {
                             product_id: 'PID-001',
-                            product_name: 'Test Product',
+                            name: 'Test Product',
                             brand: 'TestBrand',
                             category: 'Electronics',
                             description: 'A test product description.',

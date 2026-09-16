@@ -233,6 +233,7 @@ npx stripe trigger checkout.session.completed
 - Vitest
 - Jsdom
 - ESLint
+- React Router
 
 ---
 

@@ -17,12 +17,6 @@ services:
     depends_on:
       - db
 
-  frontend:
-    build:
-      context: .
-      dockerfile: docker/frontend.Dockerfile
-    container_name: erp_frontend
-
   nginx:
     build:
       context: .
@@ -31,7 +25,6 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - frontend
       - api
 
   db:
