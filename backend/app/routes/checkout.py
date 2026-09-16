@@ -1,9 +1,14 @@
+# file: checkout.py
+# descr:
+
 import stripe
 from flask import Blueprint, current_app, jsonify, request
 
 from app import db
 from app.models.cart import Cart
 from app.models.orders import Order, OrderItem
+from app.services.delivery import customer_delivers_to_zip
+
 
 checkout_bp = Blueprint("checkout", __name__, url_prefix="/api")
 
@@ -46,7 +51,7 @@ def checkout():
         .scalars()
         .first()
     )
-
+    # existing cart tests
     if cart is None:
         return jsonify({"error": "Cart not found"}), 404
 
@@ -55,6 +60,15 @@ def checkout():
 
     if cart.order is not None:
         return jsonify({"error": "Checkout already started for this cart"}), 409
+
+    sellers = {item.product.customer for item in cart.items}
+
+    for seller in sellers:
+        if not customer_delivers_to_zip(seller.id, shipping_zip_code):
+            return (
+                jsonify({"error": "Seller does not deliver to the provided ZIP code"}),
+                400,
+            )
 
     try:
         order = Order(
