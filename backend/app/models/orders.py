@@ -76,21 +76,13 @@ class Order(TimeStampModel):
         "OrderItem", back_populates="order", cascade="all, delete-orphan"
     )
 
-    shipping_address_1: Mapped[str] = mapped_column(
-        String(200), unique=True, nullable=False
-    )
+    shipping_address_1: Mapped[str] = mapped_column(String(200), nullable=False)
 
-    shipping_address_2: Mapped[str] = mapped_column(
-        String(200), unique=True, nullable=True
-    )
-    shipping_country: Mapped[str] = mapped_column(
-        String(50), unique=True, nullable=False
-    )
-    shipping_city: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
-    shipping_zip_code: Mapped[str] = mapped_column(
-        String(50), unique=True, nullable=False
-    )
-    shipping_state: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+    shipping_address_2: Mapped[str] = mapped_column(String(200), nullable=True)
+    shipping_country: Mapped[str] = mapped_column(String(50), nullable=False)
+    shipping_city: Mapped[str] = mapped_column(String(50), nullable=False)
+    shipping_zip_code: Mapped[str] = mapped_column(String(50), nullable=False)
+    shipping_state: Mapped[str] = mapped_column(String(50), nullable=False)
     invoice: Mapped[Invoice] = db.relationship(
         "Invoice",
         back_populates="order",
