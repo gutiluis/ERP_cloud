@@ -72,10 +72,25 @@ repos:
       # hook(id="docker-compose-config")
       - id: docker-compose-config
         name: Validate Docker Compose
-        entry: docker compose -f docker-compose.yml config --quiet
+        entry: docker compose -f compose.yaml config --quiet
         language: system
-        files: ^docker-compose\.ya?ml$
+        files: ^compose\.ya?ml$
         pass_filenames: false
+
+      - id: docker-compose-production-config
+        name: Validate Docker Compose Production
+        entry: docker compose -f compose.yaml -f compose.production.yaml config --quiet
+        language: system
+        files: ^compose.*\.ya?ml$
+        pass_filenames: false
+
+      - id: docker-compose-e2e-config
+        name: Validate Docker Compose E2E
+        entry: docker compose -f compose.yaml -f compose.e2e.yaml config --quiet
+        language: system
+        files: ^compose(\.e2e)?\.ya?ml$
+        pass_filenames: false
+
 
       # Backend tests
       - id: pytest
@@ -97,9 +112,9 @@ repos:
         files: ^frontend/.*\.(js|jsx)$
         pass_filenames: false
 
-      # frontend tests
-      - id: vitest
-        name: Run frontend tests
+      # Vitest tests. e2e is exluded in the child vite.config.js
+      - id: frontend-vitest
+        name: Run frontend Vitest unit/components
         entry: npm --prefix frontend run test
         language: system
         files: ^frontend/.*\.(js|jsx)$

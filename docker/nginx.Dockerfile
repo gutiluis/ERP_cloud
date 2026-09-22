@@ -1,7 +1,7 @@
 # multi-stage build
 # react + nginx
 # nginx.Dockerfile builds the react app inside the nginx image
-
+# Dockerfile Can use multiple base images through multi-stage builds, but produces one final image.
 
 FROM node:26-alpine AS builder
 

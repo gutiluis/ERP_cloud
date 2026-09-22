@@ -1,5 +1,5 @@
 """
-Script to set up a test database running with docker, for the customer class for instance using pytest
+Script to set up a test database running with docker
 
 
 pytest configuration file. needs to be runned from project root

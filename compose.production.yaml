@@ -7,8 +7,7 @@ services:
     container_name: erp_api
     expose:
       # does not mean docker compose erp_api is running in localhost:5000
-      # does not mean its running in localhost:5000
-      - "5000"
+      - "8000"
       # erp_api reads
     env_file: # read by erp_api not erp_db
       - .env
@@ -31,8 +30,9 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    ports:
-      - "3307:3306"
+    # pytest is from outside. this is inside
+    #ports:
+    #  - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
 volumes:
