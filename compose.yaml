@@ -6,8 +6,7 @@ services:
     restart: unless-stopped
     container_name: erp_api
     ports:
-      # erp_api not running in localhost:5000
-      - "8000:5000"
+      - "8000:8000"
 
       # erp_api reads. not erp_db
     env_file:
@@ -33,8 +32,9 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    # from inside containers under compose.production
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
 volumes:

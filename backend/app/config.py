@@ -21,4 +21,6 @@ class Config:
 
 
 class TestConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.environ["TEST_DATABASE_URL"]
+    """Pytest"""
+
+    SQLALCHEMY_DATABASE_URI = os.getenv("TEST_DATABASE_URL")

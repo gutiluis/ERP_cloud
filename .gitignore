@@ -1,3 +1,10 @@
+#e2e
+test-results/
+playwright-report/
+frontend/results.json
+frontend/test-results/
+frontend/playwright-report/
+#
 scripts/create_admin_from_within_containerapi.py
 #
 __pycache__/

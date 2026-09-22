@@ -17,16 +17,15 @@
 set -e
 date -u
 
-echo "[INFO] Waiting for DB..."
-# 3306 networking
-while ! nc -z db 3306; do
+DB_HOST="${DB_HOST:-db}"
+DB_PORT="${DB_PORT:-3306}"
+
+echo "[INFO] Waiting for DB at ${DB_HOST}:${DB_PORT}..."
+while ! nc -z "$DB_HOST" "$DB_PORT"; do
     echo "[INFO] Waiting for database..."
     sleep 1
 done
 
 echo "[INFO] DB is up..."
 echo "[INFO] Running application..."
-# gunicorn upfront and nginx behind. # put nginx upfront and gunicorn behind for production.
-# any lines after exec will never execute
-# after exec the terminal closes
-exec gunicorn -b 0.0.0.0:5000 wsgi:app --log-level=info
+exec gunicorn -b 0.0.0.0:8000 wsgi:app --log-level=info

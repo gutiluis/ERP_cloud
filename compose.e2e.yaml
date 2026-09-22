@@ -1,0 +1,81 @@
+services:
+
+  db:
+    image: mysql:8.0
+    restart: "no"
+    environment:
+      MYSQL_DATABASE: erp_e2e
+      MYSQL_USER: erp
+      MYSQL_PASSWORD: erp
+      MYSQL_ROOT_PASSWORD: root
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-uerp",
+          "-perp"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+
+  e2e_api:
+    build:
+      # current directory as build context
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    restart: "no"
+    # flask /app/config.py
+    environment:
+      # mysql is only reachable by other containers on the compose network
+      # 3306 mysql port always inside docker
+      # pymysql driver
+      # connect to the mysql db service internal mysql port 3306
+      DATABASE_URL: mysql+pymysql://erp:erp@db:3306/erp_e2e
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+
+  e2e_playwright:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.noble
+    shm_size: 1gb
+    restart: "no"
+    environment:
+      # vite and playwright run in same e2e_playwright container
+      # playwright.config.js. frontend
+      BASE_URL: http://127.0.0.1:5173
+      # vite.config.js
+      VITE_API_TARGET: http://e2e_api:8000
+    depends_on:
+      e2e_api:
+        condition: service_healthy
+    volumes:
+      - type: bind
+        source: ./frontend/test-results
+      # container paths based on playwright docker file workdir /app/frontend
+      # update localhost and make new copy
+        target: /app/frontend/test-results
+      - type: bind
+        source: ./frontend/results.json
+        target: /app/frontend/results.json
