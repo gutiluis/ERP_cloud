@@ -28,7 +28,7 @@ packaging==26.3
 pycodestyle==2.14.0
 pycparser==3.0
 pyflakes==3.4.0
-PyMySQL==1.2.0
+PyMySQL==1.2.3
 python-dotenv==1.2.3
 SQLAlchemy==2.0.54
 stripe
