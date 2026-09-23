@@ -2,6 +2,9 @@
 
 import { defineConfig, devices } from '@playwright/test';
 
+
+const jsonOutputDir = process.env.PLAYWRIGHT_JSON_OUTPUT_DIR ?? 'test-results';
+
 export default defineConfig({
     // look for test files in the /e2e directory, relative to this configuration file
     testDir: './e2e',
@@ -10,7 +13,9 @@ export default defineConfig({
     // reporter to use the container is ephemeral it will not save
     reporter: [
         ['list'],
-        ['json', { outputFile: 'results.json' }],
+        ['json', {
+            outputFile: `${jsonOutputDir}/results.json`
+        }],
     ],
     use: {
         viewport: { width: 2560, height: 1440 },

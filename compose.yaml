@@ -7,14 +7,14 @@ services:
     container_name: erp_api
     ports:
       - "8000:8000"
-
       # erp_api reads. not erp_db
     env_file:
       - .env
     volumes:
       - ./backend:/app
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   nginx:
     build:
@@ -30,6 +30,11 @@ services:
     image: mysql:8.0
     container_name: erp_db
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     env_file:
       - .env
     # from inside containers under compose.production

@@ -24,16 +24,6 @@ export default defineConfig({
             },
         },
     },
-    // not needed under production. nginx can do it so it can be removed. only for development
-    //preview: {
-    //    host: '0.0.0.0',
-    //    port: 4173,
-    //    proxy: {
-    //        '/api': {
-    //            target: apiTarget,
-    //            changeOrigin: true,
-    //        },
-    //    },
     // test property
     test: {
         environment: 'jsdom',

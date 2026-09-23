@@ -11,10 +11,10 @@ down:
 	docker compose down
 
 migrate:
-	docker compose run --rm api flask --app wsgi db migrate
+	docker compose run --rm --entrypoint flask api --app wsgi db migrate
 
 upgrade:
-	docker compose run --rm api flask --app wsgi db upgrade
+	docker compose run --rm --entrypoint flask api --app wsgi db upgrade
 
 test:
 	docker compose run --rm api pytest
@@ -43,4 +43,4 @@ e2e-test:
 	docker compose -f compose.e2e.yaml run --rm e2e_playwright
 
 e2e-down:
-	docker compose -f compose.e2e.yaml down -v
+	docker compose -f compose.e2e.yaml down -v --remove-orphans
