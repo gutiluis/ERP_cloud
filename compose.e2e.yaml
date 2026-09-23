@@ -16,12 +16,14 @@ services:
           "ping",
           "-h",
           "localhost",
-          "-uerp",
-          "-perp"
+          "-u",
+          "root",
+          "-proot"
         ]
       interval: 5s
       timeout: 5s
       retries: 10
+      start_period: 20s
     deploy:
       resources:
         limits:
@@ -67,6 +69,7 @@ services:
       BASE_URL: http://127.0.0.1:5173
       # vite.config.js
       VITE_API_TARGET: http://e2e_api:8000
+      PLAYWRIGHT_JSON_OUTPUT_DIR: /app/frontend/test-results
     depends_on:
       e2e_api:
         condition: service_healthy
@@ -76,6 +79,3 @@ services:
       # container paths based on playwright docker file workdir /app/frontend
       # update localhost and make new copy
         target: /app/frontend/test-results
-      - type: bind
-        source: ./frontend/results.json
-        target: /app/frontend/results.json

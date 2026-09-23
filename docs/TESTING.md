@@ -117,59 +117,106 @@ The E2E suite verifies complete user workflows such as:
 3. Add a product to the cart.
 4. Retrieve and update the cart.
 5. Start checkout.
-6. Complete the payment workflow in the appropriate test environment.
+6. Complete the checkout workflow when the public checkout endpoint is available.
 
-The E2E environment consists of four services:
+The E2E environment consists of three services:
 
-* `db` — MySQL E2E database
-* `e2e_api` — backend API
-* `e2e_frontend` — frontend application
+* `db` — isolated MySQL E2E database
+* `e2e_api` — Flask backend API configured for the E2E database
 * `e2e_playwright` — Playwright test runner
 
-The E2E database is separate from the development database.
+Vite runs inside the `e2e_playwright` container. Playwright's `webServer` configuration starts Vite automatically before the tests run.
 
-### Start the E2E Environment
+The E2E database is separate from the development and production databases.
 
-Build the E2E images and start the API, database, and frontend:
+### Run the E2E Tests
+
+The recommended local E2E workflow is:
 
 ```bash
-docker compose -f compose.e2e.yaml up -d --build
+make e2e
 ```
 
-Check the service status:
+This:
+
+1. Builds and starts the E2E services.
+2. Waits for the database and API readiness checks.
+3. Runs the E2E database migrations.
+4. Seeds deterministic test data.
+5. Starts Vite through Playwright.
+6. Runs the Playwright test suite.
+
+The E2E environment does not require the developer to manually start the backend or frontend.
+
+### E2E Database
+
+The E2E backend connects to the dedicated `erp_e2e` database:
+
+```text
+mysql+pymysql://erp:erp@db:3306/erp_e2e
+```
+
+The database is isolated from the development database.
+
+Migrations are applied with:
+
+```bash
+make e2e-migrate
+```
+
+Deterministic test data is created with:
+
+```bash
+make e2e-seed
+```
+
+The E2E database can be recreated safely because it uses a dedicated Docker volume.
+
+### E2E Services
+
+Start the E2E environment without running the tests:
+
+```bash
+make e2e-up
+```
+
+Check service status:
 
 ```bash
 docker compose -f compose.e2e.yaml ps
 ```
 
-The database must be healthy and the API and frontend must be running before starting the Playwright tests.
+The API service depends on the MySQL health check before becoming available.
 
-### Seed the E2E Database
+### Run Playwright
 
-Populate the E2E database with test data:
-
-```bash
-docker compose -f compose.e2e.yaml exec e2e_api \
-    python -m tests.seed_e2e
-```
-
-The seed script creates the test data required by the E2E tests.
-
-### Run the E2E Tests
-
-Run the complete Playwright test suite:
+Run the complete E2E suite:
 
 ```bash
-docker compose -f compose.e2e.yaml run --rm e2e_playwright
+make e2e-test
 ```
 
-Playwright accesses the frontend through the Docker Compose network using:
+Playwright starts Vite on:
 
 ```text
-http://e2e_frontend:4173
+http://127.0.0.1:5173
 ```
 
-The `BASE_URL` environment variable is configured automatically by `compose.e2e.yaml`.
+The browser accesses Vite through the loopback interface because Vite and Playwright run in the same container.
+
+Vite proxies frontend API requests to the E2E Flask backend using:
+
+```text
+http://e2e_api:8000
+```
+
+The API target is configured through:
+
+```text
+VITE_API_TARGET
+```
+
+This keeps the frontend configuration independent of the E2E environment.
 
 ### Run a Specific Playwright Test
 
@@ -177,14 +224,12 @@ Run a specific test file:
 
 ```bash
 docker compose -f compose.e2e.yaml run --rm e2e_playwright \
-    npx playwright test tests/example.spec.ts
+    npx playwright test e2e/example.spec.ts
 ```
 
-Replace `tests/example.spec.ts` with the test file you want to run.
+Replace `e2e/example.spec.ts` with the test file you want to run.
 
 ### Run Playwright in Debug Mode
-
-Run the tests with Playwright's debugger:
 
 ```bash
 docker compose -f compose.e2e.yaml run --rm e2e_playwright \
@@ -193,8 +238,6 @@ docker compose -f compose.e2e.yaml run --rm e2e_playwright \
 
 ### Run Playwright in Headed Mode
 
-To run the browser in headed mode:
-
 ```bash
 docker compose -f compose.e2e.yaml run --rm e2e_playwright \
     npx playwright test --headed
@@ -202,73 +245,83 @@ docker compose -f compose.e2e.yaml run --rm e2e_playwright \
 
 Headed mode may require additional display configuration depending on the Docker environment.
 
-## Test Reports
+## Test Artifacts
 
-Playwright generates its HTML report inside the `e2e_playwright` container.
+Playwright is configured to produce:
 
-Because the current Compose configuration does not mount a host directory for the Playwright report, the report is not persisted when the one-off container is removed with `--rm`.
-
-If you want to inspect the report after a test run, run the Playwright container without `--rm`:
-
-```bash
-docker compose -f compose.e2e.yaml run e2e_playwright
+```text
+frontend/results.json
+frontend/test-results/
 ```
 
-Then inspect the generated report from the container or copy it to the host with `docker cp`.
+`results.json` contains the JSON test report.
 
-If persistent host access to the report becomes necessary, add a volume for the Playwright report directory to `compose.e2e.yaml`.
+`test-results/` contains Playwright test artifacts such as screenshots and traces when applicable.
 
-## Stop the E2E Environment
+These paths are bind-mounted from the Playwright container to the host so the artifacts remain available after the test container exits.
 
-Stop the E2E services:
+The Playwright configuration uses:
 
-```bash
-docker compose -f compose.e2e.yaml down
+```text
+trace: on-first-retry
+screenshot: only-on-failure
 ```
 
-The E2E MySQL volume is preserved.
+### Stop the E2E Environment
 
-To remove the E2E database and all associated volumes:
-
-```bash
-docker compose -f compose.e2e.yaml down -v
-```
-
-Use `down -v` when you want to start with a completely clean E2E database.
-
-## Typical E2E Workflow
-
-A normal E2E development cycle is:
+Stop and remove the E2E services:
 
 ```bash
-# Build and start the E2E environment
-docker compose -f compose.e2e.yaml up -d --build
-
-# Seed the E2E database
-docker compose -f compose.e2e.yaml exec e2e_api \
-    python -m tests.seed_e2e
-
-# Run Playwright
-docker compose -f compose.e2e.yaml run --rm e2e_playwright
-
-# Stop the E2E environment
-docker compose -f compose.e2e.yaml down
+make e2e-down
 ```
 
-If backend, frontend, or Playwright code changes, rebuild the affected image before running the tests:
+This runs:
 
 ```bash
-docker compose -f compose.e2e.yaml build e2e_api e2e_frontend e2e_playwright
+docker compose -f compose.e2e.yaml down -v --remove-orphans
 ```
 
-Then recreate the services:
+The `-v` option removes the disposable E2E MySQL volume, ensuring the next E2E run starts with a clean database.
+
+### Typical E2E Workflow
+
+For normal development, use:
 
 ```bash
-docker compose -f compose.e2e.yaml up -d
+make e2e
 ```
 
+To run the individual lifecycle steps:
 
-See [`docs/testing.md`](docs/testing.md) for instructions on starting the E2E environment, seeding test data, running Playwright, and viewing test reports.
+```bash
+make e2e-up
+make e2e-migrate
+make e2e-seed
+make e2e-test
+```
+
+After testing:
+
+```bash
+make e2e-down
+```
+
+If an E2E test fails, the environment remains available so that logs and artifacts can be inspected before cleanup.
+
+For example:
+
+```bash
+docker compose -f compose.e2e.yaml ps
+docker compose -f compose.e2e.yaml logs e2e_api
+```
+
+Then clean up with:
+
+```bash
+make e2e-down
+```
+
+The same E2E Compose environment is used locally and in CI to keep the test environment consistent.
 
 ---
 
@@ -377,7 +430,6 @@ npm install
 
 The following limitations currently apply:
 
-* No automated E2E test suite is currently implemented.
 * Production verification is not a replacement for automated tests.
 * External payment-provider behavior should be tested using Stripe test-mode resources.
 * Some production infrastructure behavior must be verified after deployment.

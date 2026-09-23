@@ -1,0 +1,58 @@
+name: E2E Playwright
+
+on:
+  push:
+    branches:
+      - main
+      - testing
+  pull_request:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build E2E services
+        run: docker compose -f compose.e2e.yaml build
+
+      - name: Start E2E services
+        run: |
+          docker compose -f compose.e2e.yaml up -d --wait db e2e_api
+
+      - name: Run database migrations
+        run: |
+          docker compose -f compose.e2e.yaml exec e2e_api \
+            flask --app wsgi db upgrade
+
+      - name: Seed E2E database
+        run: |
+          docker compose -f compose.e2e.yaml exec e2e_api \
+            python -m tests.seed_e2e
+
+      - name: Run Playwright
+        run: |
+          docker compose -f compose.e2e.yaml run --rm e2e_playwright
+
+      - name: Upload Playwright artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts
+          path: |
+            frontend/test-results/
+          if-no-files-found: ignore
+
+      - name: Show E2E service logs
+        if: failure()
+        run: |
+          docker compose -f compose.e2e.yaml logs
+
+      - name: Stop E2E environment
+        if: always()
+        run: |
+          docker compose -f compose.e2e.yaml down \
+            -v \
+            --remove-orphans
