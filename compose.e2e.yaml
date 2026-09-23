@@ -16,12 +16,14 @@ services:
           "ping",
           "-h",
           "localhost",
-          "-uerp",
-          "-perp"
+          "-u",
+          "root",
+          "-proot"
         ]
       interval: 5s
       timeout: 5s
       retries: 10
+      start_period: 10s
     deploy:
       resources:
         limits:
@@ -77,6 +79,3 @@ services:
       # container paths based on playwright docker file workdir /app/frontend
       # update localhost and make new copy
         target: /app/frontend/test-results
-      #- type: bind
-      #  source: ./frontend/results.json
-        #target: /app/frontend/results.json

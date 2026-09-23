@@ -19,7 +19,8 @@ jobs:
         run: docker compose -f compose.e2e.yaml build
 
       - name: Start E2E services
-        run: docker compose -f compose.e2e.yaml up -d db e2e_api
+        run: |
+          docker compose -f compose.e2e.yaml up -d db e2e_api
 
       - name: Run database migrations
         run: |
