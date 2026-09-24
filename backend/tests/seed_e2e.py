@@ -1,21 +1,22 @@
-# file: seed_e2e.py
-# descr: Seed deterministic data for Playwright E2E tests
-
 from decimal import Decimal
 
 from app import create_app
 from app.extensions import db
-from app.models.customers import Customer
+from app.models.customers import Customer, CustomerDeliveryZone
 from app.models.products import Product, ProductVariant
 
 
-# return type annotation
 def seed() -> None:
     """Create the data required by the E2E test suite."""
     customer = Customer(
         customer_id="e2e-customer",
         customer_name="E2E Test Customer",
         customer_email="e2e@example.test",
+    )
+
+    delivery_zone = CustomerDeliveryZone(
+        customer=customer,
+        zip_code="45000",
     )
 
     product = Product(
@@ -34,14 +35,13 @@ def seed() -> None:
         sku="E2E-CART-001",
     )
 
-    db.session.add_all([customer, product, variant])
+    db.session.add_all([customer, delivery_zone, product, variant])
     db.session.commit()
 
 
 def main() -> None:
     """Create the application context and seed the E2E database."""
     app = create_app()
-
     with app.app_context():
         seed()
 
