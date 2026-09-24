@@ -10,11 +10,31 @@ import {
     deleteCartItem,
 } from '../../api/cart'
 import { Link } from 'react-router-dom'
+import { createCheckout } from '../../api/checkout'
+
+
+
 
 function CartPage() {
+    // useState can obly be called at the top level of the component or own hook
+    // use array destructuring
+    // cart state variable declarations
+    // set initial state
+    // setCart set function update state to a different value and trigger a re-render
     const [cart, setCart] = useState(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    // api/checkout
+    const [shippingAddress, setShippingAddress] = useState({
+        address1: '',
+        address2: '',
+        country: '',
+        city: '',
+        zipCode: '',
+        state: '',
+    })
+    const [checkoutLoading, setCheckoutLoading] = useState(false)
+    const [checkoutError, setCheckoutError] = useState(null)
 
     useEffect(() => {
         async function loadCart() {
@@ -136,6 +156,39 @@ function CartPage() {
             </main>
         )
     }
+    // /api/checkout
+    async function handleCheckout(event) {
+        event.preventDefault()
+
+        const cartToken = localStorage.getItem('cart_token')
+
+        if (!cartToken) {
+            setCheckoutError('Unable to identify your cart.')
+            return
+        }
+
+        setCheckoutLoading(true)
+        setCheckoutError(null)
+
+        try {
+            const data = await createCheckout(cartToken, shippingAddress)
+
+            window.location.assign(data.checkout_url)
+        } catch (error) {
+            setCheckoutError(error.message)
+        } finally {
+            setCheckoutLoading(false)
+        }
+    }
+    // controlled input helper
+    function handleShippingChange(event) {
+        const { name, value } = event.target
+
+        setShippingAddress((currentAddress) => ({
+            ...currentAddress,
+            [name]: value,
+        }))
+    }
 
     return (
         <main className="mx-auto max-w-7xl px-6 py-12">
@@ -226,11 +279,161 @@ function CartPage() {
                 ))}
             </section>
 
-            <div className="mt-8 border-t border-gray-200 pt-6 text-right">
-                <p className="text-xl font-bold text-gray-900">
-                    Total: ${cart.total_amount}
-                </p>
+            <div className="mt-8 border-t border-gray-200 pt-6">
+                <div className="text-right">
+                    <p className="text-xl font-bold text-gray-900">
+                        Total: ${cart.total_amount}
+                    </p>
+                </div>
+
+                <form
+                    onSubmit={handleCheckout}
+                    className="mt-8 max-w-2xl space-y-6"
+                >
+                    <div>
+                        <h2 className="text-2xl font-bold text-gray-900">
+                            Shipping information
+                        </h2>
+
+                        <p className="mt-2 text-gray-600">
+                            Enter your shipping address to continue to payment.
+                        </p>
+                    </div>
+
+                    {checkoutError && (
+                        <p
+                            role="alert"
+                            className="rounded-md border border-red-200 bg-red-50 p-4 text-red-700"
+                        >
+                            {checkoutError}
+                        </p>
+                    )}
+
+                    <div>
+                        <label
+                            htmlFor="shipping-address-1"
+                            className="block text-sm font-medium text-gray-700"
+                        >
+                            Address
+                        </label>
+
+                        <input
+                            id="shipping-address-1"
+                            name="address1"
+                            type="text"
+                            required
+                            value={shippingAddress.address1}
+                            onChange={handleShippingChange}
+                            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+                        />
+                    </div>
+
+                    <div>
+                        <label
+                            htmlFor="shipping-address-2"
+                            className="block text-sm font-medium text-gray-700"
+                        >
+                            Address 2
+                        </label>
+
+                        <input
+                            id="shipping-address-2"
+                            name="address2"
+                            type="text"
+                            value={shippingAddress.address2}
+                            onChange={handleShippingChange}
+                            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+                        />
+                    </div>
+
+                    <div className="grid gap-6 sm:grid-cols-2">
+                        <div>
+                            <label
+                                htmlFor="shipping-country"
+                                className="block text-sm font-medium text-gray-700"
+                            >
+                                Country
+                            </label>
+
+                            <input
+                                id="shipping-country"
+                                name="country"
+                                type="text"
+                                required
+                                value={shippingAddress.country}
+                                onChange={handleShippingChange}
+                                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+                            />
+                        </div>
+
+                        <div>
+                            <label
+                                htmlFor="shipping-state"
+                                className="block text-sm font-medium text-gray-700"
+                            >
+                                State
+                            </label>
+
+                            <input
+                                id="shipping-state"
+                                name="state"
+                                type="text"
+                                required
+                                value={shippingAddress.state}
+                                onChange={handleShippingChange}
+                                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+                            />
+                        </div>
+
+                        <div>
+                            <label
+                                htmlFor="shipping-city"
+                                className="block text-sm font-medium text-gray-700"
+                            >
+                                City
+                            </label>
+
+                            <input
+                                id="shipping-city"
+                                name="city"
+                                type="text"
+                                required
+                                value={shippingAddress.city}
+                                onChange={handleShippingChange}
+                                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+                            />
+                        </div>
+
+                        <div>
+                            <label
+                                htmlFor="shipping-zip-code"
+                                className="block text-sm font-medium text-gray-700"
+                            >
+                                ZIP code
+                            </label>
+
+                            <input
+                                id="shipping-zip-code"
+                                name="zipCode"
+                                type="text"
+                                required
+                                value={shippingAddress.zipCode}
+                                onChange={handleShippingChange}
+                                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+                            />
+                        </div>
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={checkoutLoading}
+                        className="rounded-md bg-blue-700 px-6 py-3 font-medium text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                        {checkoutLoading ? 'Starting checkout...' : 'Checkout'}
+                    </button>
+                </form>
             </div>
+
         </main>
     )
 }

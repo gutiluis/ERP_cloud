@@ -1,6 +1,8 @@
 // file: api/cart.js
 // descr: cart frontend api module. which matches backend cart api routes and methods. createCart POST, getCart GET, addCartItem POST, updateCartItem PATCH, deleteCartItem DELETE function endpoints
 // /api/cart, /api/cart/:cartToken, /api/cart:cartToken/items, /api/cart/:cartToken/items/:itemId. /api/cart:cartToken/items/:itemId
+// load cart, handles empty-error state, update quantity, removes items, submits checkouts, handles checkout errors, redirects to stripe
+// unit/component testing
 
 
 async function handleResponse(response) {
