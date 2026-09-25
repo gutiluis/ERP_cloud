@@ -13,7 +13,6 @@ jobs:
     environment: testing
     env:
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-      FRONTEND_URL: http://127.0.0.1:5173
 
     steps:
       - name: Checkout
