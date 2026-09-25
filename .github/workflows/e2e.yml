@@ -10,7 +10,9 @@ on:
 jobs:
   e2e:
     runs-on: ubuntu-latest
-    environment: testing
+    environment:
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+
 
     steps:
       - name: Checkout
@@ -34,8 +36,6 @@ jobs:
             python -m tests.seed_e2e
 
       - name: Run Playwright
-        env:
-          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
         run: |
           docker compose -f compose.e2e.yaml run --rm e2e_playwright
 
