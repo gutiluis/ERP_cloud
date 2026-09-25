@@ -7,47 +7,38 @@ on:
       - testing
   pull_request:
 
-jobs:
+  jobs:
   e2e:
     runs-on: ubuntu-latest
     environment: testing
     env:
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
 
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Build E2E services
-        run: docker compose -f compose.e2e.yaml build
+        run: |
+          docker compose -f compose.e2e.yaml build
 
       - name: Start E2E services
         run: |
           docker compose -f compose.e2e.yaml up -d --wait db e2e_api
 
-      - name: Verify E2E services
-        if: always()
+      - name: Check Stripe configuration
         run: |
-          docker compose -f compose.e2e.yaml ps
+          if [ -n "$STRIPE_SECRET_KEY" ]; then
+            echo "STRIPE_SECRET_KEY is set in runner"
+          else
+            echo "STRIPE_SECRET_KEY is NOT set in runner"
+            exit 1
+          fi
 
-      - name: Verify E2E API health
+      - name: Check API Stripe configuration
         run: |
-          docker compose -f compose.e2e.yaml ps
           docker compose -f compose.e2e.yaml exec -T e2e_api \
-            python -c '
-          import urllib.request
-
-          response = urllib.request.urlopen(
-            "http://127.0.0.1:8000/health",
-            timeout=5,
-          )
-          print(f"API health: {response.status}")
-          '
-      - name: Show E2E API logs
-        if: failure()
-        run: |
-          docker compose -f compose.e2e.yaml logs e2e_api
+            python -c 'import os; print("STRIPE_SECRET_KEY:", bool(os.getenv("STRIPE_SECRET_KEY")))'
 
       - name: Run database migrations
         run: |
