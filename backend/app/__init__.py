@@ -5,7 +5,7 @@
 # enable for api docstring for api documentation with marshmallow
 # from flasgger import Swagger
 # from flask import Marshmallow
-from flask import Flask, render_template, current_app, jsonify
+from flask import Flask, render_template
 import stripe
 
 from .config import Config
@@ -25,11 +25,11 @@ def create_app(config_object=Config):
     """
     app = Flask(__name__)
     app.config.from_object(config_object)
-
+    # in github and .env
     stripe_key = current_app.config.get("STRIPE_SECRET_KEY")
     if not stripe_key:
-        current_app.logger.error("STRIPE_SECRET_KEY is not configured")
-        return jsonify({"error": "Payment service is not configured"})
+        app.logger.error("STRIPE_SECRET_KEY is not configured")
+        raise RuntimeError("STRIPE_SECRET_KEY is not configured")
     stripe.api_key = stripe_key
 
     # initialize extensions
