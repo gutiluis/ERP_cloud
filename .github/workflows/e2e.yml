@@ -50,6 +50,11 @@ jobs:
           docker compose -f compose.e2e.yaml exec e2e_api \
             python -m tests.seed_e2e
 
+      - name: Check E2E frontend
+        run: |
+          docker compose -f compose.e2e.yaml run --rm e2e_playwright \
+            sh -c 'curl -I http://127.0.0.1:5173'
+
       - name: Run Playwright
         run: |
           docker compose -f compose.e2e.yaml run --rm e2e_playwright

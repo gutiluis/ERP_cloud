@@ -22,6 +22,10 @@ test('completes a Stripe test payment', async ({ page }) => {
         page.getByRole('heading', { name: /cart/i })
     ).toBeVisible()
 
+    console.log('URL:', page.url());
+    console.log('TITLE:', await page.title());
+    console.log('BODY:', await page.locator('body').innerText());
+
     await page.locator('#shipping-address-1').fill('123 Test Street')
     await page.locator('#shipping-country').fill('MX')
     await page.locator('#shipping-state').fill('Jalisco')
