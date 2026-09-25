@@ -10,7 +10,8 @@ on:
 jobs:
   e2e:
     runs-on: ubuntu-latest
-    environment:
+    environment: testing
+    env:
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
 
 
