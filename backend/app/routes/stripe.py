@@ -69,7 +69,11 @@ def checkout():
                 )
             )
 
+        # CI environment redirection after payment
+
         # stripe checkout session create might raise an exception stop commitment
+        frontend_url = current_app.config["FRONTEND_URL"].rstrip("/")
+
         session = stripe.checkout.Session.create(
             mode="payment",
             line_items=[
@@ -86,8 +90,8 @@ def checkout():
                 for item in cart.items
             ],
             metadata={"order_id": str(order.id)},
-            success_url="https://yourapp.com/success",
-            cancel_url="https://yourapp.com/cart",
+            success_url=f"{frontend_url}/checkout/success",
+            cancel_url=f"{frontend_url}/checkout/cancel",
         )
         order.stripe_session_id = session.id
         db.session.commit()
