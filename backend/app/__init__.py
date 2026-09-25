@@ -30,7 +30,7 @@ def create_app(config_object=Config):
     if not stripe_key:
         current_app.logger.error("STRIPE_SECRET_KEY is not configured")
         return jsonify({"error": "Payment service is not configured"})
-    stripe.api_key = app.config["STRIPE_SECRET_KEY"]
+    stripe.api_key = stripe_key
 
     # initialize extensions
     db.init_app(app)
