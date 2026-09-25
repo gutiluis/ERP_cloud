@@ -26,7 +26,7 @@ def create_app(config_object=Config):
     app = Flask(__name__)
     app.config.from_object(config_object)
     # in github and .env
-    stripe_key = current_app.config.get("STRIPE_SECRET_KEY")
+    stripe_key = app.config.get("STRIPE_SECRET_KEY")
     if not stripe_key:
         app.logger.error("STRIPE_SECRET_KEY is not configured")
         raise RuntimeError("STRIPE_SECRET_KEY is not configured")

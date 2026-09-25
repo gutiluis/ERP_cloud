@@ -2,7 +2,7 @@
 
 # filename: entrypoint.sh
 
-# descr: production entrypoint.
+# descr: production containers entrypoint.
 # run flask migrations after containers run to check models are mapping to the mysql db
 # before flask app starts
 # after the db container is starting
