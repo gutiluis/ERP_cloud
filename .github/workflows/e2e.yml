@@ -45,7 +45,7 @@ jobs:
           print(f"API health: {response.status}")
           '
       - name: Show E2E API logs
-        if: falure()
+        if: failure()
         run: |
           docker compose -f compose.e2e.yaml logs e2e_api
 
