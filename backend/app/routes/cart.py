@@ -1,5 +1,5 @@
 # file: /routes/cart.py
-# descr: cart does not require login. the stripe and checkout webhook need the cart as buyers and sellers do not have login accounts. only a cart_token
+# descr: cart does not require login. the stripe and checkout webhook need the cart as buyers and sellers do not have login accounts. only a cart_token. used with curl requests
 
 from uuid import uuid4
 from decimal import Decimal

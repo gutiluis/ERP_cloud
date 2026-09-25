@@ -18,6 +18,9 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # change to os.environ for production
     STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
+    STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+    STRIPE_SUCCESS_URL = os.getenv("STRIPE_SUCCESS_URL")
+    STRIPE_CANCEL_URL = os.getenv("STRIPE_CANCEL_URL")
 
 
 class TestConfig(Config):

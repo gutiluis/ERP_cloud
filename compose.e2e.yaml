@@ -43,6 +43,9 @@ services:
       # pymysql driver
       # connect to the mysql db service internal mysql port 3306
       DATABASE_URL: mysql+pymysql://erp:erp@db:3306/erp_e2e
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_SUCCESS_URL: http://localhost:5173/success
+      STRIPE_CANCEL_URL: http://localhost:5173/cart
     depends_on:
       db:
         condition: service_healthy

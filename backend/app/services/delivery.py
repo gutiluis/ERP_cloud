@@ -1,5 +1,5 @@
-# file: delivery.py
-# descr: check if customer delivers to zip code
+# file: /backend/services/delivery.py
+# descr: check if customer delivers to zip code. CustomerDeliveryZone model
 
 
 from sqlalchemy import select

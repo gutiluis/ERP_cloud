@@ -1,3 +1,6 @@
+# file: tests/seed_e2e.py
+# descr: seed e2e backend in containers for Playwright
+
 from decimal import Decimal
 
 from app import create_app

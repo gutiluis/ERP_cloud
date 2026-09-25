@@ -6,6 +6,7 @@
 # from flasgger import Swagger
 # from flask import Marshmallow
 from flask import Flask, render_template
+import stripe
 
 from .config import Config
 from .extensions import db, login_manager, migrate
@@ -24,6 +25,10 @@ def create_app(config_object=Config):
     """
     app = Flask(__name__)
     app.config.from_object(config_object)
+
+    if app.config.get("STRIPE_SECRET_KEY"):
+        stripe.api_key = app.config["STRIPE_SECRET_KEY"]
+
     # initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)

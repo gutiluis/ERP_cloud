@@ -34,3 +34,4 @@ test.describe('Product catalog', () => {
 
     });
 });
+
