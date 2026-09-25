@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test'
 
 
 test('completes a Stripe test payment', async ({ page }) => {
+    test.setTimeout(60000)
     await page.goto('/')
 
     await expect(
@@ -60,8 +61,16 @@ test('completes a Stripe test payment', async ({ page }) => {
     await expect(payButton).toBeVisible()
     await expect(payButton).toBeEnabled()
 
+
     await payButton.click()
 
-    await expect(page).toHaveURL(/\/checkout\/success/)
+    try {
+        await expect(page).toHaveURL(/\/checkout\/success/, {
+            timeout: 30000,
+        })
+    } finally {
+        console.log('URL after payment:', page.url())
+        console.log('Page text:', await page.locator('body').innerText())
+    }
 
 })
