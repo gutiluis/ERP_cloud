@@ -1,5 +1,5 @@
 // file: CartPage.jsx
-// descr: Cart Page
+// descr: Cart Page. has an api helper /api/checkout.js
 
 
 
@@ -172,6 +172,8 @@ function CartPage() {
 
         try {
             const data = await createCheckout(cartToken, shippingAddress)
+
+            console.log('CHECKOUT DATA', data)
 
             window.location.assign(data.checkout_url)
         } catch (error) {

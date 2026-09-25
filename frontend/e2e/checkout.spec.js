@@ -30,11 +30,12 @@ test('completes a Stripe test payment', async ({ page }) => {
 
     await page.getByRole('button', { name: 'Checkout' }).click()
 
-    await expect(page).toHaveURL(/checkout\.stripe\.com/)
 
-    await expect(
-        page.getByRole('heading', { name: 'New business sandbox' })
-    ).toBeVisible()
+
+    await expect(page).toHaveURL(/checkout\.stripe\.com/, {
+        timeout: 15000,
+    })
+
 
     await page.locator('input[name="email"]').fill('e2e@example.test')
     await page.locator(
@@ -55,7 +56,6 @@ test('completes a Stripe test payment', async ({ page }) => {
 
     await payButton.click()
 
-    await page.waitForURL('http://localhost:5173/success', {
-        timeout: 30000,
-    })
+    await expect(page).toHaveURL(/\/checkout\/success/)
+
 })

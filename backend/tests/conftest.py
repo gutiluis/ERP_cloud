@@ -42,7 +42,7 @@ class TestConfig:
     SQLALCHEMY_DATABASE_URI = os.environ["TEST_DATABASE_URL"]
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     STRIPE_WEBHOOK_SECRET = "test_stripe.pyPassword"
-    STRIPE_SUCCESS_URL = "http://localhost:5173/success"
+    STRIPE_SUCCESS_URL = "http://localhost:5173/checkout/success"
     STRIPE_CANCEL_URL = "http://localhost:5173/cart"
 
 

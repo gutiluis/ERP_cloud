@@ -2,7 +2,7 @@
 # descr:
 
 import stripe
-from flask import Blueprint, current_app, jsonify, request
+from flask import Blueprint, current_app, jsonify, request, current_app
 
 from app import db
 from app.models.cart import Cart
@@ -19,7 +19,7 @@ def checkout():
     Interactive view for the frontend
     """
     data = request.get_json(silent=True) or {}
-
+    # /frontend/src/api/checkout.js
     cart_token = data.get("cart_token")
     shipping_address_1 = data.get("shipping_address_1")
     shipping_address_2 = data.get("shipping_address_2")

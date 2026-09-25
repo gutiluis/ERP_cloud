@@ -1,3 +1,8 @@
+// file: /api/checkout.js
+// descr: api helper of public cartpage
+
+
+
 async function handleResponse(response) {
     const contentType = response.headers.get('content-type')
 
@@ -15,10 +20,7 @@ async function handleResponse(response) {
     return data
 }
 
-export async function createCheckout(
-    cartToken,
-    shippingAddress,
-) {
+export async function createCheckout(cartToken, shippingAddress) {
     const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: {
