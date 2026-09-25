@@ -30,11 +30,7 @@ test('completes a Stripe test payment', async ({ page }) => {
 
     await page.getByRole('button', { name: 'Checkout' }).click()
 
-    await page.waitForURL(/checkout\.stripe\.com/)
-
-    await expect(
-        page.locator('.LOADING-container')
-    ).toBeHidden({ timeout: 15000 })
+    await expect(page).toHaveURL(/checkout\.stripe\.com/)
 
     await expect(
         page.getByRole('heading', { name: 'New business sandbox' })
