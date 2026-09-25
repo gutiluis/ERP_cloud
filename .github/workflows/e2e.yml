@@ -7,7 +7,7 @@ on:
       - testing
   pull_request:
 
-  jobs:
+jobs:
   e2e:
     runs-on: ubuntu-latest
     environment: testing
