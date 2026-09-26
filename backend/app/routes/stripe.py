@@ -72,7 +72,7 @@ def checkout():
         # CI environment redirection after payment
 
         # stripe checkout session create might raise an exception stop commitment
-        frontend_url = current_app.config["FRONTEND_URL"].rstrip("/")
+        FRONTEND_URL = current_app.config["FRONTEND_URL"].rstrip("/")
 
         session = stripe.checkout.Session.create(
             mode="payment",
@@ -90,8 +90,8 @@ def checkout():
                 for item in cart.items
             ],
             metadata={"order_id": str(order.id)},
-            success_url=f"{frontend_url}/checkout/success",
-            cancel_url=f"{frontend_url}/checkout/cancel",
+            success_url=f"{FRONTEND_URL}/checkout/success",
+            cancel_url=f"{FRONTEND_URL}/checkout/cancel",
         )
         order.stripe_session_id = session.id
         db.session.commit()
@@ -119,7 +119,6 @@ def webhook():
     """
     # all event share same structure except data property
     # event body
-    print("[INFO] WEBHOOOK HIT")
     payload = request.data
     # signature parameter for constructEvent()
     # event payload verification. with endpoint's secret verification in the try statement

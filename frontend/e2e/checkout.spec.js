@@ -1,3 +1,6 @@
+// file: checkout.spec.js
+// descr:
+
 import { expect, test } from '@playwright/test'
 
 
@@ -33,15 +36,33 @@ test('completes a Stripe test payment', async ({ page }) => {
     await page.locator('#shipping-country').fill('MX')
     await page.locator('#shipping-state').fill('Jalisco')
     await page.locator('#shipping-city').fill('Guadalajara')
+
+
+
     await page.locator('#shipping-zip-code').fill('45000')
 
     await page.getByRole('button', { name: 'Checkout' }).click()
 
 
-
+    // synchronization point
     await expect(page).toHaveURL(/checkout\.stripe\.com/, {
         timeout: 15000,
     })
+
+    await expect(
+        page.locator('input[name="email"]')
+    ).toBeVisible()
+
+    console.log(
+        await page.locator('input').evaluateAll(inputs =>
+            inputs.map(input => ({
+                name: input.name,
+                id: input.id,
+                aria: input.getAttribute('aria-label'),
+                value: input.value,
+            }))
+        )
+    )
 
 
     await page.locator('input[name="email"]').fill('e2e@example.test')
