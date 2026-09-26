@@ -10,6 +10,8 @@ load_dotenv()
 
 
 class Config:
+    """Base flask config"""
+
     # os.getenv returns none if missing
     # change to os.environ in production
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-key")

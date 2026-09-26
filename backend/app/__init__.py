@@ -7,6 +7,7 @@
 # from flask import Marshmallow
 from flask import Flask, render_template, current_app
 import stripe
+import os
 
 from .config import Config
 from .extensions import db, login_manager, migrate
@@ -25,11 +26,16 @@ def create_app(config_object=Config):
     """
     app = Flask(__name__)
     app.config.from_object(config_object)
+
     # in github and .env
     stripe_key = app.config.get("STRIPE_SECRET_KEY")
     if not stripe_key:
         app.logger.error("STRIPE_SECRET_KEY is not configured")
         raise RuntimeError("STRIPE_SECRET_KEY is not configured")
+
+    if os.getenv("APP_ENV") == "production" and not stripe_key.startswith("sk_live_"):
+        app.logger.error("Production requires a Stripe live-mode secret key")
+        raise RuntimeError("Production requires a Stripe live-mode secret key")
     stripe.api_key = stripe_key
 
     # initialize extensions
