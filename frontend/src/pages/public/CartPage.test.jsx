@@ -1,5 +1,5 @@
 // file: public/CartPage.test.jsx
-// descr: unit/component/integration testing of cart page. frontend integration-style testing the cart page calling api layer
+// descr: unit/component/integration testing of cart page. frontend integration-style testing the cart page calling api layer. form uses html required so test should verify browser constraint validation, not produce a custom error message.
 
 
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
@@ -13,8 +13,11 @@ import {
     deleteCartItem,
 } from '../../api/cart'
 
+import { createCheckout } from '../../api/checkout'
+
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
+
 
 
 
@@ -22,6 +25,10 @@ vi.mock('../../api/cart', () => ({
     getCart: vi.fn(),
     updateCartItem: vi.fn(),
     deleteCartItem: vi.fn(),
+}))
+
+vi.mock('../../api/checkout', () => ({
+    createCheckout: vi.fn(),
 }))
 
 describe('CartPage', () => {
@@ -176,5 +183,43 @@ describe('CartPage', () => {
                 name: 'Continue Shopping',
             }),
         ).toHaveAttribute('href', '/')
+    })
+    // api/checkout
+    test('does not submit checkout when required shipping address is missing', async () => {
+        localStorage.setItem('cart_token', 'abc123')
+
+        getCart.mockResolvedValue({
+            cart_token: 'abc123',
+            items: [
+                {
+                    id: 1,
+                    product_id: 1,
+                    product_variant_id: 1,
+                    quantity: 2,
+                    unit_price: '29.99',
+                },
+            ],
+            total_amount: '59.98',
+        })
+
+        const user = userEvent.setup()
+
+        render(
+            <MemoryRouter>
+                <CartPage />
+            </MemoryRouter>,
+        )
+
+        await screen.findByText('Product variant 1')
+
+        const addressInput = screen.getByLabelText('Address')
+        expect(addressInput).toBeRequired()
+
+        await user.click(
+            screen.getByRole('button', { name: 'Checkout' }),
+        )
+
+        expect(createCheckout).not.toHaveBeenCalled()
+        expect(addressInput).toBeInvalid()
     })
 })

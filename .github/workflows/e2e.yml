@@ -26,14 +26,21 @@ jobs:
         run: |
           docker compose -f compose.e2e.yaml up -d --wait db e2e_api
 
-      - name: Check Stripe configuration
+      - name: Check Stripe test mode
         run: |
-          if [ -n "$STRIPE_SECRET_KEY" ]; then
-            echo "STRIPE_SECRET_KEY is set in runner"
-          else
-            echo "STRIPE_SECRET_KEY is NOT set in runner"
+          if [ -z "$STRIPE_SECRET_KEY" ]; then
+            echo "STRIPE_SECRET_KEY is not set"
             exit 1
           fi
+          case "$STRIPE_SECRET_KEY" in
+            sk_test_*)
+            echo "Stripe test-mode key detected"
+            ;;
+          *)
+            echo "STRIPE_SECRET_KEY is not a Stripe test-mode key"
+            exit 1
+            ;;
+          esac
 
       - name: Check API Stripe configuration
         run: |
