@@ -1,5 +1,11 @@
+// file: CheckoutSuccess.test.jsx
+// descr: checkout page vitest
+
+
+import { describe, beforeEach, test, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import CheckoutSuccess from './CheckoutSuccess'
+
 
 describe('CheckoutSuccess', () => {
     beforeEach(() => {
