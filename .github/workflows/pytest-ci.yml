@@ -12,7 +12,7 @@ jobs:
   pytest:
     name: Run backend tests
     runs-on: ubuntu-latest
-    # variable under github environment for CI
+    # variable and secrets under github environment for CI
     environment: testing
 
     env:
@@ -26,11 +26,11 @@ jobs:
     services:
       mysql:
         image: mysql:8.0
-        #env:
-        #  MYSQL_ROOT_PASSWORD: erp
-        #  MYSQL_DATABASE: erp_test
-        #  MYSQL_USER: erp
-        #  MYSQL_PASSWORD: erp
+        env:
+          MYSQL_DATABASE: ${{ vars.MYSQL_DATABASE }}
+          MYSQL_USER: ${{ vars.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
         ports:
           - "3306:3306"
         #options: >-
