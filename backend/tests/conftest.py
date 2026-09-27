@@ -40,6 +40,7 @@ from app.models.customers import Customer
 class TestConfig:
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ["TEST_DATABASE_URL"]
+    STRIPE_SECRET_KEY = "sk_test_fake"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     STRIPE_WEBHOOK_SECRET = "test_stripe.pyPassword"
     STRIPE_SUCCESS_URL = "http://localhost:5173/checkout/success"

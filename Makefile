@@ -8,7 +8,7 @@ prod:
 	docker compose -f compose.production.yaml up -d --build
 
 down:
-	docker compose down
+	docker compose down -v
 
 migrate:
 	docker compose run --rm --entrypoint flask api --app wsgi db migrate

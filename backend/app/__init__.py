@@ -5,7 +5,7 @@
 # enable for api docstring for api documentation with marshmallow
 # from flasgger import Swagger
 # from flask import Marshmallow
-from flask import Flask, render_template, current_app
+from flask import Flask, render_template
 import stripe
 import os
 

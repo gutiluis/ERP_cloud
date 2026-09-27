@@ -28,5 +28,4 @@ class Config:
 class TestConfig(Config):
     """Pytest"""
 
-    STRIPE_SECRET_KEY = "sk_test_fake"
     SQLALCHEMY_DATABASE_URI = os.getenv("TEST_DATABASE_URL")

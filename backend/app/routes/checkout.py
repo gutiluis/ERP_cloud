@@ -2,7 +2,7 @@
 # descr:
 
 import stripe
-from flask import Blueprint, current_app, jsonify, request, current_app
+from flask import Blueprint, jsonify, request, current_app
 
 from app import db
 from app.models.cart import Cart
