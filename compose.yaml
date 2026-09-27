@@ -4,14 +4,10 @@ services:
       context: .
       dockerfile: docker/backend.Dockerfile
     restart: unless-stopped
-    environment:
-      TEST_DATABASE_URL: mysql+pymysql://erp:erp@db:3306/erp_test
-
+    env_file:
+      - .env
     ports:
       - "8000:8000"
-      # erp_api reads. not erp_db
-    #env_file:
-    #  - .env
     volumes:
       - ./backend:/app
     depends_on:
@@ -29,20 +25,14 @@ services:
 
   db:
     image: mysql:8.0
-    environment:
-      MYSQL_DATABASE: erp_test
-      MYSQL_USER: erp
-      MYSQL_PASSWORD: erp
-      MYSQL_ROOT_PASSWORD: root
+    env_file:
+      - .env
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s
       timeout: 5s
       retries: 10
-    #env_file:
-    #  - .env
-    # from inside containers under compose.production
     ports:
       - "3306:3306"
     volumes:

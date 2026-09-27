@@ -108,7 +108,6 @@ def submit_customer_form():
         return redirect(url_for("customers.customer_form"))
 
 
-# [ x ] ready rest api endpoint
 @customer_bp.route("/edit/<string:customer_id>", methods=["GET"])
 @login_required
 def edit_customer(customer_id):

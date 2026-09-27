@@ -14,6 +14,7 @@ venv/
 .env/
 .env
 .env.*
+.env.production
 *.pyc
 .mypy_cache/
 instance/

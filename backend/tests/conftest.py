@@ -40,11 +40,13 @@ from app.models.customers import Customer
 class TestConfig:
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ["TEST_DATABASE_URL"]
-    STRIPE_SECRET_KEY = "sk_test_fake"
+    STRIPE_SECRET_KEY = os.environ["STRIPE_SECRET_KEY"]
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    STRIPE_WEBHOOK_SECRET = "test_stripe.pyPassword"
-    STRIPE_SUCCESS_URL = "http://localhost:5173/checkout/success"
-    STRIPE_CANCEL_URL = "http://localhost:5173/cart"
+    STRIPE_WEBHOOK_SECRET = os.environ["STRIPE_WEBHOOK_SECRET"]
+    STRIPE_SUCCESS_URL = os.environ["STRIPE_SUCCESS_URL"]
+    STRIPE_CANCEL_URL = os.environ["STRIPE_CANCEL_URL"]
+    # needs a pytest test
+    # SECRET_KEY = os.environ["SECRET_KEY"]
 
 
 @pytest.fixture(scope="session")

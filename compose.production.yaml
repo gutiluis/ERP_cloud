@@ -4,13 +4,10 @@ services:
       context: .
       dockerfile: docker/backend.Dockerfile
     restart: unless-stopped
-    container_name: erp_api
     expose:
-      # does not mean docker compose erp_api is running in localhost:5000
       - "8000"
-      # erp_api reads
-    env_file: # read by erp_api not erp_db
-      - .env
+    env_file:
+      - .env.production
     depends_on:
       - db
 
@@ -18,7 +15,6 @@ services:
     build:
       context: .
       dockerfile: docker/nginx.Dockerfile
-    container_name: erp_nginx
     ports:
       - "80:80"
     depends_on:
@@ -31,13 +27,9 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    container_name: erp_db
     restart: unless-stopped
     env_file:
-      - .env
-    # pytest is from outside. this is inside
-    #ports:
-    #  - "3307:3306"
+      - .env.production
     volumes:
       - mysql_data:/var/lib/mysql
 volumes:
