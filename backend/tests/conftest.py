@@ -45,7 +45,7 @@ class TestConfig(Config):
     # STRIPE_SECRET_KEY = os.environ["STRIPE_SECRET_KEY"]
     # SQLALCHEMY_TRACK_MODIFICATIONS = False
     # STRIPE_WEBHOOK_SECRET = os.environ["STRIPE_WEBHOOK_SECRET"]
-    STRIPE_SUCCESS_URL = os.environ["STRIPE_SUCCESS_URL"]
+    # STRIPE_SUCCESS_URL = os.environ["STRIPE_SUCCESS_URL"]
     STRIPE_CANCEL_URL = os.environ["STRIPE_CANCEL_URL"]
     # needs a pytest test
     # SECRET_KEY = os.environ["SECRET_KEY"]
