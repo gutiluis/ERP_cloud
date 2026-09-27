@@ -16,7 +16,7 @@ jobs:
 
     env:
       TEST_DATABASE_URL: ${TEST_DATABASE_URL}
-      #STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
 
     strategy:
       matrix:
