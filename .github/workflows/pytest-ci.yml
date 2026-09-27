@@ -1,6 +1,8 @@
 name: Pytest CI
 
 on:
+  push:
+    branches: [testing]
   pull_request:
     branches:
       - testing
@@ -10,7 +12,7 @@ jobs:
   pytest:
     name: Run backend tests
     runs-on: ubuntu-latest
-
+    environment: testing
     strategy:
       matrix:
         python-version: ["3.12"]
