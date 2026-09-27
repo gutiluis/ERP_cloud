@@ -35,14 +35,17 @@ from app.models.orders import Order, OrderItem, OrderStatus
 from app.models.admin_user import AdminUser
 from app.models.cart import Cart
 from app.models.customers import Customer
+from app import Config
 
 
-class TestConfig:
+class TestConfig(Config):
+    """Pytest Config"""
+
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ["TEST_DATABASE_URL"]
-    STRIPE_SECRET_KEY = os.environ["STRIPE_SECRET_KEY"]
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    STRIPE_WEBHOOK_SECRET = os.environ["STRIPE_WEBHOOK_SECRET"]
+    # STRIPE_SECRET_KEY = os.environ["STRIPE_SECRET_KEY"]
+    # SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # STRIPE_WEBHOOK_SECRET = os.environ["STRIPE_WEBHOOK_SECRET"]
     STRIPE_SUCCESS_URL = os.environ["STRIPE_SUCCESS_URL"]
     STRIPE_CANCEL_URL = os.environ["STRIPE_CANCEL_URL"]
     # needs a pytest test
