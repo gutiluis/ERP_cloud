@@ -7,6 +7,7 @@ from unittest.mock import MagicMock
 from app.models.customers import CustomerDeliveryZone
 from app.models.cart import Cart, CartItem
 from app.models.orders import Order, OrderStatus
+import pytest
 
 
 def test_checkout_success(client, cart_product_variant, session, monkeypatch):
@@ -244,23 +245,37 @@ def test_checkout_missing_cart_token(client):
     assert data["error"] == "cart_token is required"
 
 
-def test_checkout_missing_shipping_field(client):
-    response = client.post(
-        "/api/checkout",
-        json={
-            "cart_token": "checkout-test-token",
-            "shipping_address_1": "Av. Example 123",
-            "shipping_country": "Mexico",
-            "shipping_city": "Zapopan",
-            "shipping_state": "Jalisco",
-        },
-    )
+# all required values of shipping
+@pytest.mark.parametrize(
+    "field",
+    [
+        "shipping_address_1",
+        "shipping_country",
+        "shipping_city",
+        "shipping_zip_code",
+        "shipping_state",
+    ],
+)
+def test_checkout_missing_shipping_field(client, field):
+    """Reject checkout when a required shipping field is missing."""
+    payload = {
+        "cart_token": "checkout-test-token",
+        "shipping_address_1": "Av. Example 123",
+        "shipping_country": "Mexico",
+        "shipping_city": "Zapopan",
+        "shipping_zip_code": "45000",
+        "shipping_state": "Jalisco",
+    }
+
+    payload.pop(field)
+
+    response = client.post("/api/checkout", json=payload)
 
     assert response.status_code == 400
 
     data = response.get_json()
 
-    assert data["error"] == "shipping_zip_code is required"
+    assert data["error"] == f"{field} is required"
 
 
 def test_checkout_stripe_creation_failed(
