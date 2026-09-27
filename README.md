@@ -3,6 +3,11 @@
 
 ---
 
+[![E2E Playwright](https://github.com/gutiluis/ERP_cloud/actions/workflows/e2e.yml/badge.svg?branch=testing)](https://github.com/gutiluis/ERP_cloud/actions/workflows/e2e.yml)
+[![Frontend CI](https://github.com/gutiluis/ERP_cloud/actions/workflows/frontend-test.yml/badge.svg?branch=testing)](https://github.com/gutiluis/ERP_cloud/actions/workflows/frontend-test.yml)
+[![Pytest CI](https://github.com/gutiluis/ERP_cloud/actions/workflows/pytest-ci.yml/badge.svg?branch=testing)](https://github.com/gutiluis/ERP_cloud/actions/workflows/pytest-ci.yml)
+
+
 # ERP SaaS
 
 Full-stack e-commerce plattform with an admin Panel, CRUD operations, public frontend, CI/CD, and containerization.
@@ -22,66 +27,31 @@ Full-stack e-commerce plattform with an admin Panel, CRUD operations, public fro
 
 ## How it works
 
+### 1 - Clone Repository
+
 ```sh
 git clone https://github.com/gutiluis/ERP_cloud.git
 cd ERP_cloud/
 cp .env.example .env
 ```
 
-### 1 - Start all services
+### 2 - Start all services
+
+#### 2.1 - Development
 
 ```sh
-docker compose up -d --build
-```
-
-### 1.1 - Development
-
-```sh
-docker compose -f compose.production.yaml up -d --build
-```
-
-### 2 - check mysql db connection with docker, or preferred way
-
-### test connection with docker compose, programming languages, or sql
-
-### does not require password
-
-```sh
-docker compose exec db bash
-```
-
-### -interactive -pseudo tty terminal makes a session active
-
-```sh
-docker compose exec -it db bash
-docker compose exec -it api bash
-```
-
-### 2.1 - or check mysql prompt without entering first bash. needs the password. without opening container shell first. enter password
-
-
-### 2.2 - or run command with docker compose passing shell and mysql. this is inside the db container
-
-```sh
-docker compose exec db mysql -u erp -p erp
-docker compose exec db mysql -u erp -perp -e "SHOW DATABASES;"
-docker compose exec db mysql -u erp -perp erp -e "SHOW TABLES;"
-```
-
-### pytest testig db from inside db container
-### test erp_test database inside the db container. connection context.
-
-```sh
-docker compose exec db mysql -u erp -p -h localhost erp_test
+make dev
 ```
 
 ---
 
-### 3.1 - Testing Endpoint Routes
+### 3 - Test the Application
+
+#### 3.1 - Testing Endpoint Routes
 
 ```sh
-curl -i [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
-curl -i [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+curl -i http://127.0.0.1:8000/health
+curl -i http://127.0.0.1:8000/
 ```
 
 ### 3.2 - Testing Live Docker Logs
@@ -92,53 +62,13 @@ docker compose logs -f --tail 10 -t
 
 ---
 
-### 4 - Testing Database and pre-commit hooks
-
-```sh
-docker compose exec db mysql -u root -p
-```
-
-### 4.1 - Create MySQL Testing DB for Pytest inside pre-commit and apply migrations
-
-```sql
-CREATE DATABASE erp_test
-CHARACTER SET utf8mb4
-COLLATE utf8mb4_unicode_ci;
-SHOW DATABASES LIKE 'erp_test';
-GRANT ALL PRIVILEGES ON erp_test.* TO 'erp'@'%';
-FLUSH PRIVILEGES;
-```
-
-### 4.2 - Run Flask Db Migrations
-
-```sh
-cd /ERP_cloud
-docker compose exec api flask --app wsgi db init
-docker compose exec api flask --app wsgi db migrate -m "initial schema"
-docker compose exec api flask --app wsgi db upgrade
-```
-
-### 4.3 Populate Testing Database with migrations
-
-```sh
-docker compose exec api flask db history
-docker compose exec api flask db current
-docker compose exec -it servicename sh
-```
-
-### 4.3.1 - Move migrations into /backend/migrations host from container
-
-```sh
-docker cp erp_api:/app/migrations ./migrations
-```
-
-### 4.4 Testing Migrations Endpoint HTTP Method Routes
+### 3.3 Testing Endpoint HTTP Method Routes
 
 ```sh
 docker compose exec api flask routes
 ```
 
-### 4.5 - Testing Pre-commit hooks
+### 3.4 - Testing Pre-commit hooks
 
 ```sh
 cd ERP_cloud
@@ -148,26 +78,25 @@ pip install -r requirements.txt
 pre-commit run --all-files
 ```
 
----
-
-### 6 - update migrations and frontend even though table rows are in the container
+### 3.5 - Testing Stripe testing after stripe cli and stripe login config, after order
 
 
 ```sh
-docker compose up --build -d api
+stripe listen --forward-to localhost:8000/api/admin/stripe/webhook
 ```
 
-### or
+### second terminal
 
 ```sh
-docker compose restart api
+npx stripe trigger payment_intent.succeeded
+npx stripe trigger checkout.session.completed
 ```
 
 ---
 
-## Admin User Setup
+## 4 - Admin User Setup
 
-### 7 - Enter admin in the db and create adminuser table in mysql
+### 4.1 - Enter admin in the db and create adminuser table in mysql
 
 ```
 docker compose exec api bash
@@ -187,27 +116,12 @@ db.session.commit()
 
 ---
 
-### 8 - Testing Stripe testing after stripe cli and stripe login config, after order
-
-
-```sh
-stripe listen --forward-to localhost:8000/api/admin/stripe/webhook
-```
-
-### second terminal
-
-```sh
-npx stripe trigger payment_intent.succeeded
-npx stripe trigger checkout.session.completed
-```
-
----
-
 ## Tech-Stack
 
 - Python
 - Flask
 - Gunicorn
+- Nginx
 - Docker
 - MySQL
 - Stripe
@@ -226,7 +140,6 @@ npx stripe trigger checkout.session.completed
 - Ruff
 - Bash
 - GitHub/Git
-- Oracle Cloud
 - React
 - Vite
 - Tailwind CSS
