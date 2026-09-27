@@ -10,7 +10,8 @@ on:
 jobs:
   e2e:
     runs-on: ubuntu-latest
-    environment: testing
+    # github actions environment and secrets
+    environment: e2e
     env:
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
 
