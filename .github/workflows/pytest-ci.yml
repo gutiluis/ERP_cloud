@@ -12,10 +12,11 @@ jobs:
   pytest:
     name: Run backend tests
     runs-on: ubuntu-latest
-    #environment: testing
+    # variable under github environment for CI
+    environment: testing
 
-    #env:
-    #  TEST_DATABASE_URL: ${TEST_DATABASE_URL}
+    env:
+      TEST_DATABASE_URL: ${{ vars.TEST_DATABASE_URL }}
       #STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
 
     strategy:

@@ -9,7 +9,6 @@ has db, has session
 
 db.drop_all() ensures after each test a clean state every time
 
-echo=True helps debug sql queries if needed
 
 @pytest.fixture # decorators
 a fixture provides a defined, reliable and consistent context for the tests. environment.
