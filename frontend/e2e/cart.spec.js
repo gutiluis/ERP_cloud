@@ -26,11 +26,13 @@ test.describe('Product catalog', () => {
     test('displays products and navigates to the cart', async ({ page }) => {
         await page.goto('/');
 
+        console.log('URL:', page.url());
+        console.log('TITLE:', await page.title());
+        console.log('BODY:', await page.locator('body').innerText());
+
         await expect(
             page.getByRole('heading', { name: 'Products' })
         ).toBeVisible();
-
-        console.log(await page.locator('body').innerText());
 
     });
 });

@@ -10,7 +10,6 @@ on:
 jobs:
   e2e:
     runs-on: ubuntu-latest
-    # github actions environment and secrets
     environment: e2e
     env:
       FLASK_CONFIG: ${{ vars.FLASK_CONFIG }}
@@ -46,12 +45,13 @@ jobs:
           docker compose -f compose.e2e.yaml exec e2e_api \
             python -c "
           from app import create_app
-          from app.extensions import db
           from app.models import Product
+
           app = create_app('production')
+
           with app.app_context():
               products = Product.query.all()
-              print(f'Products in E2E database: (len{products})')
+              print(f'Products in E2E database: {len(products)}')
               for product in products:
                   print(product.name)
           "
