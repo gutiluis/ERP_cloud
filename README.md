@@ -3,9 +3,7 @@
 
 ---
 
-[![E2E Playwright](https://github.com/gutiluis/ERP_cloud/actions/workflows/e2e.yml/badge.svg?branch=testing)](https://github.com/gutiluis/ERP_cloud/actions/workflows/e2e.yml)
 [![Frontend CI](https://github.com/gutiluis/ERP_cloud/actions/workflows/frontend-test.yml/badge.svg?branch=testing)](https://github.com/gutiluis/ERP_cloud/actions/workflows/frontend-test.yml)
-[![Pytest CI](https://github.com/gutiluis/ERP_cloud/actions/workflows/pytest-ci.yml/badge.svg?branch=testing)](https://github.com/gutiluis/ERP_cloud/actions/workflows/pytest-ci.yml)
 
 
 # ERP SaaS
