@@ -45,9 +45,14 @@ test('completes a Stripe test payment', async ({ page }) => {
 
 
     // synchronization point
+    await page.waitForTimeout(1000)
+
+    console.log('URL before Stripe redirect:', page.url())
+
     await expect(page).toHaveURL(/checkout\.stripe\.com/, {
         timeout: 15000,
     })
+
     console.log('Stripe URL:', page.url())
     console.log(
         'Stripe inputs:',
