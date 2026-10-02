@@ -68,7 +68,7 @@ jobs:
         run: |
           docker compose -f compose.e2e.yaml exec -T e2e_api \
             python -c "
-          import urllib.pull_request
+          import urllib.request
 
           response = urllib.request.urlopen(
               'http://localhost:8000/api/products'
