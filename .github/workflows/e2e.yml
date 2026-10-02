@@ -41,11 +41,20 @@ jobs:
           docker compose -f compose.e2e.yaml exec e2e_api \
             python -m tests.seed_e2e
 
-      - name: Verify E2E services
+      - name: Verify E2E seed
         run: |
-          docker compose -f compose.e2e.yaml ps
-          docker compose -f compose.e2e.yaml logs e2e_api
-
+          docker compose -f compose.e2e.yaml exec e2e_api \
+            python -c "
+          from app import create_app
+          from app.extensions import db
+          from app.models import Product
+          app = create_app()
+          with app.app_context():
+              products = Product.query.all()
+              print(f'Products in E2E database: {len{products}}')
+              for product in products:
+                  print(product.name)
+          "
 
       - name: Run Playwright
         run: |

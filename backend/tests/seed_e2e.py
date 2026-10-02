@@ -40,6 +40,10 @@ def seed() -> None:
 
     db.session.add_all([customer, delivery_zone, product, variant])
     db.session.commit()
+    product = Product.query.filter_by(name="cart-test-product").first()
+    if product is None:
+        raise RuntimeError("E2E product was not created")
+    print(f"Seeded E2E product: {product.name}")
 
 
 def main() -> None:
