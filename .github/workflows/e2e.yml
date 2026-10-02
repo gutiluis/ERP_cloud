@@ -48,7 +48,7 @@ jobs:
           from app import create_app
           from app.extensions import db
           from app.models import Product
-          app = create_app("production")
+          app = create_app('production')
           with app.app_context():
               products = Product.query.all()
               print(f'Products in E2E database: (len{products})')
