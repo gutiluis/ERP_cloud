@@ -32,17 +32,17 @@ jobs:
 
       - name: Run database migrations
         run: |
-          docker compose -f compose.e2e.yaml exec e2e_api \
+          docker compose -f compose.e2e.yaml exec -T e2e_api \
             flask --app wsgi db upgrade
 
       - name: Seed E2E database
         run: |
-          docker compose -f compose.e2e.yaml exec e2e_api \
+          docker compose -f compose.e2e.yaml exec -T e2e_api \
             python -m tests.seed_e2e
 
       - name: Verify E2E seed
         run: |
-          docker compose -f compose.e2e.yaml exec e2e_api \
+          docker compose -f compose.e2e.yaml exec -T e2e_api \
             python -c "
           from app import create_app
           from app.models import Product
