@@ -34,7 +34,7 @@ jobs:
       - name: Run database migrations
         run: |
           docker compose -f compose.e2e.yaml exec -T e2e_api \
-            flask --app wsgi db upgrade
+            flask db upgrade
 
       - name: Verify database schema
         run: |
@@ -56,7 +56,7 @@ jobs:
           from app import create_app
           from app.models import Product
 
-          app = create_app('production')
+          app = create_app()
 
           with app.app_context():
               products = Product.query.all()
@@ -64,6 +64,12 @@ jobs:
               for product in products:
                   print(product.name)
           "
+
+      - name: Verify E2E API environment
+        run: |
+          docker compose -f compose.e2e.yaml exec -T e2e_api \
+            python -c "import os; print('ALLOWED_HOSTS:', os.environ.get('ALLOWED_HOSTS'))"
+
       - name: Verify Vite API proxy
         run: |
           docker compose -f compose.e2e.yaml run --rm e2e_playwright \
