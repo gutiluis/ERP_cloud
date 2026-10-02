@@ -49,21 +49,18 @@ jobs:
           docker compose -f compose.e2e.yaml exec -T e2e_api \
             python -m tests.seed_e2e
 
+      - name: Inspect Flask configuration
+        run: |
+          docker compose -f compose.e2e.yaml exec -T e2e_api \
+            sed -n '1,100p' app/__init__.py
+          docker compose -f compose.e2e.yaml exec -T e2e_api \
+            sed -n '1,100p' wsgi.py
+
       - name: Verify E2E seed
         run: |
           docker compose -f compose.e2e.yaml exec -T e2e_api \
-            python -c "
-          from app import create_app
-          from app.models import Product
-
-          app = create_app()
-
-          with app.app_context():
-              products = Product.query.all()
-              print(f'Products in E2E database: {len(products)}')
-              for product in products:
-                  print(product.name)
-          "
+            mysql -u erp -perp erp_e2e \
+            -e "SELECT product_id, name FROM products;"
 
       - name: Verify E2E API environment
         run: |
