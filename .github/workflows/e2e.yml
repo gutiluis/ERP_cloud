@@ -17,6 +17,7 @@ jobs:
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
       STRIPE_SUCCESS_URL: ${{ vars.STRIPE_SUCCESS_URL }}
       STRIPE_CANCEL_URL: ${{ vars.STRIPE_CANCEL_URL }}
+      ALLOWED_HOSTS: ${{ vars.ALLOWED_HOSTS }}
 
     steps:
       - name: Checkout

@@ -41,7 +41,7 @@ services:
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       STRIPE_SUCCESS_URL: ${STRIPE_SUCCESS_URL}
       STRIPE_CANCEL_URL: ${STRIPE_CANCEL_URL}
-      ALLOWED_HOSTS: localhost,127.0.0.1,e2e_api
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
     depends_on:
       db:
         condition: service_healthy
