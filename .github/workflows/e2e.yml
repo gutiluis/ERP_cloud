@@ -64,6 +64,19 @@ jobs:
                   print(product.name)
           "
 
+      - name: Verify E2E API
+        run: |
+          docker compose -f compose.e2e.yaml exec -T e2e_api \
+            python -c "
+          import urllib.pull_request
+
+          response = urllib.request.urlopen(
+              'http://localhost:8000/api/products'
+          )
+          print(f'API status: {response.status}')
+          print(response.read().decode())
+          "
+
       - name: Run Playwright
         run: |
           docker compose -f compose.e2e.yaml run --rm e2e_playwright
