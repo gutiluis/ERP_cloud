@@ -44,7 +44,7 @@ def seed() -> None:
 
 def main() -> None:
     """Create the application context and seed the E2E database."""
-    app = create_app()
+    app = create_app("production")
     with app.app_context():
         seed()
 
