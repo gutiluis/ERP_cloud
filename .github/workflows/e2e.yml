@@ -63,20 +63,52 @@ jobs:
               for product in products:
                   print(product.name)
           "
-
-      - name: Verify E2E API
+      - name: Verify Vite API proxy
         run: |
-          docker compose -f compose.e2e.yaml exec -T e2e_api \
-            python -c "
-          import urllib.request
+          docker compose -f compose.e2e.yaml run --rm e2e_playwright \
+            sh -c '
+              npm run dev -- --host 0.0.0.0 --port 5173 > /tmp/vite.log 2>&1 &
+              VITE_PID=$!
 
-          response = urllib.request.urlopen(
-              'http://localhost:8000/api/products'
-          )
-          print(f'API status: {response.status}')
-          print(response.read().decode())
-          "
+              trap "kill $VITE_PID" EXIT
 
+              sleep 5
+
+              echo "=== Environment ==="
+              env | grep -E "VITE_API_TARGET|BASE_URL"
+
+              echo "=== API through Vite ==="
+              node -e "
+              fetch(\"http://127.0.0.1:5173/api/products\")
+                .then(async response => {
+                  console.log(\"Status:\", response.status)
+                  console.log(await response.text())
+                  process.exit(response.ok ? 0 : 1)
+                })
+                .catch(error => {
+                  console.error(error)
+                  process.exit(1)
+                })
+              "
+
+              echo "=== Vite log ==="
+              cat /tmp/vite.log
+            '
+      - name: Verify E2E API networking
+        run: |
+          docker compose -f compose.e2e.yaml run --rm e2e_playwright \
+            node -e "
+              fetch('http://e2e_api:8000/api/products')
+                .then(async r => {
+                  console.log('Status:', r.status);
+                  console.log(await r.text());
+                  process.exit(r.ok ? 0 : 1);
+                })
+                .catch(err => {
+                  console.error(err);
+                  process.exit(1);
+                });
+            "
       - name: Run Playwright
         run: |
           docker compose -f compose.e2e.yaml run --rm e2e_playwright
