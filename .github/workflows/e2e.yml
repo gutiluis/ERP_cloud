@@ -35,6 +35,14 @@ jobs:
           docker compose -f compose.e2e.yaml exec -T e2e_api \
             flask --app wsgi db upgrade
 
+      - name: Verify database schema
+        run: |
+          docker compose -f compose.e2e.yaml exec -T e2e_api \
+            flask db current
+          docker compose -f compose.e2e.yaml exec -T db \
+            mysql -u erp -perp erp_e2e \
+            -e "SHOW TABLES LIKE 'products';"
+
       - name: Seed E2E database
         run: |
           docker compose -f compose.e2e.yaml exec -T e2e_api \
