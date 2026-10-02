@@ -58,7 +58,7 @@ jobs:
 
       - name: Verify E2E seed
         run: |
-          docker compose -f compose.e2e.yaml exec -T e2e_api \
+          docker compose -f compose.e2e.yaml exec -T e2e_api db\
             mysql -u erp -perp erp_e2e \
             -e "SELECT product_id, name FROM products;"
 
