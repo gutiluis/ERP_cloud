@@ -29,16 +29,16 @@ jobs:
 
       - name: Start E2E services
         run: |
-          docker compose -f compose.e2e.yaml up -d --wait db e2e_api
+          docker compose -f compose.e2e.yaml up -d --wait db e2e-api
 
       - name: Run database migrations
         run: |
-          docker compose -f compose.e2e.yaml exec -T e2e_api \
+          docker compose -f compose.e2e.yaml exec -T e2e-api \
             flask db upgrade
 
       - name: Verify database schema
         run: |
-          docker compose -f compose.e2e.yaml exec -T e2e_api \
+          docker compose -f compose.e2e.yaml exec -T e2e-api \
             flask db current
           docker compose -f compose.e2e.yaml exec -T db \
             mysql -u erp -perp erp_e2e \
@@ -46,14 +46,14 @@ jobs:
 
       - name: Seed E2E database
         run: |
-          docker compose -f compose.e2e.yaml exec -T e2e_api \
+          docker compose -f compose.e2e.yaml exec -T e2e-api \
             python -m tests.seed_e2e
 
       - name: Inspect Flask configuration
         run: |
-          docker compose -f compose.e2e.yaml exec -T e2e_api \
+          docker compose -f compose.e2e.yaml exec -T e2e-api \
             sed -n '1,100p' app/__init__.py
-          docker compose -f compose.e2e.yaml exec -T e2e_api \
+          docker compose -f compose.e2e.yaml exec -T e2e-api \
             sed -n '1,100p' wsgi.py
 
       - name: Verify E2E seed
@@ -64,7 +64,7 @@ jobs:
 
       - name: Verify E2E API environment
         run: |
-          docker compose -f compose.e2e.yaml exec -T e2e_api \
+          docker compose -f compose.e2e.yaml exec -T e2e-api \
             python -c "import os; print('ALLOWED_HOSTS:', os.environ.get('ALLOWED_HOSTS'))"
 
       - name: Verify Vite API proxy
@@ -102,7 +102,7 @@ jobs:
         run: |
           docker compose -f compose.e2e.yaml run --rm e2e_playwright \
             node -e "
-              fetch('http://e2e_api:8000/api/products')
+              fetch('http://e2e-api:8000/api/products')
                 .then(async r => {
                   console.log('Status:', r.status);
                   console.log(await r.text());

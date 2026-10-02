@@ -32,11 +32,11 @@ e2e-up:
 	docker compose -f compose.e2e.yaml up -d --build
 
 e2e-migrate:
-	docker compose -f compose.e2e.yaml exec e2e_api \
+	docker compose -f compose.e2e.yaml exec e2e-API \
 		flask --app wsgi db upgrade
 
 e2e-seed:
-	docker compose -f compose.e2e.yaml exec e2e_api \
+	docker compose -f compose.e2e.yaml exec e2e-API \
 		python -m tests.seed_e2e
 # remove container after running
 e2e-test:

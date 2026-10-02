@@ -30,7 +30,7 @@ services:
           cpus: '1.0'
           memory: 512M
 
-  e2e_api:
+  e2e-api:
     build:
       context: .
       dockerfile: docker/backend.Dockerfile
@@ -67,10 +67,10 @@ services:
       # playwright.config.js. frontend
       BASE_URL: http://127.0.0.1:5173
       # vite.config.js
-      VITE_API_TARGET: http://e2e_api:8000
+      VITE_API_TARGET: http://e2e-api:8000
       PLAYWRIGHT_JSON_OUTPUT_DIR: /app/frontend/test-results
     depends_on:
-      e2e_api:
+      e2e-api:
         condition: service_healthy
     volumes:
       - type: bind
