@@ -8,7 +8,7 @@ prod:
 	docker compose -f compose.production.yaml up -d --build
 
 down:
-	docker compose down -v
+	docker compose down --remove-orphans
 
 migrate:
 	docker compose run --rm --entrypoint flask api --app wsgi db migrate
@@ -17,7 +17,7 @@ upgrade:
 	docker compose run --rm --entrypoint flask api --app wsgi db upgrade
 
 test:
-	docker compose run --rm api pytest
+	docker compose run --rm --entrypoint pytest api
 # backend
 lint:
 	pre-commit run --all-files

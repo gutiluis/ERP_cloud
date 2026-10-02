@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy import (
     BigInteger,
+    Integer,
     DateTime,
     Numeric,
     String,
@@ -25,7 +26,7 @@ if TYPE_CHECKING:
 
 class Payment(TimeStampModel):
     __tablename__ = "payments"
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
 
     # external systems stripe. requires strings
     public_payment_id: Mapped[str] = mapped_column(

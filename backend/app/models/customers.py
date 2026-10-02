@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 import enum
 
 from sqlalchemy import (
+    Integer,
     BigInteger,
     String,
     Text,
@@ -50,7 +51,7 @@ class Customer(TimeStampModel):
     )
     # backup in mysql too
     # biginteger does not increment automatically in sqlite. and does not autogenerate the id
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     # exception integrity error
     # every customer has an invoice
     customer_id: Mapped[str] = mapped_column(
@@ -140,7 +141,7 @@ class CustomerDeliveryZone(TimeStampModel):
     )
 
     id: Mapped[int] = mapped_column(
-        BigInteger,
+        Integer,
         primary_key=True,
         autoincrement=True,
     )

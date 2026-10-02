@@ -33,7 +33,7 @@ class Product(TimeStampModel):
     """
 
     __tablename__ = "products"
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
 
     product_id: Mapped[str] = mapped_column(
         String(50), index=True, unique=True, nullable=False
@@ -85,7 +85,7 @@ class ProductVariant(TimeStampModel):
             "external_source", "external_product_id", name="uq_external_product"
         ),
     )
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     product_id: Mapped[int] = mapped_column(
         BigInteger, db.ForeignKey("products.id"), nullable=False, index=True
     )

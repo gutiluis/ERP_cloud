@@ -3,39 +3,48 @@ services:
     build:
       context: .
       dockerfile: docker/backend.Dockerfile
-    restart: unless-stopped
-    env_file:
-      - .env
-    ports:
-      - "8000:8000"
+      # pytest implementation
+      args:
+        INSTALL_DEV: "true"
+    restart: "no"
+    environment:
+      FLASK_CONFIG: development
+      DEV_DATABASE_URL: ${DEV_DATABASE_URL}
+      SECRET_KEY: ${SECRET_KEY}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      STRIPE_SUCCESS_URL: ${STRIPE_SUCCESS_URL}
+      STRIPE_CANCEL_URL: ${STRIPE_CANCEL_URL}
     volumes:
       - ./backend:/app
     depends_on:
       db:
         condition: service_healthy
-
+  # browser -> nginx -> api -> db
   nginx:
     build:
       context: .
       dockerfile: docker/nginx.Dockerfile
     ports:
       - "80:80"
+    restart: "no"
     depends_on:
-      - api
+      api:
+          condition: service_started
 
   db:
     image: mysql:8.0
-    env_file:
-      - .env
-    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    restart: "no"
+    # pymysql
+    #ports:
+    #  - "3306:3306"
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s
       timeout: 5s
       retries: 10
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-volumes:
-  mysql_data:

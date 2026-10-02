@@ -39,7 +39,7 @@ class Cart(TimeStampModel):
     """
 
     __tablename__ = "carts"
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
 
     # react can store it in a cookie or local storage and send it with api requests
     # instead of user_id for no login of user and /stripe/checkout
@@ -86,7 +86,7 @@ class CartItem(TimeStampModel):
         ),
     )
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     cart_id: Mapped[int] = mapped_column(
         db.ForeignKey("carts.id"), nullable=False, index=True
     )

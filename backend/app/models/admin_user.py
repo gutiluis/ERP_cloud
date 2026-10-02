@@ -4,7 +4,7 @@
 
 from flask_login import UserMixin
 from sqlalchemy import (
-    BigInteger,
+    Integer,
     String,
     Text,
 )
@@ -15,7 +15,7 @@ from app.models.mixin import TimeStampModel
 
 class AdminUser(UserMixin, TimeStampModel):
     __tablename__ = "adminUsers"
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
 
     admin_id: Mapped[str] = mapped_column(
         String(50), index=True, unique=True, nullable=False

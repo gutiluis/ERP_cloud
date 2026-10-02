@@ -50,8 +50,7 @@ make dev
 #### 3.1 - Testing Endpoint Routes
 
 ```sh
-curl -i http://127.0.0.1:8000/health
-curl -i http://127.0.0.1:8000/
+curl -i http://localhost/health
 ```
 
 ### 3.2 - Testing Live Docker Logs

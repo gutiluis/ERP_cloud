@@ -1,6 +1,5 @@
 # file: tests/test_checkout.py
-# descr: real cart and real cart item, mock only stripe.checkout.session.create, call the http endpoint, inspect the resulting order
-
+# descr: unit/integration tests and deterministrict
 
 from decimal import Decimal
 from unittest.mock import MagicMock
@@ -45,9 +44,12 @@ def test_checkout_success(client, cart_product_variant, session, monkeypatch):
 
     stripe_create = MagicMock(return_value=stripe_session)
 
+    stripe_client = MagicMock()
+    stripe_client.v1.checkout.sessions.create = stripe_create
+
     monkeypatch.setattr(
-        "app.routes.checkout.stripe.checkout.Session.create",
-        stripe_create,
+        "app.routes.checkout.stripe.StripeClient",
+        lambda secret_key: stripe_client,
     )
 
     response = client.post(

@@ -6,10 +6,8 @@
 # from flasgger import Swagger
 # from flask import Marshmallow
 from flask import Flask, render_template
-import stripe
-import os
 
-from .config import Config
+from app.config import config
 from .extensions import db, login_manager, migrate
 
 
@@ -19,25 +17,15 @@ def register_error_handlers(app):
         return render_template("500.html"), 500
 
 
-def create_app(config_object=Config):
+def create_app(config_object):
     """
     Make app
     Export routes apis for admin, public frontend and cart
     """
     app = Flask(__name__)
-    app.config.from_object(config_object)
+    app.config.from_object(config[config_object])
 
-    # in github and .env
-    stripe_key = app.config.get("STRIPE_SECRET_KEY")
-    if not stripe_key:
-        app.logger.error("STRIPE_SECRET_KEY is not configured")
-        raise RuntimeError("STRIPE_SECRET_KEY is not configured")
-
-    if os.getenv("APP_ENV") == "production" and not stripe_key.startswith("sk_live_"):
-        app.logger.error("Production requires a Stripe live-mode secret key")
-        raise RuntimeError("Production requires a Stripe live-mode secret key")
-    stripe.api_key = stripe_key
-
+    config[config_object].init_app(app)
     # initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)

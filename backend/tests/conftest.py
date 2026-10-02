@@ -1,14 +1,9 @@
 """
-Script to set up a test database running with docker
-
-
 pytest configuration file. needs to be runned from project root
-
 
 has db, has session
 
 db.drop_all() ensures after each test a clean state every time
-
 
 @pytest.fixture # decorators
 a fixture provides a defined, reliable and consistent context for the tests. environment.
@@ -23,7 +18,7 @@ the services, state, or other operating environments set up by fixtures are acce
 
 """
 
-import os
+# import os
 import pytest
 
 from app import create_app
@@ -34,19 +29,19 @@ from app.models.orders import Order, OrderItem, OrderStatus
 from app.models.admin_user import AdminUser
 from app.models.cart import Cart
 from app.models.customers import Customer
-from app import Config
+# from app.config import config
 
 
-class TestConfig(Config):
-    """Pytest Config"""
+# class TestConfig(Config):
+#    """Pytest Config"""
 
-    TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.environ["TEST_DATABASE_URL"]
+#    TESTING = True
+#    SQLALCHEMY_DATABASE_URI = os.environ["TEST_DATABASE_URL"]
 
 
 @pytest.fixture(scope="session")
 def app():
-    app = create_app(TestConfig)
+    app = create_app("testing")
 
     with app.app_context():
         yield app

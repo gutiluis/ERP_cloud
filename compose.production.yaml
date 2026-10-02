@@ -6,8 +6,17 @@ services:
     restart: unless-stopped
     expose:
       - "8000"
-    env_file:
-      - .env.production
+    #env_file:
+      # use the value of ENV_FILE if it is set and non-empty; otherwise use .env.production
+    #  - .env.production
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      DATABASE_URL: ${DATABASE_URL}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      STRIPE_SUCCESS_URL: ${STRIPE_SUCCESS_URL}
+      STRIPE_CANCEL_URL: ${STRIPE_CANCEL_URL}
+
     depends_on:
       - db
 
@@ -28,8 +37,6 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     restart: unless-stopped
-    env_file:
-      - .env.production
     volumes:
       - mysql_data:/var/lib/mysql
 volumes:

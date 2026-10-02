@@ -32,21 +32,14 @@ services:
 
   e2e_api:
     build:
-      # current directory as build context
       context: .
       dockerfile: docker/backend.Dockerfile
     restart: "no"
-    # flask /app/config.py
     environment:
-      # mysql is only reachable by other containers on the compose network
-      # 3306 mysql port always inside docker
-      # pymysql driver
-      # connect to the mysql db service internal mysql port 3306
       DATABASE_URL: mysql+pymysql://erp:erp@db:3306/erp_e2e
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       STRIPE_SUCCESS_URL: http://localhost:5173/checkout/success
       STRIPE_CANCEL_URL: http://localhost:5173/checkout/cancel
-      FRONTEND_URL: http://127.0.0.1:5173
     depends_on:
       db:
         condition: service_healthy

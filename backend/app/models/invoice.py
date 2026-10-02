@@ -51,7 +51,11 @@ class Invoice(TimeStampModel):
         Index("ix_invoice_customer_status", "customer_id", "status"),
     )
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+        autoincrement=True,
+    )
 
     invoice_id: Mapped[str] = mapped_column(
         String(50), unique=True, nullable=False, index=True
@@ -164,7 +168,11 @@ class InvoiceItem(TimeStampModel):
         {"mysql_engine": "InnoDB", "mysql_charset": "utf8mb4"},
     )
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+        autoincrement=True,
+    )
 
     invoice_id: Mapped[int] = mapped_column(
         BigInteger,
@@ -216,7 +224,7 @@ class InvoiceTax(TimeStampModel):
         {"mysql_engine": "InnoDB", "mysql_charset": "utf8mb4"},
     )
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
 
     invoice_id: Mapped[int] = mapped_column(
         BigInteger, db.ForeignKey("invoices.id", ondelete="restrict"), nullable=False

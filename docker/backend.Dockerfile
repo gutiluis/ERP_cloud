@@ -10,8 +10,18 @@ RUN apt-get update && \
     netcat-openbsd=1.229-1 && \
     rm -rf /var/lib/apt/lists/*
 
+
 COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+# pytest implementation
+COPY dev-requirements.txt /app/dev-requirements.txt
+
+# pytest argument
+ARG INSTALL_DEV=false
+
+RUN pip install --no-cache-dir -r requirements.txt && \
+    if [ "$INSTALL_DEV" = "true" ]; then \
+    pip install --no-cache-dir -r dev-requirements.txt; \
+    fi
 # COPY <host-path> <image-path>
 # copy contents of local backend/ directory into /app when the image is built
 COPY backend/ .

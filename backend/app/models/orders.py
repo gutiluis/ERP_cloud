@@ -42,7 +42,7 @@ class Order(TimeStampModel):
     "table arguments is a class attribute"
     "This attribute accommodates both positional as well as keyword arguments that are normally sent to the Table constructor. "
     __table_args__ = ({"mysql_engine": "InnoDB", "mysql_charset": "utf8mb4"},)
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
 
     # nullable until stripe session exists
     stripe_session_id: Mapped[str] = mapped_column(
@@ -112,7 +112,7 @@ class OrderItem(TimeStampModel):
         Index("ix_order_items_order_id", "order_id"),
         Index("ix_order_items_product_id", "product_id"),
     )
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
 
     # invoice.py has quantity for several products
     quantity: Mapped[int] = mapped_column(
