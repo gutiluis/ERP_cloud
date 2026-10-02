@@ -51,7 +51,7 @@ jobs:
           app = create_app()
           with app.app_context():
               products = Product.query.all()
-              print(f'Products in E2E database: {len{products}}')
+              print(f'Products in E2E database: (len{products})')
               for product in products:
                   print(product.name)
           "
