@@ -173,10 +173,11 @@ function CartPage() {
         try {
             const data = await createCheckout(cartToken, shippingAddress)
 
-            console.log('CHECKOUT DATA', data)
-
+            console.log('Checkout response:', data)
+            console.log('Checkout URL:', data?.checkout_url)
             window.location.assign(data.checkout_url)
         } catch (error) {
+            console.error('Checkout failed:', error)
             setCheckoutError(error.message)
         } finally {
             setCheckoutLoading(false)
