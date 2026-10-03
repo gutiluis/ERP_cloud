@@ -41,6 +41,21 @@ jobs:
           docker compose -f compose.e2e.yaml exec -T e2e-api \
             python -m tests.seed_e2e
 
+      - name: Check E2E API environment
+        run: |
+          docker compose \
+            -f compose.e2e.yaml \
+            exec -T e2e-api \
+            sh -c '
+              test -n "$STRIPE_SECRET_KEY" &&
+                echo "STRIPE_SECRET_KEY is set" ||
+                echo "STRIPE_SECRET_KEY is missing"
+
+              printf "STRIPE_SUCCESS_URL=%s\n" "$STRIPE_SUCCESS_URL"
+              printf "STRIPE_CANCEL_URL=%s\n" "$STRIPE_CANCEL_URL"
+              printf "FLASK_CONFIG=%s\n" "$FLASK_CONFIG"
+            '
+
       - name: Run Playwright
         run: |
           docker compose -f compose.e2e.yaml run --rm e2e_playwright
@@ -49,6 +64,5 @@ jobs:
         if: always()
         run: |
           docker compose \
-          --env-file .env.e2e \
-          -f compose.e2e.yaml \
-          logs --no-color e2e-api
+            -f compose.e2e.yaml \
+            logs --no-color e2e-api
