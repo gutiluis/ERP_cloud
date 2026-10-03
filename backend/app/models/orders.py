@@ -16,7 +16,6 @@ import enum
 from decimal import Decimal
 
 from sqlalchemy import (
-    BigInteger,
     Index,
     Integer,
     Numeric,
@@ -67,7 +66,7 @@ class Order(TimeStampModel):
     )
 
     customer_id: Mapped[int] = mapped_column(
-        BigInteger, db.ForeignKey("customers.id"), nullable=False
+        Integer, db.ForeignKey("customers.id"), nullable=False
     )
 
     customer: Mapped[Customer] = db.relationship("Customer", back_populates="orders")
@@ -90,7 +89,7 @@ class Order(TimeStampModel):
         uselist=False,
     )
     cart_id: Mapped[int] = mapped_column(
-        BigInteger,
+        Integer,
         db.ForeignKey("carts.id"),
         unique=True,
         nullable=False,
@@ -120,10 +119,10 @@ class OrderItem(TimeStampModel):
         nullable=False,
     )
     order_id: Mapped[int] = mapped_column(
-        BigInteger, db.ForeignKey("orders.id"), nullable=False
+        Integer, db.ForeignKey("orders.id"), nullable=False
     )
     product_id: Mapped[int] = mapped_column(
-        BigInteger, db.ForeignKey("products.id"), nullable=False
+        Integer, db.ForeignKey("products.id"), nullable=False
     )
     product: Mapped[Product] = db.relationship("Product", back_populates="order_items")
 
@@ -132,7 +131,7 @@ class OrderItem(TimeStampModel):
     order: Mapped[Order] = db.relationship("Order", back_populates="items")
 
     product_variant_id: Mapped[int] = mapped_column(
-        BigInteger, db.ForeignKey("product_variants.id"), nullable=False
+        Integer, db.ForeignKey("product_variants.id"), nullable=False
     )
 
     product_variant: Mapped[ProductVariant] = db.relationship(

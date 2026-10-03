@@ -13,7 +13,6 @@ if TYPE_CHECKING:
 from decimal import Decimal
 
 from sqlalchemy import (
-    BigInteger,
     Boolean,
     Integer,
     Numeric,
@@ -87,7 +86,7 @@ class ProductVariant(TimeStampModel):
     )
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     product_id: Mapped[int] = mapped_column(
-        BigInteger, db.ForeignKey("products.id"), nullable=False, index=True
+        Integer, db.ForeignKey("products.id"), nullable=False, index=True
     )
     is_active: Mapped[bool] = mapped_column(
         Boolean,

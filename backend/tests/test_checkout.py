@@ -44,12 +44,9 @@ def test_checkout_success(client, cart_product_variant, session, monkeypatch):
 
     stripe_create = MagicMock(return_value=stripe_session)
 
-    stripe_client = MagicMock()
-    stripe_client.v1.checkout.sessions.create = stripe_create
-
     monkeypatch.setattr(
-        "app.routes.checkout.stripe.StripeClient",
-        lambda secret_key: stripe_client,
+        "app.routes.checkout.stripe.checkout.Session.create",
+        stripe_create,
     )
 
     response = client.post(
@@ -66,6 +63,8 @@ def test_checkout_success(client, cart_product_variant, session, monkeypatch):
     )
 
     assert response.status_code == 200
+
+    stripe_create.assert_called_once()
 
     data = response.get_json()
 

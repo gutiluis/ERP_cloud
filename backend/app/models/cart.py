@@ -13,7 +13,6 @@ import enum
 from decimal import Decimal
 
 from sqlalchemy import (
-    BigInteger,
     Integer,
     Numeric,
     String,
@@ -55,7 +54,7 @@ class Cart(TimeStampModel):
         index=True,
     )
     customer_id: Mapped[int] = mapped_column(
-        BigInteger,
+        Integer,
         db.ForeignKey("customers.id"),
         nullable=False,
         index=True,
@@ -88,17 +87,17 @@ class CartItem(TimeStampModel):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     cart_id: Mapped[int] = mapped_column(
-        db.ForeignKey("carts.id"), nullable=False, index=True
+        Integer, db.ForeignKey("carts.id"), nullable=False, index=True
     )
     product_id: Mapped[int] = mapped_column(
-        db.ForeignKey("products.id"), nullable=False, index=True
+        Integer, db.ForeignKey("products.id"), nullable=False, index=True
     )
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
     unit_price: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     cart: Mapped[Cart] = db.relationship("Cart", back_populates="items")
     product: Mapped[Product] = db.relationship("Product", back_populates="cart_items")
     product_variant_id: Mapped[int] = mapped_column(
-        BigInteger,
+        Integer,
         db.ForeignKey("product_variants.id"),
         nullable=False,
         index=True,

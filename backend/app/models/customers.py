@@ -16,7 +16,6 @@ import enum
 
 from sqlalchemy import (
     Integer,
-    BigInteger,
     String,
     Text,
     UniqueConstraint,
@@ -146,8 +145,8 @@ class CustomerDeliveryZone(TimeStampModel):
         autoincrement=True,
     )
 
-    customer_id: Mapped[int] = mapped_column(
-        BigInteger,
+    customer_id: Mapped[str] = mapped_column(
+        Integer,
         db.ForeignKey("customers.id"),
         nullable=False,
         index=True,

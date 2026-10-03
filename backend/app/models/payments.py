@@ -8,7 +8,6 @@ from decimal import Decimal
 from typing import TYPE_CHECKING
 
 from sqlalchemy import (
-    BigInteger,
     Integer,
     DateTime,
     Numeric,
@@ -33,7 +32,7 @@ class Payment(TimeStampModel):
         String(50), unique=True, nullable=False, index=True
     )
     invoice_id: Mapped[int] = mapped_column(
-        BigInteger,
+        Integer,
         db.ForeignKey("invoices.id", ondelete="restrict"),
         nullable=False,
         index=True,

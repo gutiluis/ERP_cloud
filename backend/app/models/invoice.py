@@ -17,7 +17,6 @@ from datetime import datetime
 from decimal import Decimal
 
 from sqlalchemy import (
-    BigInteger,
     CheckConstraint,
     DateTime,
     Index,
@@ -62,7 +61,7 @@ class Invoice(TimeStampModel):
     )
 
     customer_id: Mapped[int] = mapped_column(
-        BigInteger,
+        Integer,
         db.ForeignKey("customers.id", ondelete="RESTRICT"),
         nullable=False,
     )
@@ -100,7 +99,7 @@ class Invoice(TimeStampModel):
         lazy="selectin",
     )
     order_id: Mapped[int] = mapped_column(
-        BigInteger,
+        Integer,
         db.ForeignKey("orders.id", ondelete="RESTRICT"),
         nullable=False,
         unique=True,
@@ -175,14 +174,14 @@ class InvoiceItem(TimeStampModel):
     )
 
     invoice_id: Mapped[int] = mapped_column(
-        BigInteger,
+        Integer,
         db.ForeignKey("invoices.id", ondelete="restrict"),
         nullable=False,
         index=True,
     )
 
     product_id: Mapped[int] = mapped_column(
-        BigInteger, db.ForeignKey("products.id"), nullable=False, index=True
+        Integer, db.ForeignKey("products.id"), nullable=False, index=True
     )
     # invoiced quantity for several products from the order PO. order.py model already has a quantity column
     quantity: Mapped[int] = mapped_column(
@@ -227,7 +226,7 @@ class InvoiceTax(TimeStampModel):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
 
     invoice_id: Mapped[int] = mapped_column(
-        BigInteger, db.ForeignKey("invoices.id", ondelete="restrict"), nullable=False
+        Integer, db.ForeignKey("invoices.id", ondelete="restrict"), nullable=False
     )
 
     tax_type: Mapped[str] = mapped_column(String(200), nullable=False, unique=True)

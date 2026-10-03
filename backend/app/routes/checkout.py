@@ -98,10 +98,9 @@ def checkout():
                 )
             )
 
-        stripe_key = current_app.config["STRIPE_SECRET_KEY"]
-        stripe_client = stripe.StripeClient(stripe_key)
+        stripe.api_key = current_app.config["STRIPE_SECRET_KEY"]
 
-        session = stripe_client.v1.checkout.sessions.create(
+        session = stripe.checkout.Session.create(
             mode="payment",
             line_items=[
                 {
