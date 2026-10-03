@@ -26,12 +26,6 @@ test('completes a Stripe test payment', async ({ page }) => {
         page.getByRole('heading', { name: /cart/i })
     ).toBeVisible()
 
-    page.on('response', async (response) => {
-        if (response.url().includes('/api/checkout')) {
-            console.log('CHECKOUT RESPONSE:', response.status(), response.url())
-            console.log('CHECKOUT BODY:', await response.text())
-        }
-    })
 
     console.log('CHECKOUT URL:', page.url());
     console.log(
