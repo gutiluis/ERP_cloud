@@ -15,10 +15,8 @@ the services, state, or other operating environments set up by fixtures are acce
 
 - pytest does not run with python REPL
 
-
 """
 
-# import os
 import pytest
 
 from app import create_app
@@ -29,14 +27,6 @@ from app.models.orders import Order, OrderItem, OrderStatus
 from app.models.admin_user import AdminUser
 from app.models.cart import Cart
 from app.models.customers import Customer
-# from app.config import config
-
-
-# class TestConfig(Config):
-#    """Pytest Config"""
-
-#    TESTING = True
-#    SQLALCHEMY_DATABASE_URI = os.environ["TEST_DATABASE_URL"]
 
 
 @pytest.fixture(scope="session")
