@@ -4,13 +4,12 @@ on:
   pull_request:
     branches:
       - testing
-  workflow_dispatch:
 
 jobs:
   pytest:
     name: Run backend tests for Dependabot
     # restricted to dependabot PRs
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.user.login == 'dependabot[bot]'
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
     runs-on: ubuntu-latest
     environment: dependabot
 
