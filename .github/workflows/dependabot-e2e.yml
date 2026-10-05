@@ -1,0 +1,66 @@
+name: Dependabot E2E Playwright
+
+on:
+  pull_request:
+    branches:
+      - testing
+
+jobs:
+  e2e:
+    name: Run E2E tests for Dependabot
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    environment: dependabot
+
+    env:
+      FLASK_CONFIG: production
+      DATABASE_URL: mysql+pymysql://erp:erp@db:3306/erp_e2e
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      STRIPE_SUCCESS_URL: http://127.0.0.1:5173/success
+      STRIPE_CANCEL_URL: http://127.0.0.1:5173/cancel
+      ALLOWED_HOSTS: localhost,127.0.0.1,e2e-api
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Fetch Dependabot metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build E2E services
+        run: |
+          docker compose -f compose.e2e.yaml build
+
+      - name: Start E2E services
+        run: |
+          docker compose -f compose.e2e.yaml up -d --wait db e2e-api
+
+      - name: Run database migrations
+        run: |
+          docker compose -f compose.e2e.yaml exec -T e2e-api \
+            flask db upgrade
+
+      - name: Seed E2E database
+        run: |
+          docker compose -f compose.e2e.yaml exec -T e2e-api \
+            python -m tests.seed_e2e
+
+      - name: Check Stripe version
+        run: |
+          docker compose \
+            -f compose.e2e.yaml \
+            exec -T e2e-api \
+            python -c "import stripe; print(stripe.VERSION)"
+
+      - name: Run Playwright
+        run: |
+          docker compose -f compose.e2e.yaml run --rm e2e_playwright
+
+      - name: Show E2E API logs
+        if: always()
+        run: |
+          docker compose \
+            -f compose.e2e.yaml \
+            logs --no-color e2e-api

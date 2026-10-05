@@ -60,5 +60,6 @@ config = {
     "default": Config,
     "development": DevelopmentConfig,
     "testing": TestConfig,
+    # compose.e2e.yaml
     "production": ProductionConfig,
 }

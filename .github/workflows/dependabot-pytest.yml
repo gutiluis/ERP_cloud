@@ -14,13 +14,10 @@ jobs:
     environment: dependabot
 
     env:
+      FLASK_CONFIG: testing
       # dependabot secret store
       TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-
-    strategy:
-      matrix:
-        python-version: ["3.12"]
 
     services:
       mysql:
@@ -37,10 +34,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.12"
           cache: pip
 
       - name: Install Pytest
