@@ -16,8 +16,7 @@ jobs:
     env:
       FLASK_CONFIG: testing
       # dependabot secret store
-      TEST_DATABASE_URL: mysql+pymysql://erp:erp@db:3306/erp_dependabot
-      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      TEST_DATABASE_URL: mysql+pymysql://erp:erp@127.0.0.1:3306/erp_dependabot
 
     services:
       mysql:
@@ -29,6 +28,12 @@ jobs:
           MYSQL_ROOT_PASSWORD: root
         ports:
           - "3306:3306"
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -u root -proot"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+          --health-start-period=20s
 
     steps:
       - name: Checkout repository
