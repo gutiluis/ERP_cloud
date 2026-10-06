@@ -12,7 +12,7 @@ jobs:
   pytest:
     name: Run backend tests
     runs-on: ubuntu-latest
-    # variable and secrets under github environment for CI
+    # Variables and secrets are stored under the GitHub testing environment.
     environment: testing
 
     env:
@@ -49,10 +49,23 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           python -m pip install pytest
 
-
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+
+      - name: Diagnose database configuration
+        run: |
+          python - <<'PY'
+          import os
+          from urllib.parse import urlparse
+
+          url = os.environ["TEST_DATABASE_URL"]
+          parsed = urlparse(url)
+
+          print(f"database host: {parsed.hostname}")
+          print(f"database port: {parsed.port}")
+          print(f"database name: {parsed.path.lstrip('/')}")
+          PY
 
       - name: Run pytest
         run: python -m pytest backend/tests
