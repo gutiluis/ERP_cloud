@@ -8,6 +8,8 @@ services:
       MYSQL_USER: erp
       MYSQL_PASSWORD: erp
       MYSQL_ROOT_PASSWORD: root
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "erp", "-perp" ]
     deploy:
       resources:
         limits:
@@ -31,7 +33,8 @@ services:
         aliases:
           - api
     depends_on:
-     - db
+      db:
+        condition: service_healthy
     deploy:
       resources:
         limits:
