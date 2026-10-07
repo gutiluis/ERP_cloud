@@ -27,7 +27,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1.0'
+          cpus: "1.0"
           memory: 512M
 
   e2e-api:
@@ -36,10 +36,9 @@ services:
       dockerfile: docker/backend.Dockerfile
     restart: "no"
     environment:
-      # production
       FLASK_CONFIG: ${FLASK_CONFIG}
       DATABASE_URL: ${DATABASE_URL}
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_SECRET_KEY:
       STRIPE_SUCCESS_URL: ${STRIPE_SUCCESS_URL}
       STRIPE_CANCEL_URL: ${STRIPE_CANCEL_URL}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS}
@@ -47,14 +46,20 @@ services:
       db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"
+        ]
       interval: 5s
       timeout: 5s
       retries: 10
     deploy:
       resources:
         limits:
-          cpus: '1.0'
+          cpus: "1.0"
           memory: 512M
 
   e2e_playwright:
@@ -64,10 +69,7 @@ services:
     shm_size: 1gb
     restart: "no"
     environment:
-      # vite and playwright run in same e2e_playwright container
-      # playwright.config.js. frontend
       BASE_URL: http://127.0.0.1:5173
-      # vite.config.js
       VITE_API_TARGET: http://e2e-api:8000
       PLAYWRIGHT_JSON_OUTPUT_DIR: /app/frontend/test-results
     depends_on:
@@ -76,6 +78,4 @@ services:
     volumes:
       - type: bind
         source: ./frontend/test-results
-      # container paths based on playwright docker file workdir /app/frontend
-      # update localhost and make new copy
         target: /app/frontend/test-results
