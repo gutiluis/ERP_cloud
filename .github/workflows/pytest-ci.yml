@@ -16,7 +16,8 @@ jobs:
     environment: testing
 
     env:
-      TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+      FLASK_CONFIG: testing
+      TEST_DATABASE_URL: mysql+pymysql://erp:erp@127.0.0.1:3306/erp_test
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
 
     strategy:
@@ -52,20 +53,6 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-
-      - name: Diagnose database configuration
-        run: |
-          python - <<'PY'
-          import os
-          from urllib.parse import urlparse
-
-          url = os.environ["TEST_DATABASE_URL"]
-          parsed = urlparse(url)
-
-          print(f"database host: {parsed.hostname}")
-          print(f"database port: {parsed.port}")
-          print(f"database name: {parsed.path.lstrip('/')}")
-          PY
 
       - name: Run pytest
         run: python -m pytest backend/tests
