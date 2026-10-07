@@ -10,7 +10,6 @@ jobs:
     name: Run E2E tests for Dependabot
     if: github.event.pull_request.user.login == 'dependabot[bot]'
     runs-on: ubuntu-latest
-    environment: dependabot
 
     env:
       FLASK_CONFIG: production
