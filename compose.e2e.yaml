@@ -8,22 +8,6 @@ services:
       MYSQL_USER: erp
       MYSQL_PASSWORD: erp
       MYSQL_ROOT_PASSWORD: root
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "mysqladmin",
-          "ping",
-          "-h",
-          "localhost",
-          "-u",
-          "root",
-          "-proot"
-        ]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 20s
     deploy:
       resources:
         limits:
@@ -42,25 +26,27 @@ services:
       STRIPE_SUCCESS_URL: ${STRIPE_SUCCESS_URL}
       STRIPE_CANCEL_URL: ${STRIPE_CANCEL_URL}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+    networks:
+      default:
+        aliases:
+          - api
     depends_on:
-      db:
-        condition: service_healthy
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "python",
-          "-c",
-          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"
-        ]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+     - db
     deploy:
       resources:
         limits:
           cpus: "1.0"
           memory: 512M
+
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx.Dockerfile
+    restart: "no"
+    ports:
+      - "80:80"
+    depends_on:
+      - e2e-api
 
   e2e_playwright:
     build:
@@ -69,12 +55,10 @@ services:
     shm_size: 1gb
     restart: "no"
     environment:
-      BASE_URL: http://127.0.0.1:5173
-      VITE_API_TARGET: http://e2e-api:8000
+      BASE_URL: http://nginx
       PLAYWRIGHT_JSON_OUTPUT_DIR: /app/frontend/test-results
     depends_on:
-      e2e-api:
-        condition: service_healthy
+      - nginx
     volumes:
       - type: bind
         source: ./frontend/test-results

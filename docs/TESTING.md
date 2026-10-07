@@ -206,14 +206,7 @@ The browser accesses Vite through the loopback interface because Vite and Playwr
 
 Vite proxies frontend API requests to the E2E Flask backend using:
 
-```text
-http://e2e_api:8000
-```
 
-The API target is configured through:
-
-```text
-VITE_API_TARGET
 ```
 
 This keeps the frontend configuration independent of the E2E environment.

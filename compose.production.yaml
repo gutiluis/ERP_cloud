@@ -6,9 +6,6 @@ services:
     restart: unless-stopped
     expose:
       - "8000"
-    #env_file:
-      # use the value of ENV_FILE if it is set and non-empty; otherwise use .env.production
-    #  - .env.production
     environment:
       SECRET_KEY: ${SECRET_KEY}
       DATABASE_URL: ${DATABASE_URL}

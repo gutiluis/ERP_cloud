@@ -71,16 +71,6 @@ test('completes a Stripe test payment', async ({ page }) => {
     console.log(await page.locator('body').innerText())
 
 
-
-
-    // email assertion
-    /*
-    await expect(
-        page.locator('input[name="email"]')
-    ).toBeVisible()
-    */
-
-
     await page.locator('input[name="email"]').fill('e2e@example.test')
     await page.locator(
         'input[aria-label="Card number"]'
@@ -100,17 +90,12 @@ test('completes a Stripe test payment', async ({ page }) => {
 
     await payButton.click()
 
-    await page.waitForTimeout(5000)
+    await expect(page).toHaveURL(/\/checkout\/success/, {
+        timeout: 30000,
+    })
 
-    console.log('URL after payment:', page.url())
-    console.log('Page text after payment:')
-    console.log(await page.locator('body').innerText())
+    await expect(page).toHaveURL('http://nginx/checkout/success')
 
-    const stripeErrors = page.locator(
-        '[role="alert"], [aria-live="polite"], [aria-live="assertive"]'
-    )
-
-    console.log('Stripe errors:', await stripeErrors.allTextContents())
 
 
 })

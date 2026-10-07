@@ -6,24 +6,9 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-// used by different compose environment local development, http://e2e_api:8000
-// loadEnv is provided by environment compose*.yaml .env.VITE_API_TARGET
-// proxy target environment-driven
-const apiTarget = process.env.VITE_API_TARGET ?? 'http://localhost:8000'
 
 export default defineConfig({
     plugins: [react(), tailwindcss()],
-    // not needed for production but its ok to leave as nginx resolves
-    // server is needed for e2e
-    // development port :5173
-    server: {
-        proxy: {
-            '/api': {
-                target: apiTarget,
-                changeOrigin: true,
-            },
-        },
-    },
     // test property
     test: {
         environment: 'jsdom',
