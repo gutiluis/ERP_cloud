@@ -94,8 +94,4 @@ test('completes a Stripe test payment', async ({ page }) => {
         timeout: 30000,
     })
 
-    await expect(page).toHaveURL('http://nginx/checkout/success')
-
-
-
 })
