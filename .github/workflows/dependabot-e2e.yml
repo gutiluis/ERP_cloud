@@ -15,8 +15,8 @@ jobs:
       FLASK_CONFIG: production
       DATABASE_URL: mysql+pymysql://erp:erp@db:3306/erp_e2e
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-      STRIPE_SUCCESS_URL: http://127.0.0.1:5173/success
-      STRIPE_CANCEL_URL: http://127.0.0.1:5173/cancel
+      STRIPE_SUCCESS_URL: http://127.0.0.1:5173/checkout/success
+      STRIPE_CANCEL_URL: http://127.0.0.1:5173/checkout/cancel
       ALLOWED_HOSTS: localhost,127.0.0.1,e2e-api
 
     steps:
