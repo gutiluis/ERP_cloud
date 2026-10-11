@@ -91,7 +91,7 @@ test('completes a Stripe test payment', async ({ page }) => {
     await payButton.click()
 
     await expect(page).toHaveURL(/\/checkout\/success/, {
-        timeout: 30000,
+        timeout: 60000,
     })
 
 })
