@@ -17,7 +17,7 @@ jobs:
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
       STRIPE_SUCCESS_URL: http://127.0.0.1:5173/checkout/success
       STRIPE_CANCEL_URL: http://127.0.0.1:5173/checkout/cancel
-      ALLOWED_HOSTS: localhost,127.0.0.1,e2e-api
+      ALLOWED_HOSTS: localhost,127.0.0.1,e2e-api,nginx
 
     steps:
       - name: Checkout
