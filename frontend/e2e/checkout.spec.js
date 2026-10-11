@@ -88,17 +88,20 @@ test('completes a Stripe test payment', async ({ page }) => {
     await expect(payButton).toBeVisible()
     await expect(payButton).toBeEnabled()
 
+
     await payButton.click()
 
-    await page.waitForTimeout(3000)
-
-    console.log('URL after payment:', page.url())
-    console.log('Stripe body after payment:')
-    console.log(await page.locator('body').innerText())
-
-    console.log(
-        'Visible alerts:',
-        await page.getByRole('alert').allTextContents(),
+    await expect(page).toHaveURL(
+        /\/checkout\/success(?:\?.*)?$/,
+        { timeout: 30000 },
     )
+
+    await expect(
+        page.getByRole('heading', { name: 'Checkout Successful' })
+    ).toBeVisible()
+
+    await expect(
+        page.getByText('Your payment was successful. Thank you for your order.')
+    ).toBeVisible()
 
 })

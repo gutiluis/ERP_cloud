@@ -28,19 +28,22 @@ e2e:
 	$(MAKE) e2e-seed
 	$(MAKE) e2e-test
 
+E2E_COMPOSE = docker compose --env-file .env.e2e -f compose.e2e.yaml
+
 e2e-up:
-	docker compose -f compose.e2e.yaml up -d --build
+	$(E2E_COMPOSE) up -d --build
 
 e2e-migrate:
-	docker compose -f compose.e2e.yaml exec e2e-API \
+	$(E2E_COMPOSE) exec e2e-api \
 		flask --app wsgi db upgrade
 
 e2e-seed:
-	docker compose -f compose.e2e.yaml exec e2e-API \
+	$(E2E_COMPOSE) exec e2e-api \
 		python -m tests.seed_e2e
-# remove container after running
+
+# Remove containers and the E2E database volume after running.
 e2e-test:
-	docker compose -f compose.e2e.yaml run --rm e2e_playwright
+	$(E2E_COMPOSE) run --rm e2e_playwright
 
 e2e-down:
-	docker compose -f compose.e2e.yaml down -v --remove-orphans
+	$(E2E_COMPOSE) down -v --remove-orphans
