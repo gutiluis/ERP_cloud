@@ -82,7 +82,7 @@ test('completes a Stripe test payment', async ({ page }) => {
         'input[aria-label="Credit or debit card CVC/CVV"]'
     ).fill('123')
     await page.locator('#billingName').fill('E2E Test Customer')
-    // pay
+    // Pay
     const payButton = page.getByRole('button', { name: /Pay/ })
 
     await expect(payButton).toBeVisible()
@@ -90,8 +90,18 @@ test('completes a Stripe test payment', async ({ page }) => {
 
     await payButton.click()
 
-    await expect(page).toHaveURL(/\/checkout\/success/, {
-        timeout: 60000,
-    })
+    // Capture Stripe's response if the redirect does not happen.
+    try {
+        await expect(page).toHaveURL(/\/checkout\/success/, {
+            timeout: 30000,
+        })
+    } catch (error) {
+        console.error('URL after payment:', page.url())
+        console.error(
+            'Stripe body after payment:',
+            await page.locator('body').innerText(),
+        )
+        throw error
+    }
 
 })
