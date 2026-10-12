@@ -10,6 +10,7 @@ export default defineConfig({
     testDir: './e2e',
     // run all tests in parallel
     fullyParallel: true,
+    workers: 1,
     // reporter to use the container is ephemeral it will not save
     reporter: [
         ['list'],
