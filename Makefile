@@ -24,8 +24,11 @@ lint:
 
 e2e:
 	$(MAKE) e2e-up
+	sleep 1
 	$(MAKE) e2e-migrate
+	sleep 1
 	$(MAKE) e2e-seed
+	sleep 1
 	$(MAKE) e2e-test
 
 E2E_COMPOSE = docker compose --env-file .env.e2e -f compose.e2e.yaml
