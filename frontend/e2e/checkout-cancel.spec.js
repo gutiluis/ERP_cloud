@@ -1,8 +1,7 @@
 // file: checkout-cancel.spec.js
 // descr: stripe cancel checkout
 
-
-import { expect, test } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 
 test('cancels Stripe checkout and returns to the cart flow', async ({ page }) => {
     test.setTimeout(60000)
@@ -27,15 +26,20 @@ test('cancels Stripe checkout and returns to the cart flow', async ({ page }) =>
     await page.locator('#shipping-city').fill('Guadalajara')
     await page.locator('#shipping-zip-code').fill('45000')
 
+    const stripeNavigation = page.waitForURL(
+        /checkout\.stripe\.com/,
+        { timeout: 30000 },
+    )
+
     await page.getByRole('button', { name: 'Checkout' }).click()
+    await stripeNavigation
 
-    await expect(page).toHaveURL(/checkout\.stripe\.com/, {
-        timeout: 15000,
-    })
+    const backLink = page.getByRole('link', { name: /back/i })
 
-    // Use Stripe Checkout's back link to trigger the configured cancel URL.
-    await page.getByRole('link', { name: /back/i }).click()
+    await expect(backLink).toBeVisible({ timeout: 10000 })
+    await backLink.click({ timeout: 10000 })
 
+    // cancellation url checks
     await expect(page).toHaveURL(
         /\/checkout\/cancel(?:\?.*)?$/,
         { timeout: 15000 },
@@ -43,9 +47,12 @@ test('cancels Stripe checkout and returns to the cart flow', async ({ page }) =>
 
     await expect(
         page.getByRole('heading', { name: 'Checkout Canceled' }),
-    ).toBeVisible()
+    ).toBeVisible({ timeout: 15000 })
 
     await expect(
-        page.getByText('Your checkout was canceled. Your cart has not been charged.'),
-    ).toBeVisible()
+        page.getByText(
+            'Your checkout was canceled. Your cart has not been charged.',
+        ),
+    ).toBeVisible({ timeout: 15000 })
+
 })
