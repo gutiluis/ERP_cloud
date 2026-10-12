@@ -1,5 +1,5 @@
-// file: CheckoutCancel.jsx
-// descr: checkout cancel page
+// file: /public/CheckoutCancel.jsx
+// descr: react using javascript and jsx checkout cancel page
 
 
 function CheckoutCancel() {
