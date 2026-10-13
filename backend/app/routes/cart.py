@@ -103,6 +103,7 @@ def get_cart(cart_token):
                     "id": item.id,
                     "product_id": item.product_id,
                     "product_variant_id": item.product_variant_id,
+                    "product_name": item.product_variant.product.name,
                     "quantity": item.quantity,
                     "unit_price": str(item.unit_price),
                 }

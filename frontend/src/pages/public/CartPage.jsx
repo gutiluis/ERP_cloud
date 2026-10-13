@@ -208,7 +208,7 @@ function CartPage() {
                         <div className="flex items-center justify-between">
                             <div>
                                 <h2 className="font-semibold text-gray-900">
-                                    Product variant {item.product_variant_id}
+                                    {item.product_name}
                                 </h2>
 
                                 <p className="mt-1 text-sm text-gray-600">
