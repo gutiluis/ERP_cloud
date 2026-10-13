@@ -78,4 +78,8 @@ def create_app(config_object):
 
     app.register_blueprint(checkout_bp)
 
+    from .routes.orders import orders_bp
+
+    app.register_blueprint(orders_bp)
+
     return app
