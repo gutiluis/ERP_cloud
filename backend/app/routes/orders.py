@@ -1,4 +1,6 @@
-"""Read orders owned by a guest checkout token."""
+# file: /routes/orders.py
+
+# descr: Read orders owned by a guest checkout token.
 
 from flask import Blueprint, jsonify, request
 
@@ -8,13 +10,14 @@ from app.models.orders import Order
 orders_bp = Blueprint("orders", __name__, url_prefix="/api/orders")
 
 
+# flask shortcut for @orders_bp.route("/<int:order_id>", methods=["GET"])
 @orders_bp.get("/<int:order_id>")
 def get_order(order_id):
     """Return an order only when the caller presents its cart token."""
     cart_token = request.headers.get("X-Cart-Token")
-
+    # missing tokens and unauthorized orders return the same 404
     if not cart_token:
-        return jsonify({"error": "X-Cart-Token header is required"}), 401
+        return jsonify({"error": "X-Cart-Token header is required"}), 404
 
     order = db.session.get(Order, order_id)
 

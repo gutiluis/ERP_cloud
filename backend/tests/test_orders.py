@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 from app.models.cart import Cart, CartItem
 from app.models.customers import CustomerDeliveryZone
-from app.models.orders import Order, OrderStatus
+from app.models.orders import OrderStatus
 
 
 def test_get_order_returns_shipping_address(client, paid_order):
@@ -23,7 +23,7 @@ def test_get_order_returns_shipping_address(client, paid_order):
 def test_get_order_requires_cart_token(client, paid_order):
     response = client.get(f"/api/orders/{paid_order.id}")
 
-    assert response.status_code == 401
+    assert response.status_code == 404
     assert response.get_json()["error"] == "X-Cart-Token header is required"
 
 
