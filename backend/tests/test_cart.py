@@ -152,6 +152,7 @@ def test_get_cart(client, cart_product_variant):
     item = data["items"][0]
 
     assert item["product_id"] == product.id
+    assert item["product_name"] == product.name
     assert item["product_variant_id"] == variant.id
     assert item["quantity"] == 2
     assert item["unit_price"] == "25.00"
