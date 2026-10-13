@@ -124,7 +124,7 @@ def checkout():
 
         db.session.commit()
 
-        return jsonify({"checkout_url": session.url}), 200
+        return jsonify({"checkout_url": session.url, "order_id": order.id}), 200
 
     except Exception:
         db.session.rollback()
