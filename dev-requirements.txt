@@ -23,7 +23,7 @@ Mako==1.4.3
 MarkupSafe==3.0.4
 mccabe==0.7.0
 packaging==26.3
-pycparser==3.0
+pycparser==3.11
 pyflakes==4.0.2
 PyMySQL==1.2.3
 python-dotenv==1.2.4
