@@ -7,6 +7,24 @@ import { test, expect } from "@playwright/test";
 test("completes a Stripe test payment", async ({ page }) => {
     test.setTimeout(90000);
 
+    page.on("pageerror", (error) => {
+        console.error("Page error:", error);
+    });
+
+    page.on("response", async (response) => {
+        if (
+            response.url().includes("/api/") &&
+            response.status() >= 400
+        ) {
+            console.error(
+                "API failure:",
+                response.status(),
+                response.url(),
+                await response.text(),
+            );
+        }
+    });
+
     await page.goto("/");
 
     const product = page.locator("article").filter({
@@ -19,7 +37,7 @@ test("completes a Stripe test payment", async ({ page }) => {
     await page.getByRole("link", { name: "View cart" }).click();
 
     await expect(
-        page.getByRole("heading", { name: /cart/i }),
+        page.getByRole("heading", { name: "Your cart", exact: true }),
     ).toBeVisible();
 
     await page.locator("#shipping-address-1").fill("123 Test Street");
@@ -78,13 +96,16 @@ test("completes a Stripe test payment", async ({ page }) => {
         throw error;
     }
 
+    console.log(await page.locator('body').innerText())
+    console.log('Current URL:', page.url())
+
     await expect(
         page.getByRole("heading", { name: "Checkout Successful" }),
     ).toBeVisible({ timeout: 15000 });
 
     await expect(
         page.getByText(
-            "Your payment was successful. Thank you for your order.",
+            "Your payment was confirmed. Thank you for your order.",
         ),
     ).toBeVisible({ timeout: 15000 });
 });

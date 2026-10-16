@@ -2,24 +2,32 @@
 // descr: checkout page vitest
 
 
+
 import { describe, beforeEach, test, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import CheckoutSuccess from './CheckoutSuccess'
 
-
 describe('CheckoutSuccess', () => {
     beforeEach(() => {
         localStorage.clear()
+        window.history.replaceState(
+            {},
+            '',
+            '/checkout/success',
+        )
     })
 
-    test('clears the cart token after successful checkout', () => {
+    test('does not clear the cart token when the session ID is missing', async () => {
         localStorage.setItem('cart_token', 'abc123')
 
         render(<CheckoutSuccess />)
 
-        expect(localStorage.getItem('cart_token')).toBeNull()
         expect(
-            screen.getByRole('heading', { name: 'Checkout Successful' })
+            await screen.findByText(
+                /couldn't verify your payment/i,
+            ),
         ).toBeInTheDocument()
+
+        expect(localStorage.getItem('cart_token')).toBe('abc123')
     })
 })

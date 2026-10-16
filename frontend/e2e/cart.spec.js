@@ -28,7 +28,7 @@ test("displays products and navigates to the cart", async ({ page }) => {
 
     await expect(page).toHaveURL(/\/cart(?:\?.*)?$/);
 
-    await expect(page.getByRole("heading", { name: /cart/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Your cart", exact: true })).toBeVisible();
 
     await expect(page.getByText("cart-test-product")).toBeVisible();
   });
