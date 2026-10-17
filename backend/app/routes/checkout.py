@@ -1,5 +1,5 @@
 # file: checkout.py
-# descr:
+# descr: verify stripe payment
 
 import stripe
 from flask import Blueprint, jsonify, request, current_app
@@ -116,7 +116,10 @@ def checkout():
                 for item in cart.items
             ],
             metadata={"order_id": str(order.id)},
-            success_url=current_app.config["STRIPE_SUCCESS_URL"],
+            success_url=(
+                f"{current_app.config['STRIPE_SUCCESS_URL']}"
+                "?session_id={CHECKOUT_SESSION_ID}"
+            ),
             cancel_url=current_app.config["STRIPE_CANCEL_URL"],
         )
 
@@ -130,3 +133,54 @@ def checkout():
         db.session.rollback()
         current_app.logger.exception("Checkout failed")
         return jsonify({"error": "Checkout failed. Please try again later."}), 500
+
+
+@checkout_bp.get("/orders/payment-status")
+def get_payment_status():
+    """Explicit synchronization, Idempotent transition, Real verification, Ownership check"""
+    session_id = request.args.get("session_id")
+
+    if not session_id:
+        return jsonify({"error": "session_id is required"}), 400
+
+    order = db.session.execute(
+        db.select(Order).where(Order.stripe_session_id == session_id)
+    ).scalar_one_or_none()
+
+    if order is None:
+        return jsonify({"error": "Order not found"}), 404
+
+    try:
+        stripe.api_key = current_app.config["STRIPE_SECRET_KEY"]
+        session = stripe.checkout.Session.retrieve(session_id)
+    except stripe.StripeError:
+        current_app.logger.exception("Stripe payment verification failed")
+        return jsonify({"error": "Unable to verify payment"}), 502
+
+    if session.metadata["order_id"] != str(order.id):
+        return jsonify({"error": "Checkout session does not match order"}), 400
+
+    status_type = type(order.status)
+    pending_status = getattr(status_type, "PENDING", "PENDING")
+    paid_status = getattr(status_type, "PAID", "PAID")
+
+    if session.payment_status == "paid":
+        try:
+            db.session.execute(
+                db.update(Order)
+                .where(
+                    Order.id == order.id,
+                    Order.status == pending_status,
+                )
+                .values(status=paid_status)
+            )
+            db.session.commit()
+            db.session.refresh(order)
+        except Exception:
+            db.session.rollback()
+            current_app.logger.exception("Failed to update order payment status")
+            return jsonify({"error": "Unable to update order status"}), 500
+
+    status = order.status.value if hasattr(order.status, "value") else order.status
+
+    return jsonify({"status": str(status).lower()}), 200
