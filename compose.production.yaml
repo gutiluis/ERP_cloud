@@ -3,10 +3,11 @@ services:
     build:
       context: .
       dockerfile: docker/backend.Dockerfile
+      args:
+        INSTALL_DEV: "false"
     restart: unless-stopped
-    expose:
-      - "8000"
     environment:
+      FLASK_CONFIG: production
       SECRET_KEY: ${SECRET_KEY}
       DATABASE_URL: ${DATABASE_URL}
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
