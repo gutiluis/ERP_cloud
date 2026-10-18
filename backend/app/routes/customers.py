@@ -85,9 +85,6 @@ def submit_customer_form():
     try:
         db.session.add(new_customer)
         db.session.commit()
-        # [ x ] the flash is visible in the customer_form
-        flash("Customer creaded successfully", "success")
-        return redirect(url_for("customers.customer_form"))
     # exception for repeated customer_id, customer_name, customer_email unique=True
     except IntegrityError as error:  # duplicate check with customer_id
         db.session.rollback()
@@ -95,17 +92,17 @@ def submit_customer_form():
         current_app.logger.error(
             f"[LOG] Customer has same customer_id, or same customer_name or same email: {error}"
         )
-        # [ x ] redirect template after creating a customer to the page.
-        # [ x ] flash is being rendered in the customer_form.html
         flash("Customer ID already exists. Failed to create customer", "error")
         return redirect(url_for("customers.customer_form"))
     # integrityrror is a sublass of sqlalchemyerror
     except SQLAlchemyError:
         db.session.rollback()
-        current_app.logger.exception("Database fail. Creation unsuccessfull.")
+        current_app.logger.exception("Database fail. Creation unsuccessful.")
         # flash stores message in the session. is not printing by itself
         flash("Database error. Failed to create customer.", "error")
         return redirect(url_for("customers.customer_form"))
+    flash("Customer Created Successfully.", "success")
+    return redirect(url_for("customers.customer_form"))
 
 
 @customer_bp.route("/edit/<string:customer_id>", methods=["GET"])

@@ -1,24 +1,7 @@
-"""
-pytest configuration file. needs to be runned from project root
-
-has db, has session
-
-db.drop_all() ensures after each test a clean state every time
-
-@pytest.fixture # decorators
-a fixture provides a defined, reliable and consistent context for the tests. environment.
-fixtures define the steps and data that constitute the arrange phase of a test
-the services, state, or other operating environments set up by fixtures are accessed by test functions through arguments
-
--setup functions
--teardown functions
-
-- pytest does not run with python REPL
-
-"""
+# file: conftest.py
+# descr: fixtures
 
 import pytest
-
 from app import create_app
 from app.extensions import db
 from decimal import Decimal
