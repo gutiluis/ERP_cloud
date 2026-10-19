@@ -57,17 +57,29 @@ function ProductCatalog() {
 
     async function handleAddToCart(productVariantId) {
         try {
-            const data = cartToken
-                // ? if cartToken exists await addCartItem(carToken, productVariantId, 1)
-                // ? ternary operator
-                ? await addCartItem(cartToken, productVariantId, 1)
-                // : else await createCart(productVariantId, 1)
-                // : ternary operator
-                : await createCart(productVariantId, 1)
+            let data
+
+            if (cartToken) {
+                try {
+                    data = await addCartItem(cartToken, productVariantId, 1)
+                } catch (error) {
+                    if (error.status !== 404) {
+                        throw error
+                    }
+
+                    localStorage.removeItem('cart_token')
+                    setCartToken(null)
+                }
+            }
+
+            if (!data) {
+                data = await createCart(productVariantId, 1)
+            }
 
             const newCartToken = data.cart_token
             setCartToken(newCartToken)
             localStorage.setItem('cart_token', newCartToken)
+            setError(null)
         } catch {
             setError('Unable to add product to cart.')
         }

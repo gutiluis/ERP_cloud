@@ -15,8 +15,13 @@ async function handleResponse(response) {
     const data = await response.json()
 
     if (!response.ok) {
-        throw new Error(data.error || `Request failed with status ${response.status}`)
+        const error = new Error(
+            data.error || `Request failed with status ${response.status}`
+        )
+        error.status = response.status
+        throw error
     }
+
 
     return data
 }
