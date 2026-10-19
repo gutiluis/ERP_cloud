@@ -39,3 +39,18 @@ export async function createCheckout(cartToken, shippingAddress) {
 
     return handleResponse(response)
 }
+
+export async function cancelCheckout(cartToken, sessionId) {
+    const response = await fetch('/api/checkout/cancel', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            cart_token: cartToken,
+            session_id: sessionId,
+        }),
+    })
+
+    return handleResponse(response)
+}
