@@ -68,7 +68,7 @@ def checkout():
             return jsonify({"error": "This order cannot be checked out again"}), 409
 
         if not order.stripe_session_id:
-            return jsonify({"error": "Existing order has no checkout session"}), 409
+            return jsonify({"error": "Checkout already started for this cart"}), 409
 
         try:
             existing_session = stripe.checkout.Session.retrieve(
