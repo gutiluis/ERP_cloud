@@ -7,7 +7,14 @@ import { Link } from 'react-router-dom'
 import { cancelCheckout } from '../../api/checkout'
 
 function CheckoutCancel() {
-    const [message, setMessage] = useState('Canceling checkout...')
+    const [message, setMessage] = useState(() => {
+        const sessionId = new URLSearchParams(window.location.search).get('session_id')
+        const cartToken = localStorage.getItem('cart_token')
+
+        return sessionId && cartToken
+            ? 'Canceling checkout...'
+            : 'Checkout was canceled. You can return to your cart to try again.'
+    })
     const [error, setError] = useState(false)
 
     useEffect(() => {
@@ -15,7 +22,6 @@ function CheckoutCancel() {
         const cartToken = localStorage.getItem('cart_token')
 
         if (!sessionId || !cartToken) {
-            setMessage('Checkout was canceled. You can return to your cart to try again.')
             return
         }
 
