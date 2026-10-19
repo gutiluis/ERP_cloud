@@ -10,7 +10,7 @@ test.describe("Product catalog", () => {
     await expect(page.getByRole("heading", { name: "Products" })).toBeVisible();
 
     await expect(page.getByText("cart-test-product")).toBeVisible();
-});
+  });
 
 test("displays products and navigates to the cart", async ({ page }) => {
     await page.goto("/");

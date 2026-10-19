@@ -71,21 +71,24 @@ def checkout():
             return jsonify({"error": "Checkout already started for this cart"}), 409
 
         try:
-            existing_session = stripe.checkout.Session.retrieve(
-                order.stripe_session_id
-            )
+            existing_session = stripe.checkout.Session.retrieve(order.stripe_session_id)
         except stripe.StripeError:
             current_app.logger.exception("Unable to retrieve existing checkout")
             return jsonify({"error": "Unable to verify existing checkout"}), 502
 
-        if existing_session.payment_status == "paid" or existing_session.status == "complete":
+        if (
+            existing_session.payment_status == "paid"
+            or existing_session.status == "complete"
+        ):
             return jsonify({"error": "Checkout has already been completed"}), 409
 
         if existing_session.status == "open":
-            return jsonify({
-                "checkout_url": existing_session.url,
-                "order_id": order.id,
-            }), 200
+            return jsonify(
+                {
+                    "checkout_url": existing_session.url,
+                    "order_id": order.id,
+                }
+            ), 200
 
         if existing_session.status != "expired":
             return jsonify({"error": "Existing checkout cannot be restarted"}), 409
@@ -175,7 +178,6 @@ def checkout():
         return jsonify({"error": "Checkout failed. Please try again later."}), 500
 
 
-
 @checkout_bp.post("/checkout/cancel")
 def cancel_checkout():
     """Expire an open Stripe Checkout Session belonging to the supplied cart."""
@@ -202,9 +204,7 @@ def cancel_checkout():
         if session.status == "open":
             stripe.checkout.Session.expire(session_id)
         elif session.status == "complete":
-            return jsonify({
-                "error": "Checkout has already been completed"
-            }), 409
+            return jsonify({"error": "Checkout has already been completed"}), 409
 
         return jsonify({"status": "canceled"}), 200
     except stripe.StripeError:
